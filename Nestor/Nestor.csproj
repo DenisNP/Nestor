@@ -7,6 +7,10 @@
         <Title>Nestor</Title>
         <Authors>Denis Peshekhonov</Authors>
         <Description>.NET Morphological library for Russian language</Description>
+        <Copyright>Denis Peshekhonov, 2019</Copyright>
+        <PackageLicenseUrl>https://licenses.nuget.org/MIT</PackageLicenseUrl>
+        <RepositoryType>GitHub</RepositoryType>
+        <PackageTags>NLP Russian morphology</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>

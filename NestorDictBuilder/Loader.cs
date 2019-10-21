@@ -72,14 +72,14 @@ namespace NestorDictBuilder
         {
             if (lines.Count == 0) return;
             var lemmaLine = lines.First().Split("|");
-            var lemma = Regex.Replace(lemmaLine[0].Trim(), "[^а-яё]", "");
-            var secondLemma = Regex.Replace(lemmaLine[2].Trim(), "[^а-яё]", "");
+            var lemma = Regex.Replace(lemmaLine[0].Trim(), "[^а-яё\\-]", "");
+            var secondLemma = Regex.Replace(lemmaLine[2].Trim(), "[^а-яё\\-]", "");
 
             for (var i = 1; i < lines.Count; i++)
             {
                 var cLine = lines[i].Split("|");
-                var cWord = Regex.Replace(cLine[0].Trim(), "[^а-яё]", "");
-                var secondCWord = Regex.Replace(cLine[2].Trim(), "[^а-яё]", "");
+                var cWord = Regex.Replace(cLine[0].Trim(), "[^а-яё\\-]", "");
+                var secondCWord = Regex.Replace(cLine[2].Trim(), "[^а-яё\\-]", "");
                 var data = (lemma, lemma == secondLemma ? "" : secondLemma);
                 
                 _dawgBuilder.Insert(cWord, data);
