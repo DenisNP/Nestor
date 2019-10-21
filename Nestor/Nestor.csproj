@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp2.2</TargetFramework>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>0.0.1</PackageVersion>
+        <PackageVersion>0.0.2</PackageVersion>
         <Title>Nestor</Title>
         <Authors>Denis Peshekhonov</Authors>
         <Description>.NET Morphological library for Russian language</Description>
@@ -20,9 +20,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="dict.bin">
+      <None Remove="dict.bin" />
+      <EmbeddedResource Include="dict.bin">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
+        <IncludeInPackage>true</IncludeInPackage>
+      </EmbeddedResource>
     </ItemGroup>
 
 </Project>
