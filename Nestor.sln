@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nestor", "Nestor\Nestor.csproj", "{1FE262F4-FDF1-4586-809A-FF24CE6A2EF7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NestorDictBuilder", "NestorDictBuilder\NestorDictBuilder.csproj", "{E2DCC571-3B69-4765-BA88-6E7ED8F97A55}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nestor.DictBuilder", "Nestor.DictBuilder\Nestor.DictBuilder.csproj", "{E2DCC571-3B69-4765-BA88-6E7ED8F97A55}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NestorTests", "NestorTests\NestorTests.csproj", "{B3774EDE-F4F3-4FC7-B8D6-AD60BDD0AAB1}"
 EndProject
