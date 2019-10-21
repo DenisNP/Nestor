@@ -2,10 +2,21 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp2.2</TargetFramework>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageVersion>0.0.1</PackageVersion>
+        <Title>Nestor</Title>
+        <Authors>Denis Peshekhonov</Authors>
+        <Description>.NET Morphological library for Russian language</Description>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="DawgSharp" Version="1.3.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="dict.bin">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>
