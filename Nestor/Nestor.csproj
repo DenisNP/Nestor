@@ -11,6 +11,8 @@
         <PackageLicenseUrl>https://licenses.nuget.org/MIT</PackageLicenseUrl>
         <RepositoryType>GitHub</RepositoryType>
         <PackageTags>NLP Russian morphology</PackageTags>
+        <PackageProjectUrl>https://github.com/DenisNP/Nestor</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/DenisNP/Nestor</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
