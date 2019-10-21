@@ -10,7 +10,7 @@ namespace NestorDictBuilder
 {
     public class Loader
     {
-        private DawgBuilder<(string, string)> _dawgBuilder = new DawgBuilder<(string, string)> ();
+        private DawgBuilder<List<string>> _dawgBuilder = new DawgBuilder<List<string>> ();
         
         public void BuildDictionary(string inputFileName, string outputFileName)
         {
@@ -61,7 +61,7 @@ namespace NestorDictBuilder
                 {
                     dawg.SaveTo(
                         saveStream,
-                        (writer, tuple) => writer.Write(tuple.Item1 + "|" + tuple.Item2)
+                        (writer, list) => writer.Write(string.Join("|", list))
                     );
                 }
                 Console.WriteLine("Ok.");
@@ -80,13 +80,31 @@ namespace NestorDictBuilder
                 var cLine = lines[i].Split("|");
                 var cWord = Regex.Replace(cLine[0].Trim(), "[^а-яё\\-]", "");
                 var secondCWord = Regex.Replace(cLine[2].Trim(), "[^а-яё\\-]", "");
-                var data = (lemma, lemma == secondLemma ? "" : secondLemma);
-                
-                _dawgBuilder.Insert(cWord, data);
+
+                InsertToDawg(cWord, lemma, secondLemma);
                 if (cWord != secondCWord)
                 {
-                    _dawgBuilder.Insert(secondCWord, data);
+                    InsertToDawg(secondCWord, lemma, secondLemma);
                 }
+            }
+        }
+
+        private void InsertToDawg(string key, params string[] values)
+        {
+            var toAdd = values.Where(v => v != "").ToList();
+            if (toAdd.Count == 0) return;
+            _dawgBuilder.TryGetValue(key, out var list);
+            
+            if (list == null)
+            {
+                _dawgBuilder.Insert(key, new List<string>(new HashSet<string>(toAdd)));
+            }
+            else
+            {
+                toAdd = toAdd.Where(ta => !list.Contains(ta)).ToList();
+                if (toAdd.Count == 0) return;
+                list.AddRange(toAdd);
+                _dawgBuilder.Insert(key, list);
             }
         }
     }

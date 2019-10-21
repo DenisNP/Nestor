@@ -9,7 +9,7 @@ namespace Nestor
 {
     public class NestorMorph
     {
-        private Dawg<(string, string)> _dawg;
+        private Dawg<string[]> _dawg;
         private static readonly string[] Prepositions =
         {
             "или", 
@@ -43,12 +43,11 @@ namespace Nestor
         public NestorMorph()
         {
             Console.Write("Nestor loading data...");
-            _dawg = Dawg<(string, string)>.Load(File.OpenRead("dict.bin"),
+            _dawg = Dawg<string[]>.Load(File.OpenRead("dict.bin"),
                 reader =>
                 {
                     var str = reader.ReadString();
-                    var data = str.Split("|");
-                    return (data[0], data[1]);
+                    return str.Split("|");
                 });
             Console.WriteLine("Ok");
         }
@@ -104,8 +103,8 @@ namespace Nestor
             
             foreach (var s in inputList)
             {
-                var expectedMatch = expectedTokens.First(exp => HasLemma(s, exp));
-                if (expectedMatch == null) return false;
+                var expectedMatch = expectedTokens.FirstOrDefault(exp => HasLemma(s, exp));
+                if (string.IsNullOrEmpty(expectedMatch)) continue;
                 
                 matches++;
                 expectedTokens.Remove(expectedMatch);
@@ -117,7 +116,7 @@ namespace Nestor
         private IEnumerable<string> CleanString(string s, bool removePrepositions)
         {
             return Regex.Split(s.ToLower().Trim(), "[^а-яё\\-]+")
-                .Where(t => !removePrepositions && Prepositions.Contains(t));
+                .Where(t => !removePrepositions && !Prepositions.Contains(t));
         }
 
         public bool HasOneOfLemmas(string inputWord, params string[] lemmas)
@@ -131,7 +130,7 @@ namespace Nestor
             if (word == lemma) return true;
             var lemmas = _dawg[word];
 
-            return lemmas.Item1 == lemma || lemmas.Item2 == lemma;
+            return lemmas != null && lemmas.Contains(lemma);
         }
 
         private static int DefaultParameters(int inputLength, int expectedLength)
