@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp2.2</TargetFramework>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>0.0.3</PackageVersion>
+        <PackageVersion>0.0.4</PackageVersion>
         <Title>Nestor.Chronicles</Title>
         <Authors>Denis Peshekhonov</Authors>
         <Description>.NET Vector words library for Russian language</Description>
