@@ -17,36 +17,9 @@ namespace Nestor.Chronicles
         {
             Console.Write("Nestor loading Chronicles...");
 
-            var addresses = new string[]
-            {
-                @"C:\Users\Denis\Desktop\dict\0_20000_wiki_ruscorp.bin",
-                @"C:\Users\Denis\Desktop\dict\20000_30000_wiki_ruscorp.bin",
-                @"C:\Users\Denis\Desktop\dict\30000_40000_wiki_ruscorp.bin",
-                @"C:\Users\Denis\Desktop\dict\40000_60000_wiki_ruscorp.bin",
-                @"C:\Users\Denis\Desktop\dict\60000_90000_wiki_ruscorp.bin",
-            };
+            _dawg = Dawg<Record>.Load(LoadFile("model_large.bin"), 
+                reader => new Record(reader.ReadString()));
             
-            var db = new DawgBuilder<Record>();
-            
-            foreach (var address in addresses)
-            {
-                var sDawg = Dawg<Record>.Load(File.OpenRead(address), 
-                    reader => new Record(reader.ReadString()));
-
-                foreach (var (key, value) in sDawg)
-                {
-                    db.Insert(key, value);
-                }
-            }
-
-            Console.Write("Building...");
-            var d = db.BuildDawg();
-            Console.WriteLine(d.GetNodeCount());
-            Console.Write("Saving...");
-            using (var create = File.Create("model_large.bin"))
-            {
-                d.SaveTo(create, Record.Write);
-            }
             Console.WriteLine("Ok");
         }
 
@@ -61,7 +34,7 @@ namespace Nestor.Chronicles
             var cloud = new List<string>(collection);
             foreach (var s in collection)
             {
-                var n = GetNeighbours(s, depth);
+                var n = Neighbours(s, depth);
                 if (n != null)
                 {
                     cloud.AddRange(n);
@@ -71,7 +44,7 @@ namespace Nestor.Chronicles
             return cloud;
         }
 
-        private List<string> GetNeighbours(string word, int level)
+        public List<string> Neighbours(string word, int level)
         {
             var record = GetRecord(word);
             if (record == null) return null;
@@ -82,7 +55,7 @@ namespace Nestor.Chronicles
             {
                 foreach (var n in best)
                 {
-                    var subN = GetNeighbours(n, level - 1);
+                    var subN = Neighbours(n, level - 1);
                     if (subN != null)
                     {
                         result.AddRange(subN);
@@ -90,7 +63,7 @@ namespace Nestor.Chronicles
                 }
             }
 
-            return result;
+            return new List<string>(new HashSet<string>(result));
         }
         
         private Stream LoadFile(string name)
