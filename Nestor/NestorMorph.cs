@@ -47,7 +47,8 @@ namespace Nestor
                 reader =>
                 {
                     var str = reader.ReadString();
-                    return str.Split("|");
+                    var lemmas = str.Split("|").Where(l => l != "");
+                    return lemmas.ToArray();
                 });
             Console.WriteLine("Ok");
         }
@@ -128,9 +129,17 @@ namespace Nestor
         {
             var word = inputWord.ToLower().Trim();
             if (word == lemma) return true;
-            var lemmas = _dawg[word];
+            var lemmas = GetLemmas(word);
 
             return lemmas != null && lemmas.Contains(lemma);
+        }
+
+        public string[] GetLemmas(string inputWord)
+        {
+            var word = inputWord.ToLower().Trim();
+            var lemmas = _dawg[word];
+            if (lemmas != null && lemmas.Length == 0) return new[] {word};
+            return lemmas;
         }
 
         private static int DefaultParameters(int inputLength, int expectedLength)

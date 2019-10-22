@@ -1,10 +1,21 @@
-﻿namespace NestorDictBuilder
+﻿namespace Nestor.DictBuilder
 {
     class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            new Loader().BuildDictionary("hagen.zip", "dict.bin");
+//            LoadNestorDictionary();
+            LoadNestorChroniclesDictionary();
+        }
+
+        private static void LoadNestorDictionary()
+        {
+            new NestorLoader().BuildDictionary("hagen", "dict_new.bin");
+        }
+
+        private static void LoadNestorChroniclesDictionary()
+        {
+            new NestorChroniclesLoader().BuildDictionary("model_small", "wiki.bin");
         }
     }
 }

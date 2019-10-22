@@ -13,6 +13,13 @@
       <None Update="hagen.zip">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="model_small.zip">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Nestor\Nestor.csproj" />
     </ItemGroup>
 
 </Project>
