@@ -125,8 +125,6 @@ namespace Nestor.DictBuilder
 
                 tasks.Add(task);
                 task.Start();
-                
-                if (count > 1000) break;
                 // _dawgBuilder.Insert(word, record);
 
                 /*if (count % 10 == 0)
