@@ -133,7 +133,7 @@ namespace Nestor
                 expectedTokens.Remove(expectedMatch);
             }
 
-            return inputList.Count() - matches <= maxDifference;
+            return expectedTokens.Count == 0 && inputList.Count - matches <= maxDifference;
         }
         
         public IEnumerable<string> Lemmatize(string phrase, bool removeUndictionaried = false)

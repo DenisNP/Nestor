@@ -60,6 +60,25 @@ namespace NestorTests
         }
         
         [Test]
+        public void TestOneWordPhrase()
+        {
+            var nestor = new NestorMorph();
+            var case1 = nestor.CheckPhrase("помощь", true,  
+                "выход",
+                "выйти",
+                "выходить",
+                "закрыть",
+                "закрывать",
+                "хватит",
+                "хватить",
+                "конец",
+                "закончить",
+                "заканчивать"
+            );
+            Assert.AreEqual(false, case1);
+        }
+        
+        [Test]
         public void TestDefaultDifference()
         {
             var nestor = new NestorMorph();
