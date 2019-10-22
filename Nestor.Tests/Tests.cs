@@ -6,6 +6,20 @@ namespace NestorTests
 {
     public class Tests
     {
+
+        [Test]
+        public void TestNonCyrillic()
+        {
+            var nestor = new NestorMorph();
+            var tokens = nestor.Lemmatize("Нажал кабаны, on 102 ++ -/  баклажана!").ToArray();
+            Assert.AreEqual(5, tokens.Length);
+            Assert.AreEqual("нажать", tokens[0]);
+            Assert.AreEqual("кабан", tokens[1]);
+            Assert.AreEqual("on", tokens[2]);
+            Assert.AreEqual("102", tokens[3]);
+            Assert.AreEqual("баклажан", tokens[4]);
+        }
+
         [Test]
         public void TestLemmatize()
         {

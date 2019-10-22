@@ -138,7 +138,7 @@ namespace Nestor
         
         public IEnumerable<string> Lemmatize(string phrase, bool removeUndictionaried = false)
         {
-            var tokens = Regex.Split(phrase.ToLower().Trim(), "[^а-яё\\-]").Where(x => x != "");
+            var tokens = Regex.Split(phrase.ToLower().Trim(), "[^\\w]").Where(x => x != "");
             return Lemmatize(tokens, removeUndictionaried);
         }
 
