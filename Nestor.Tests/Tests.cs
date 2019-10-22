@@ -7,6 +7,14 @@ namespace NestorTests
     public class Tests
     {
         [Test]
+        public void TestLemmatizeAll()
+        {
+            var nestor = new NestorMorph();
+            var tokens = nestor.Lemmatize("стали", false, true).ToArray();
+            Assert.AreEqual(2, tokens.Length);
+        }
+        
+        [Test]
         public void TestHyphen()
         {
             var nestor = new NestorMorph();

@@ -142,8 +142,9 @@ namespace Nestor
         
         public IEnumerable<string> Lemmatize(string phrase, bool removeUndictionaried = false, bool allLemmas = false)
         {
-            var tokens = Regex.Split(phrase.ToLower().Trim(), "[^\\w\\-]").Where(x => x != "");
-            return Lemmatize(tokens, removeUndictionaried);
+            var tokens = Regex.Split(phrase.ToLower().Trim(), "[^\\w\\-]")
+                .Where(x => x.Trim() != "" && !x.StartsWith("-") && !x.EndsWith("-"));
+            return Lemmatize(tokens, removeUndictionaried, allLemmas);
         }
 
         public IEnumerable<string> Lemmatize(IEnumerable<string> phrase, bool removeUndictionaried = false, bool allLemmas = false)
@@ -171,11 +172,10 @@ namespace Nestor
                 }
                 else
                 {
-                    list.Add(l.First());
-                }
+                    list.Add(l.First());                }
             }
-            
-            return list;
+
+            return list.Count <= 1 ? list : new List<string>(new HashSet<string>(list));
         }
 
         private IEnumerable<string> CleanString(string s, bool removePrepositions)
