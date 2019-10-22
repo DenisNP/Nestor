@@ -63,36 +63,71 @@ namespace Nestor.DictBuilder
         {
             Console.WriteLine("Calculating...");
             var count = 0;
+            var calculated = new Dictionary<string, Dictionary<string, double>>();
 
             foreach (var word in vocabulary.Keys)
             {
-                var list = new List<Word>();
+                var best = new List<Word>();
+                var worst = new List<Word>();
                 foreach (var secondWord in vocabulary.Keys)
                 {
                     if (word != secondWord)
                     {
-                        list.Add(new Word
+                        double distance;
+                        if (calculated.ContainsKey(secondWord) && calculated[secondWord].ContainsKey(word))
                         {
-                            Value = secondWord,
-                            Distance = ScalarMultiply(vocabulary[word], vocabulary[secondWord])
-                        });
+                            distance = calculated[secondWord][word];
+                        }
+                        else
+                        {
+                            distance = ScalarMultiply(vocabulary[word], vocabulary[secondWord]);
+                            if (!calculated.ContainsKey(word))
+                            {
+                                calculated.Add(word, new Dictionary<string, double>());
+                            }
+                            calculated[word].Add(secondWord, distance);
+                        }
+                        
+                        if (best.Count < 20 || best.Last().Distance < distance)
+                        {
+                            best.Add(new Word
+                            {
+                                Value = secondWord,
+                                Distance = ScalarMultiply(vocabulary[word], vocabulary[secondWord])
+                            });
+                            best = best.OrderByDescending(x => x.Distance).Take(20).ToList();
+                        }
+                        
+                        if (worst.Count < 20 || worst.Last().Distance > distance)
+                        {
+                            worst.Add(new Word
+                            {
+                                Value = secondWord,
+                                Distance = ScalarMultiply(vocabulary[word], vocabulary[secondWord])
+                            });
+                            worst = worst.OrderBy(x => x.Distance).Take(20).ToList();
+                        }
                     }
                 }
 
-                var orderedList = list.OrderByDescending(x => x.Distance).ToList();
                 var record = new Record
                 {
-                    Best = orderedList.Take(10).ToList(),
-                    Worst = orderedList.TakeLast(10).OrderBy(x => x.Distance).ToList()
+                    Best = best,
+                    Worst = worst
                 };
                 
                 _dawgBuilder.Insert(word, record);
                 count++;
 
-                if (count % 100 == 0)
+                if (count % 10 == 0)
                 {
                     Console.WriteLine("..." + count + " done");
                     Console.WriteLine(word + ": " + record + "\n");
+                }
+
+                if (count >= 1000)
+                {
+                    break;
                 }
             }
         }

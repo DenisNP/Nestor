@@ -59,7 +59,7 @@ namespace Nestor.Chronicles
 
         public override string ToString()
         {
-            return Value + ";" + Distance.ToString(CultureInfo.InvariantCulture);
+            return Value + ";" + Distance.ToString("0.00", CultureInfo.InvariantCulture);
         }
     }
 }
