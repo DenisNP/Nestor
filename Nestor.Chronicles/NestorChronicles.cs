@@ -71,7 +71,7 @@ namespace Nestor.Chronicles
             try
             {
                 var assembly = Assembly.GetCallingAssembly();
-                var file = assembly.GetManifestResourceStream("Nestor." + name);
+                var file = assembly.GetManifestResourceStream("Nestor.Chronicles." + name);
                 if (file != null)
                 {
                     return file;
@@ -86,17 +86,12 @@ namespace Nestor.Chronicles
         }
     }
     
-    
-
     public class Record
     {
         public List<Word> Best { get; set; }
         public List<Word> Worst { get; set; }
 
-        public Record()
-        {
-            
-        }
+        public Record() { }
 
         public Record(string raw)
         {
@@ -122,10 +117,7 @@ namespace Nestor.Chronicles
         public string Value { get; set; }
         public double Distance { get; set; }
 
-        public Word()
-        {
-            
-        }
+        public Word() { }
 
         public Word(string raw)
         {
