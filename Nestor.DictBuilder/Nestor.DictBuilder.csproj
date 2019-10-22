@@ -13,6 +13,9 @@
       <None Update="hagen.zip">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="model_large.zip">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
       <None Update="model_small.zip">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>

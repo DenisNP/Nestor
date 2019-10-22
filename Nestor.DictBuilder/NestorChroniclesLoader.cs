@@ -44,14 +44,12 @@ namespace Nestor.DictBuilder
                 .Select(
                     v => v.Key + " " + string.Join(
                              " ",
-                             v.Value.Select(
-                                 d => d.ToString(CultureInfo.InvariantCulture
-                                 )
+                             v.Value.Select(d => d.ToString("0.0000", CultureInfo.InvariantCulture)
                              )
                          )
                 );
             var orderedEnumerable = list.OrderBy(l => l);
-            File.WriteAllLines("out.txt", orderedEnumerable);
+            File.WriteAllLines(inputFileName + "_new.txt", orderedEnumerable);
         }
 
         private int ReadLine(string line, Dictionary<string, double[]> vocabulary)
@@ -64,7 +62,7 @@ namespace Nestor.DictBuilder
             if (wordParts.Length != 2) return 0;
 
             var wordCore = wordParts[0];
-            var wordPos = wordParts[1];
+            // var wordPos = wordParts[1];
 
             var lemmas = _nestor.GetLemmas(wordCore);
             if (lemmas == null) return 0;
