@@ -1,3 +1,4 @@
+using System.Linq;
 using Nestor;
 using NUnit.Framework;
 
@@ -5,6 +6,25 @@ namespace NestorTests
 {
     public class Tests
     {
+        [Test]
+        public void TestLemmatize()
+        {
+            var nestor = new NestorMorph();
+            var tokens = nestor.Lemmatize("Нажал кабаны, на бурдыльку, баклажана").ToArray();
+            Assert.AreEqual(5, tokens.Length);
+            Assert.AreEqual("нажать", tokens[0]);
+            Assert.AreEqual("кабан", tokens[1]);
+            Assert.AreEqual("на", tokens[2]);
+            Assert.AreEqual("бурдыльку", tokens[3]);
+            Assert.AreEqual("баклажан", tokens[4]);
+
+            var tokens2 = nestor.Lemmatize("Нажал кабаны, на бурдыльку, баклажана", true).ToArray();
+            Assert.AreEqual(4, tokens2.Length);
+            Assert.AreEqual("нажать", tokens2[0]);
+            Assert.AreEqual("кабан", tokens2[1]);
+            Assert.AreEqual("на", tokens2[2]);
+            Assert.AreEqual("баклажан", tokens2[3]);
+        }
 
         [Test]
         public void TestComplexPhrase()

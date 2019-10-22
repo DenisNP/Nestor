@@ -135,19 +135,31 @@ namespace Nestor
 
             return inputList.Count() - matches <= maxDifference;
         }
+        
+        public IEnumerable<string> Lemmatize(string phrase, bool removeUndictionaried = false)
+        {
+            var tokens = Regex.Split(phrase.ToLower().Trim(), "[^а-яё\\-]").Where(x => x != "");
+            return Lemmatize(tokens, removeUndictionaried);
+        }
 
-        public IEnumerable<string> Lemmatize(IEnumerable<string> phrase)
+        public IEnumerable<string> Lemmatize(IEnumerable<string> phrase, bool removeUndictionaried = false)
         {
             return phrase.Select(p =>
             {
                 var l = GetLemmas(p);
-                if (l == null || l.Length == 0)
+                if (l == null)
+                {
+                    return removeUndictionaried ? null : p;
+                }
+
+                if (l.Length == 0)
                 {
                     return p;
                 }
 
                 return l.First();
-            });
+            })
+            .Where(x => x != null);
         }
 
         private IEnumerable<string> CleanString(string s, bool removePrepositions)
