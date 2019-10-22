@@ -15,8 +15,8 @@
 
         private static void LoadNestorChroniclesDictionary()
         {
-            const int from = 0;
-            const int to = 20000;
+            const int from = 20000;
+            const int to = 30000;
             
             new NestorChroniclesLoader().BuildDictionary(
                 "model_large",
