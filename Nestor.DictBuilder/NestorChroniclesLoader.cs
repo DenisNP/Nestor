@@ -14,7 +14,7 @@ namespace Nestor.DictBuilder
     public class NestorChroniclesLoader
     {
         private readonly NestorMorph _nestor = new NestorMorph();
-        private readonly DawgBuilder<Chronicles.Record> _dawgBuilder = new DawgBuilder<Chronicles.Record> ();
+        private readonly DawgBuilder<Record> _dawgBuilder = new DawgBuilder<Record> ();
         
         public void BuildDictionary(string inputFileName, string outputFileName, int from, int to)
         {
@@ -66,7 +66,12 @@ namespace Nestor.DictBuilder
             Console.WriteLine("Ok");
         }
 
-        private void Calculate(ConcurrentDictionary<string, Record> dict, Dictionary<string, double[]> vocabulary, int from, int to)
+        private void Calculate(
+            ConcurrentDictionary<string, Record> dict,
+            Dictionary<string, double[]> vocabulary,
+            int from,
+            int to
+        )
         {
             Console.WriteLine("Calculating...");
             var count = -1;

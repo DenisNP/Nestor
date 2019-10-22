@@ -28,6 +28,10 @@
       <EmbeddedResource Include="model_large.bin">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </EmbeddedResource>
+      <None Remove="model_small.bin" />
+      <EmbeddedResource Include="model_small.bin">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
     </ItemGroup>
 
 </Project>

@@ -11,21 +11,34 @@ namespace Nestor.Chronicles
 
     public class NestorChronicles
     {
-        private Dawg<Record> _dawg;
+        private Dawg<Record> _dawgLarge;
+        private Dawg<Record> _dawgSmall;
         
         public NestorChronicles()
         {
-            Console.Write("Nestor loading Chronicles...");
+            Console.Write("Nestor loading Chronicles, large vocabulary...");
 
-            _dawg = Dawg<Record>.Load(LoadFile("model_large.bin"), 
+            _dawgLarge = Dawg<Record>.Load(LoadFile("model_large.bin"), 
+                reader => new Record(reader.ReadString()));
+            
+            Console.WriteLine("Ok");
+            
+            Console.Write("Nestor loading Chronicles, small vocabulary...");
+
+            _dawgSmall = Dawg<Record>.Load(LoadFile("model_small.bin"), 
                 reader => new Record(reader.ReadString()));
             
             Console.WriteLine("Ok");
         }
 
-        public Record GetRecord(string w)
+        public Record GetLargeRecord(string w)
         {
-            return _dawg[w];
+            return _dawgLarge[w];
+        }
+        
+        public Record GetSmallRecord(string w)
+        {
+            return _dawgSmall[w];
         }
 
         public List<string> Cloud(IEnumerable<string> input, int depth)
@@ -44,18 +57,26 @@ namespace Nestor.Chronicles
             return cloud;
         }
 
-        public List<string> Neighbours(string word, int level)
+        public List<string> Neighbours(string word, int level, bool firstBatch = true)
         {
-            var record = GetRecord(word);
-            if (record == null) return null;
+            var recLarge = GetLargeRecord(word);
+            var recSmall = firstBatch ? GetSmallRecord(word) : null;
+            if (recLarge == null && recSmall == null) return null;
 
-            var best = record.Best.Select(x => x.Value).ToList();
+            var bestRaw = recLarge != null ? recLarge.Best : new List<Word>();
+            if (recSmall != null)
+            {
+                bestRaw.AddRange(recSmall.Best);
+            }
+            
+            var best = new List<string>(new HashSet<string>(bestRaw.Select(x => x.Value)));
             var result = new List<string>(best);
+            
             if (level > 1)
             {
                 foreach (var n in best)
                 {
-                    var subN = Neighbours(n, level - 1);
+                    var subN = Neighbours(n, level - 1, false);
                     if (subN != null)
                     {
                         result.AddRange(subN);

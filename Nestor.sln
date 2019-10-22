@@ -8,7 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nestor.Tests", "Nestor.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nestor.Chronicles", "Nestor.Chronicles\Nestor.Chronicles.csproj", "{3D6F8620-1702-4E51-B16B-7B34B55305E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nestor.Chronecles.Tests", "Nestor.Chronecles.Tests\Nestor.Chronecles.Tests.csproj", "{A1D052E2-5FEA-40B6-B071-8A03001CFE54}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nestor.Chronicles.Tests", "Nestor.Chronicles.Tests\Nestor.Chronicles.Tests.csproj", "{A1D052E2-5FEA-40B6-B071-8A03001CFE54}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
