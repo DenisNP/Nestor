@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using DawgSharp;
 
@@ -43,7 +44,10 @@ namespace Nestor
         public NestorMorph()
         {
             Console.Write("Nestor loading data...");
-            _dawg = Dawg<string[]>.Load(File.OpenRead("dict.bin"),
+            var assembly = Assembly.GetCallingAssembly();
+            var file = assembly.GetManifestResourceStream("Nestor.dict.bin");
+            
+            _dawg = Dawg<string[]>.Load(file,
                 reader =>
                 {
                     var str = reader.ReadString();
@@ -112,6 +116,20 @@ namespace Nestor
             }
 
             return inputList.Count() - matches <= maxDifference;
+        }
+
+        public IEnumerable<string> Lemmatize(IEnumerable<string> phrase)
+        {
+            return phrase.Select(p =>
+            {
+                var l = GetLemmas(p);
+                if (l == null || l.Length == 0)
+                {
+                    return p;
+                }
+
+                return l.First();
+            });
         }
 
         private IEnumerable<string> CleanString(string s, bool removePrepositions)
