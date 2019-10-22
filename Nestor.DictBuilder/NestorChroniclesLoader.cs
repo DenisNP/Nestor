@@ -16,7 +16,7 @@ namespace Nestor.DictBuilder
         private readonly NestorMorph _nestor = new NestorMorph();
         private readonly DawgBuilder<Chronicles.Record> _dawgBuilder = new DawgBuilder<Chronicles.Record> ();
         
-        public void BuildDictionary(string inputFileName, string outputFileName)
+        public void BuildDictionary(string inputFileName, string outputFileName, int from, int to)
         {
             var vocabulary = new Dictionary<string, double[]>();
             using (var zip = ZipFile.Open(inputFileName + ".zip", ZipArchiveMode.Read))
@@ -46,31 +46,37 @@ namespace Nestor.DictBuilder
             }
 
             var dict = new ConcurrentDictionary<string, Record>();
-            Calculate(dict, vocabulary);
+            Calculate(dict, vocabulary, from, to);
+            foreach (var key in dict.Keys)
+            {
+                _dawgBuilder.Insert(key, dict[key]);
+            }
             
-//            Console.Write("Building DAWG... ");
-//            var dawg = _dawgBuilder.BuildDawg();
-//            
-//            Console.WriteLine("Ok, nodes: " + dawg.GetNodeCount());
-//            Console.WriteLine("Save DAWG");
-//            
-//            using (var writeToFile = File.Create(outputFileName))
-//            {
-//                dawg.SaveTo(writeToFile, Record.Write);
-//            }
-//
-//            Console.WriteLine("Ok");
+            Console.Write("Building DAWG... ");
+            var dawg = _dawgBuilder.BuildDawg();
+           
+            Console.WriteLine("Ok, nodes: " + dawg.GetNodeCount());
+            Console.WriteLine("Save DAWG");
+            
+            using (var writeToFile = File.Create(from + "_" + to + "_" + outputFileName))
+            {
+               dawg.SaveTo(writeToFile, Record.Write);
+            }
+
+            Console.WriteLine("Ok");
         }
 
-        private void Calculate(ConcurrentDictionary<string, Record> dict, Dictionary<string, double[]> vocabulary)
+        private void Calculate(ConcurrentDictionary<string, Record> dict, Dictionary<string, double[]> vocabulary, int from, int to)
         {
             Console.WriteLine("Calculating...");
-            var count = 0;
+            var count = -1;
             var tasks = new List<Task>();
             
             foreach (var word in vocabulary.Keys)
             {
                 count++;
+                if (count < from) continue;
+                if (count > to) break;
                 
                 var task = new Task(() =>
                 {

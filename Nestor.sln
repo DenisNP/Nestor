@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nestor.Tests", "Nestor.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nestor.Chronicles", "Nestor.Chronicles\Nestor.Chronicles.csproj", "{3D6F8620-1702-4E51-B16B-7B34B55305E2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nestor.Chronecles.Tests", "Nestor.Chronecles.Tests\Nestor.Chronecles.Tests.csproj", "{A1D052E2-5FEA-40B6-B071-8A03001CFE54}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{3D6F8620-1702-4E51-B16B-7B34B55305E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D6F8620-1702-4E51-B16B-7B34B55305E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D6F8620-1702-4E51-B16B-7B34B55305E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1D052E2-5FEA-40B6-B071-8A03001CFE54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1D052E2-5FEA-40B6-B071-8A03001CFE54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1D052E2-5FEA-40B6-B071-8A03001CFE54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1D052E2-5FEA-40B6-B071-8A03001CFE54}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

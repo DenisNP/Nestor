@@ -3,13 +3,52 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using DawgSharp;
 
 namespace Nestor.Chronicles
 {
+
     public class NestorChronicles
     {
+        private Dawg<Record> _dawg;
         
+        public NestorChronicles()
+        {
+            Console.Write("Nestor loading Chronicles...");
+            
+            _dawg = Dawg<Record>.Load(LoadFile("0_100_wiki_ruscorp.bin"), 
+                reader => new Record(reader.ReadString()));
+            
+            Console.WriteLine("Ok");
+        }
+
+        public Record GetRecord(string w)
+        {
+            return _dawg[w];
+        }
+        
+        private Stream LoadFile(string name)
+        {
+            try
+            {
+                var assembly = Assembly.GetCallingAssembly();
+                var file = assembly.GetManifestResourceStream("Nestor." + name);
+                if (file != null)
+                {
+                    return file;
+                }
+            }
+            catch (Exception _)
+            {
+                // ignored
+            }
+
+            return File.OpenRead(name);
+        }
     }
+    
+    
 
     public class Record
     {
@@ -25,7 +64,7 @@ namespace Nestor.Chronicles
         {
             var parts = raw.Split("!");
             Best = parts[0].Split("|").Select(x => new Word(x)).ToList();
-            Best = parts[1].Split("|").Select(x => new Word(x)).ToList();
+            Worst = parts[1].Split("|").Select(x => new Word(x)).ToList();
         }
         
         public static void Write(BinaryWriter writer, Record record)

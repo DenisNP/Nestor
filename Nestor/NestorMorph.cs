@@ -45,7 +45,7 @@ namespace Nestor
         {
             Console.Write("Nestor loading data...");
 
-            _dawg = Dawg<string[]>.Load(LoadFile(),
+            _dawg = Dawg<string[]>.Load(LoadFile("dict.bin"),
                 reader =>
                 {
                     var str = reader.ReadString();
@@ -56,12 +56,12 @@ namespace Nestor
             Console.WriteLine("Ok");
         }
 
-        private Stream LoadFile()
+        private Stream LoadFile(string name)
         {
             try
             {
                 var assembly = Assembly.GetCallingAssembly();
-                var file = assembly.GetManifestResourceStream("Nestor.dict.bin");
+                var file = assembly.GetManifestResourceStream("Nestor." + name);
                 if (file != null)
                 {
                     return file;
@@ -72,7 +72,7 @@ namespace Nestor
                 // ignored
             }
 
-            return File.OpenRead("dict.bin");
+            return File.OpenRead(name);
         }
 
         public bool CheckPhrase(string inputPhrase, bool removePrepositions, params string[] expected)
