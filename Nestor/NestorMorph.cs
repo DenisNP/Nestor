@@ -140,30 +140,42 @@ namespace Nestor
             return expectedTokens.Count == 0 && inputList.Count - matches <= maxDifference;
         }
         
-        public IEnumerable<string> Lemmatize(string phrase, bool removeUndictionaried = false)
+        public IEnumerable<string> Lemmatize(string phrase, bool removeUndictionaried = false, bool allLemmas = false)
         {
             var tokens = Regex.Split(phrase.ToLower().Trim(), "[^\\w\\-]").Where(x => x != "");
             return Lemmatize(tokens, removeUndictionaried);
         }
 
-        public IEnumerable<string> Lemmatize(IEnumerable<string> phrase, bool removeUndictionaried = false)
+        public IEnumerable<string> Lemmatize(IEnumerable<string> phrase, bool removeUndictionaried = false, bool allLemmas = false)
         {
-            return phrase.Select(p =>
+            var list = new List<string>();
+            
+            foreach (var p in phrase)
             {
                 var l = GetLemmas(p);
                 if (l == null)
                 {
-                    return removeUndictionaried ? null : p;
+                     if (!removeUndictionaried) list.Add(p);
+                     continue;
                 }
 
                 if (l.Length == 0)
                 {
-                    return p;
+                    list.Add(p);
+                    continue;
                 }
 
-                return l.First();
-            })
-            .Where(x => x != null);
+                if (allLemmas)
+                {
+                    list.AddRange(l);
+                }
+                else
+                {
+                    list.Add(l.First());
+                }
+            }
+            
+            return list;
         }
 
         private IEnumerable<string> CleanString(string s, bool removePrepositions)
