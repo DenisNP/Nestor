@@ -14,6 +14,8 @@ namespace Nestor
         private static readonly string[] Prepositions =
         {
             "или", 
+            "иль",
+            "о",
             "в", 
             "у", 
             "к", 
@@ -28,6 +30,8 @@ namespace Nestor
             "об", 
             "от", 
             "во", 
+            "то",
+            "до",
             "без", 
             "про", 
             "вне", 
@@ -138,7 +142,7 @@ namespace Nestor
         
         public IEnumerable<string> Lemmatize(string phrase, bool removeUndictionaried = false)
         {
-            var tokens = Regex.Split(phrase.ToLower().Trim(), "[^\\w]").Where(x => x != "");
+            var tokens = Regex.Split(phrase.ToLower().Trim(), "[^\\w\\-]").Where(x => x != "");
             return Lemmatize(tokens, removeUndictionaried);
         }
 

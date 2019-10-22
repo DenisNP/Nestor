@@ -6,6 +6,13 @@ namespace NestorTests
 {
     public class Tests
     {
+        [Test]
+        public void TestHyphen()
+        {
+            var nestor = new NestorMorph();
+            var tokens = nestor.Lemmatize("Привет как-нибудь как дела").ToArray();
+            Assert.AreEqual(4, tokens.Length);
+        }
 
         [Test]
         public void TestNonCyrillic()
