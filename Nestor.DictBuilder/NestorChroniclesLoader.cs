@@ -92,7 +92,7 @@ namespace Nestor.DictBuilder
                 if (count % 100 == 0)
                 {
                     Console.WriteLine("..." + count + " done");
-                    Console.WriteLine(word + ": " + record.ToString());
+                    Console.WriteLine(word + ": " + record + "\n");
                 }
             }
         }
