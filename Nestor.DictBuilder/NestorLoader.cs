@@ -10,7 +10,7 @@ namespace Nestor.DictBuilder
 {
     public class NestorLoader
     {
-        private DawgBuilder<List<string>> _dawgBuilder = new DawgBuilder<List<string>> ();
+        private readonly DawgBuilder<List<string>> _dawgBuilder = new DawgBuilder<List<string>> ();
         
         public void BuildDictionary(string inputFileName, string outputFileName)
         {

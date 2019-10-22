@@ -4,12 +4,15 @@ using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using DawgSharp;
+using Nestor.Chronicles;
 
 namespace Nestor.DictBuilder
 {
     public class NestorChroniclesLoader
     {
         private readonly NestorMorph _nestor = new NestorMorph();
+        private readonly DawgBuilder<Chronicles.Record> _dawgBuilder = new DawgBuilder<Chronicles.Record> ();
         
         public void BuildDictionary(string inputFileName, string outputFileName)
         {
@@ -40,29 +43,64 @@ namespace Nestor.DictBuilder
                 Console.WriteLine("Entries added: " + count);
             }
 
-            var list = vocabulary
-                .Select(
-                    v => v.Key + " " + string.Join(
-                             " ",
-                             v.Value.Select(d => d.ToString("0.0000", CultureInfo.InvariantCulture)
-                             )
-                         )
-                );
-            var orderedEnumerable = list.OrderBy(l => l);
-            File.WriteAllLines(inputFileName + "_new.txt", orderedEnumerable);
+            Calculate(vocabulary);
+            
+            Console.Write("Building DAWG... ");
+            var dawg = _dawgBuilder.BuildDawg();
+            
+            Console.WriteLine("Ok, nodes: " + dawg.GetNodeCount());
+            Console.WriteLine("Save DAWG");
+            
+            using (var writeToFile = File.Create(outputFileName))
+            {
+                dawg.SaveTo(writeToFile, Record.Write);
+            }
+
+            Console.WriteLine("Ok");
+        }
+
+        private void Calculate(Dictionary<string, double[]> vocabulary)
+        {
+            Console.WriteLine("Calculating...");
+            var count = 0;
+
+            foreach (var word in vocabulary.Keys)
+            {
+                var list = new List<Word>();
+                foreach (var secondWord in vocabulary.Keys)
+                {
+                    if (word != secondWord)
+                    {
+                        list.Add(new Word
+                        {
+                            Value = secondWord,
+                            Distance = ScalarMultiply(vocabulary[word], vocabulary[secondWord])
+                        });
+                    }
+                }
+
+                var orderedList = list.OrderByDescending(x => x.Distance).ToList();
+                var record = new Record
+                {
+                    Best = orderedList.Take(10).ToList(),
+                    Worst = orderedList.TakeLast(10).OrderBy(x => x.Distance).ToList()
+                };
+                
+                _dawgBuilder.Insert(word, record);
+                count++;
+
+                if (count % 100 == 0)
+                {
+                    Console.WriteLine("..." + count + " done");
+                    Console.WriteLine(word + ": " + record.ToString());
+                }
+            }
         }
 
         private int ReadLine(string line, Dictionary<string, double[]> vocabulary)
         {
             var data = line.Split(" ");
-            var word = data[0];
-
-            if (word.Contains("::")) return 0;
-            var wordParts = word.Split("_");
-            if (wordParts.Length != 2) return 0;
-
-            var wordCore = wordParts[0];
-            // var wordPos = wordParts[1];
+            var wordCore = data[0];
 
             var lemmas = _nestor.GetLemmas(wordCore);
             if (lemmas == null) return 0;
@@ -82,6 +120,11 @@ namespace Nestor.DictBuilder
             }
 
             return count;
+        }
+
+        private double ScalarMultiply(double[] vec1, double[] vec2)
+        {
+            return vec1.Select((t, i) => t * vec2[i]).Sum();
         }
     }
 }

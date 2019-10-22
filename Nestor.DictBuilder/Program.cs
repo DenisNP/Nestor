@@ -15,7 +15,7 @@
 
         private static void LoadNestorChroniclesDictionary()
         {
-            new NestorChroniclesLoader().BuildDictionary("model_large", "wiki.bin");
+            new NestorChroniclesLoader().BuildDictionary("model_large", "wiki_ruscorp.bin");
         }
     }
 }
