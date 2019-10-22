@@ -4,7 +4,7 @@
     {
         public static void Main(string[] args)
         {
-//            LoadNestorDictionary();
+            // LoadNestorDictionary();
             LoadNestorChroniclesDictionary();
         }
 
@@ -15,7 +15,15 @@
 
         private static void LoadNestorChroniclesDictionary()
         {
-            new NestorChroniclesLoader().BuildDictionary("model_large", "wiki_ruscorp.bin", 0, 100);
+            const int from = 0;
+            const int to = 20000;
+            
+            new NestorChroniclesLoader().BuildDictionary(
+                "model_large",
+                "wiki_ruscorp.bin",
+                from,
+                to
+            );
         }
     }
 }

@@ -117,7 +117,7 @@ namespace Nestor.DictBuilder
                     };
 
                     dict.TryAdd(word, record);
-                    if (dict.Keys.Count % 10 == 0)
+                    if (dict.Keys.Count % 1000 == 0)
                     {
                         Console.WriteLine("..." + dict.Keys.Count + " done");
                     }
