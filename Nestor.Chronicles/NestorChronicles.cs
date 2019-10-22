@@ -57,10 +57,12 @@ namespace Nestor.Chronicles
             return cloud;
         }
 
-        public List<string> Neighbours(string word, int level, bool firstBatch = true)
+        public List<string> Neighbours(string word, int level, int currentLevel = -1)
         {
             var recLarge = GetLargeRecord(word);
-            var recSmall = firstBatch ? GetSmallRecord(word) : null;
+            if (currentLevel == -1) currentLevel = level;
+            
+            var recSmall = currentLevel == level ? GetSmallRecord(word) : null;
             if (recLarge == null && recSmall == null) return null;
 
             var bestRaw = recLarge != null ? recLarge.Best : new List<Word>();
@@ -72,18 +74,18 @@ namespace Nestor.Chronicles
             var best = new List<string>(new HashSet<string>(bestRaw.Select(x => x.Value)));
             var result = new List<string>(best);
             
-            if (level > 1)
+            var take = Math.Max(5, 10 - (level - currentLevel) * 5);
+            if (currentLevel > 1)
             {
                 foreach (var n in best)
                 {
-                    var subN = Neighbours(n, level - 1, false);
+                    var subN = Neighbours(n, level, currentLevel - 1);
                     if (subN != null)
                     {
-                        result.AddRange(subN);
+                        result.AddRange(subN.Take(take));
                     }
                 }
             }
-
             return new List<string>(new HashSet<string>(result));
         }
         
