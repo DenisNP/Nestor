@@ -12,9 +12,6 @@
 
     <ItemGroup>
       <None Remove="0_100_wiki_ruscorp.bin" />
-      <EmbeddedResource Include="0_100_wiki_ruscorp.bin">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </EmbeddedResource>
     </ItemGroup>
 
 </Project>
