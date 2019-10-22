@@ -153,7 +153,7 @@ namespace Nestor
         private IEnumerable<string> CleanString(string s, bool removePrepositions)
         {
             return Regex.Split(s.ToLower().Trim(), "[^а-яё\\-]+")
-                .Where(t => !removePrepositions && !Prepositions.Contains(t));
+                .Where(t => !removePrepositions || !Prepositions.Contains(t));
         }
 
         public bool HasOneOfLemmas(string inputWord, params string[] lemmas)

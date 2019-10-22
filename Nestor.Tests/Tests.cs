@@ -5,6 +5,27 @@ namespace NestorTests
 {
     public class Tests
     {
+
+        [Test]
+        public void TestComplexPhrase()
+        {
+            var nestor = new NestorMorph();
+            
+            var case1 = nestor.CheckPhrase("привет меня зовут Иван мне 40 лет и я молодец", true,  
+                "выход",
+                "выйти",
+                "выходить",
+                "закрыть",
+                "закрывать",
+                "хватит",
+                "хватить",
+                "конец",
+                "закончить",
+                "заканчивать"
+            );
+            
+            Assert.AreEqual(false, case1);
+        }
         
         [Test]
         public void TestDefaultDifference()
