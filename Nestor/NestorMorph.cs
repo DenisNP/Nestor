@@ -44,17 +44,35 @@ namespace Nestor
         public NestorMorph()
         {
             Console.Write("Nestor loading data...");
-            var assembly = Assembly.GetCallingAssembly();
-            var file = assembly.GetManifestResourceStream("Nestor.dict.bin");
-            
-            _dawg = Dawg<string[]>.Load(file,
+
+            _dawg = Dawg<string[]>.Load(LoadFile(),
                 reader =>
                 {
                     var str = reader.ReadString();
                     var lemmas = str.Split("|").Where(l => l != "");
                     return lemmas.ToArray();
                 });
+            
             Console.WriteLine("Ok");
+        }
+
+        private Stream LoadFile()
+        {
+            try
+            {
+                var assembly = Assembly.GetCallingAssembly();
+                var file = assembly.GetManifestResourceStream("Nestor.dict.bin");
+                if (file != null)
+                {
+                    return file;
+                }
+            }
+            catch (Exception _)
+            {
+                // ignored
+            }
+
+            return File.OpenRead("dict.bin");
         }
 
         public bool CheckPhrase(string inputPhrase, bool removePrepositions, params string[] expected)
