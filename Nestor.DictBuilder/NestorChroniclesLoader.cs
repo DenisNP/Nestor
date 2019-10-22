@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading.Tasks;
 using DawgSharp;
 using Nestor.Chronicles;
 
@@ -43,93 +45,92 @@ namespace Nestor.DictBuilder
                 Console.WriteLine("Entries added: " + count);
             }
 
-            Calculate(vocabulary);
+            var dict = new ConcurrentDictionary<string, Record>();
+            Calculate(dict, vocabulary);
             
-            Console.Write("Building DAWG... ");
-            var dawg = _dawgBuilder.BuildDawg();
-            
-            Console.WriteLine("Ok, nodes: " + dawg.GetNodeCount());
-            Console.WriteLine("Save DAWG");
-            
-            using (var writeToFile = File.Create(outputFileName))
-            {
-                dawg.SaveTo(writeToFile, Record.Write);
-            }
-
-            Console.WriteLine("Ok");
+//            Console.Write("Building DAWG... ");
+//            var dawg = _dawgBuilder.BuildDawg();
+//            
+//            Console.WriteLine("Ok, nodes: " + dawg.GetNodeCount());
+//            Console.WriteLine("Save DAWG");
+//            
+//            using (var writeToFile = File.Create(outputFileName))
+//            {
+//                dawg.SaveTo(writeToFile, Record.Write);
+//            }
+//
+//            Console.WriteLine("Ok");
         }
 
-        private void Calculate(Dictionary<string, double[]> vocabulary)
+        private void Calculate(ConcurrentDictionary<string, Record> dict, Dictionary<string, double[]> vocabulary)
         {
             Console.WriteLine("Calculating...");
             var count = 0;
-            var calculated = new Dictionary<string, Dictionary<string, double>>();
-
+            var tasks = new List<Task>();
+            
             foreach (var word in vocabulary.Keys)
             {
-                var best = new List<Word>();
-                var worst = new List<Word>();
-                foreach (var secondWord in vocabulary.Keys)
+                count++;
+                
+                var task = new Task(() =>
                 {
-                    if (word != secondWord)
+                    var best = new List<Word>();
+                    var worst = new List<Word>();
+                    foreach (var secondWord in vocabulary.Keys)
                     {
-                        double distance;
-                        if (calculated.ContainsKey(secondWord) && calculated[secondWord].ContainsKey(word))
+                        if (word != secondWord)
                         {
-                            distance = calculated[secondWord][word];
-                        }
-                        else
-                        {
-                            distance = ScalarMultiply(vocabulary[word], vocabulary[secondWord]);
-                            if (!calculated.ContainsKey(word))
+                            double distance = ScalarMultiply(vocabulary[word], vocabulary[secondWord]);
+
+                            if (best.Count < 20 || best.Last().Distance < distance)
                             {
-                                calculated.Add(word, new Dictionary<string, double>());
+                                best.Add(new Word
+                                {
+                                    Value = secondWord,
+                                    Distance = ScalarMultiply(vocabulary[word], vocabulary[secondWord])
+                                });
+                                best = best.OrderByDescending(x => x.Distance).Take(20).ToList();
                             }
-                            calculated[word].Add(secondWord, distance);
-                        }
                         
-                        if (best.Count < 20 || best.Last().Distance < distance)
-                        {
-                            best.Add(new Word
+                            if (worst.Count < 20 || worst.Last().Distance > distance)
                             {
-                                Value = secondWord,
-                                Distance = ScalarMultiply(vocabulary[word], vocabulary[secondWord])
-                            });
-                            best = best.OrderByDescending(x => x.Distance).Take(20).ToList();
-                        }
-                        
-                        if (worst.Count < 20 || worst.Last().Distance > distance)
-                        {
-                            worst.Add(new Word
-                            {
-                                Value = secondWord,
-                                Distance = ScalarMultiply(vocabulary[word], vocabulary[secondWord])
-                            });
-                            worst = worst.OrderBy(x => x.Distance).Take(20).ToList();
+                                worst.Add(new Word
+                                {
+                                    Value = secondWord,
+                                    Distance = ScalarMultiply(vocabulary[word], vocabulary[secondWord])
+                                });
+                                worst = worst.OrderBy(x => x.Distance).Take(20).ToList();
+                            }
                         }
                     }
-                }
 
-                var record = new Record
-                {
-                    Best = best,
-                    Worst = worst
-                };
+                    var record = new Record
+                    {
+                        Best = best,
+                        Worst = worst
+                    };
+
+                    dict.TryAdd(word, record);
+                    if (dict.Keys.Count % 10 == 0)
+                    {
+                        Console.WriteLine("..." + dict.Keys.Count + " done");
+                    }
+                });
+
+                tasks.Add(task);
+                task.Start();
                 
-                _dawgBuilder.Insert(word, record);
-                count++;
+                if (count > 1000) break;
+                // _dawgBuilder.Insert(word, record);
 
-                if (count % 10 == 0)
+                /*if (count % 10 == 0)
                 {
-                    Console.WriteLine("..." + count + " done");
+                    Console.WriteLine(count + " done");
                     Console.WriteLine(word + ": " + record + "\n");
-                }
-
-                if (count >= 1000)
-                {
-                    break;
-                }
+                }*/
             }
+
+            Task.WaitAll(tasks.ToArray());
         }
 
         private int ReadLine(string line, Dictionary<string, double[]> vocabulary)
