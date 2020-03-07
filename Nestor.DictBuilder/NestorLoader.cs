@@ -5,113 +5,132 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text.RegularExpressions;
 using DawgSharp;
+using Nestor.Models;
 
 namespace Nestor.DictBuilder
 {
     public class NestorLoader
     {
-        private readonly DawgBuilder<List<string>> _dawgBuilder = new DawgBuilder<List<string>> ();
+        private readonly DawgBuilder<int[]> _dawgBuilder = new DawgBuilder<int[]> ();
+        private readonly List<Paradigm> _paradigms = new List<Paradigm>();
+        private readonly Storage _storage = new Storage();
         
+        /// <summary>
+        /// Main build method
+        /// </summary>
+        /// <param name="inputFileName">File of .zip dictionary archive without extension</param>
+        /// <param name="outputFileName">File to save ready dictionary</param>
         public void BuildDictionary(string inputFileName, string outputFileName)
         {
-            using (var zip = ZipFile.Open(inputFileName + ".zip", ZipArchiveMode.Read))
+            using var zip = ZipFile.Open(inputFileName + ".zip", ZipArchiveMode.Read);
+            
+            Console.WriteLine("Unzipping file...");
+            
+            // unzip file
+            var entry = zip.GetEntry(inputFileName + ".txt");
+            if (entry == null)
             {
-                Console.WriteLine("Unzipping file...");
-                var entry = zip.GetEntry(inputFileName + ".txt");
-                if (entry == null)
-                {
-                    throw new IOException();
-                }
-                
-                Console.WriteLine("Loading file: " + entry.Name);
-                var count = 0;
-                
-                using (var reader = new StreamReader(entry.Open()))
-                {
-                    var lines = new List<string>();
-                    while (!reader.EndOfStream)
-                    {
-                        var lineRaw = reader.ReadLine();
-                        if (lineRaw == null) continue;
-
-                        var line = lineRaw.Trim();
-                        if (line == "")
-                        {
-                            FlushLines(lines);
-                            count += lines.Count;
-                            lines.Clear();
-                        }
-                        else
-                        {
-                            lines.Add(line);
-                        }
-                    }
-                    FlushLines(lines);
-                    count += lines.Count;
-                }
-
-                Console.WriteLine("Lines loaded: " + count);
-                Console.Write("Building DAWG...");
-                
-                var dawg = _dawgBuilder.BuildDawg();
-                Console.WriteLine("Done. Nodes count: " + dawg.GetNodeCount() + ".");
-
-                Console.Write("Saving...");
-                using (var saveStream = File.Create(outputFileName))
-                {
-                    dawg.SaveTo(
-                        saveStream,
-                        (writer, list) => writer.Write(string.Join("|", list))
-                    );
-                }
-                Console.WriteLine("Ok.");
+                throw new IOException($"Cannot load file: {inputFileName}");
             }
+                
+            Console.WriteLine("Loading file: " + entry.Name);
+            var count = 0;
+
+            // read file line by line
+            using var reader = new StreamReader(entry.Open());
+            var lines = new List<string>();
+            while (!reader.EndOfStream)
+            {
+                var lineRaw = reader.ReadLine();
+                if (lineRaw == null) continue;
+
+                var line = lineRaw.Trim();
+                if (line == "")
+                {
+                    // if line is empty, a new word just started, to save previous one and clean its lines
+                    WriteWord(lines);
+                    count += lines.Count;
+                    lines.Clear();
+                    
+                    // log progress
+                    if (count % 1000 == 0)
+                    {
+                        Console.WriteLine("Lines loaded: " + count);
+                    }
+                }
+                else
+                {
+                    // if line is not empty, just add it to previous lines
+                    lines.Add(line);
+                }
+            }
+            
+            // write finish lines
+            WriteWord(lines);
+            count += lines.Count;
+
+            Console.WriteLine("Total lines: " + count);
+            Console.Write("Building DAWG...");
+            
+            // build dawg dictionary
+            var dawg = _dawgBuilder.BuildDawg();
+            Console.WriteLine("Done. Nodes count: " + dawg.GetNodeCount() + ".");
+
+            Console.Write("Saving...");
+            
+            // save it to file
+            using var saveStream = File.Create(outputFileName);
+            dawg.SaveTo(saveStream, (writer, list) => writer.Write(string.Join("|", list)));
+            Console.WriteLine("Ok.");
         }
 
-        private void FlushLines(List<string> lines)
+        /// <summary>
+        /// Write single word to dawg
+        /// </summary>
+        /// <param name="lines">Word morphology lines from dict</param>
+        private void WriteWord(List<string> lines)
         {
             if (lines.Count == 0) return;
             var lemmaLine = lines.First().Split("|");
-            var lemma = Regex.Replace(lemmaLine[0].Trim(), "[^а-яё\\-]", "");
-            var secondLemma = Regex.Replace(lemmaLine[2].Trim(), "[^а-яё\\-]", "");
-            
-            InsertToDawg(lemma, true, "");
-            if (secondLemma != lemma)
+            if (
+                lemmaLine.Length == 0
+                || lemmaLine[0].Contains(" ")
+                || Regex.Match(lemmaLine[0], "[a-z]+").Success
+            )
             {
-                InsertToDawg(secondLemma, true, "");
+                // dont load empty words, words with space and words with english letters
+                return;
             }
 
-            for (var i = 1; i < lines.Count; i++)
-            {
-                var cLine = lines[i].Split("|");
-                var cWord = Regex.Replace(cLine[0].Trim(), "[^а-яё\\-]", "");
-                var secondCWord = Regex.Replace(cLine[2].Trim(), "[^а-яё\\-]", "");
-
-                InsertToDawg(cWord, false, lemma, secondLemma);
-                if (cWord != secondCWord)
-                {
-                    InsertToDawg(secondCWord, false, lemma, secondLemma);
-                }
-            }
-        }
-
-        private void InsertToDawg(string key, bool forceEmpty, params string[] values)
-        {
-            var toAdd = values.Where(v => forceEmpty || v != "").ToList();
-            if (toAdd.Count == 0) return;
-            _dawgBuilder.TryGetValue(key, out var list);
+            var paradigm = ParadigmGenerator.Generate(lines, _storage);
             
-            if (list == null)
+            // find if there is this kind of paradigm already
+            var similar = _paradigms.FirstOrDefault(p => p.IsEqualTo(paradigm));
+            
+            // assign paradigm identifier
+            int paradigmId;
+            if (similar == null)
             {
-                var uniqueAdd = new HashSet<string>(toAdd);
-                _dawgBuilder.Insert(key, new List<string>(uniqueAdd));
+                paradigmId = _paradigms.Count;
+                _paradigms.Add(paradigm);
             }
             else
             {
-                toAdd = toAdd.Where(ta => !list.Contains(ta)).ToList();
-                if (toAdd.Count == 0) return;
-                list.AddRange(toAdd);
-                _dawgBuilder.Insert(key, list);
+                paradigmId = _paradigms.IndexOf(similar);
+                paradigm = similar;
+            }
+            
+            // write all words
+            var forms = paradigm.GetAllForms();
+            foreach (var word in forms)
+            {
+                _dawgBuilder.TryGetValue(word, out var list);
+                _dawgBuilder.Insert(
+                    word,
+                    list == null
+                        ? new[] {paradigmId}
+                        : list.Append(paradigmId).ToArray()
+                );
             }
         }
     }
