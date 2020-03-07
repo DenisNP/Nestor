@@ -21,10 +21,12 @@
 
     <ItemGroup>
       <None Remove="dict.bin" />
-      <EmbeddedResource Include="dict.bin">
+      <None Update="dict\dict.bin">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        <IncludeInPackage>true</IncludeInPackage>
-      </EmbeddedResource>
+      </None>
+      <None Update="dict\prepositions.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

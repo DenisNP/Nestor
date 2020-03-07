@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using DawgSharp;
 
@@ -11,45 +12,38 @@ namespace Nestor
     public class NestorMorph
     {
         private Dawg<string[]> _dawg;
-        private static readonly string[] Prepositions =
-        {
-            "или", 
-            "иль",
-            "о",
-            "в", 
-            "у", 
-            "к", 
-            "а", 
-            "и", 
-            "с", 
-            "на", 
-            "по", 
-            "за", 
-            "ко", 
-            "из", 
-            "об", 
-            "от", 
-            "во", 
-            "то",
-            "до",
-            "без", 
-            "про", 
-            "вне", 
-            "для", 
-            "изо", 
-            "меж", 
-            "над", 
-            "под", 
-            "обо", 
-            "ото", 
-            "при"
-        };
+        private static readonly HashSet<string> Prepositions = new HashSet<string>();
 
         public NestorMorph()
         {
-            Console.Write("Nestor loading data...");
+            LoadMorphology();
+            LoadAdditional();
+        }
 
-            _dawg = Dawg<string[]>.Load(LoadFile("dict.bin"),
+        private void LoadAdditional()
+        {
+            Console.Write("Nestor loading additional data...");
+
+            using var fileStream = Utils.LoadFile("prepositions.txt");
+            using var reader = new StreamReader(fileStream, Encoding.UTF8);
+
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                if (!line.IsNullOrEmpty())
+                {
+                    Prepositions.Add(line);
+                }
+            }
+
+            Console.WriteLine("Ok");
+        }
+
+        private void LoadMorphology()
+        {
+            Console.Write("Nestor loading morphology...");
+
+            _dawg = Dawg<string[]>.Load(Utils.LoadFile("dict.bin"),
                 reader =>
                 {
                     var str = reader.ReadString();
@@ -58,25 +52,6 @@ namespace Nestor
                 });
             
             Console.WriteLine("Ok");
-        }
-
-        private Stream LoadFile(string name)
-        {
-            try
-            {
-                var assembly = Assembly.GetCallingAssembly();
-                var file = assembly.GetManifestResourceStream("Nestor." + name);
-                if (file != null)
-                {
-                    return file;
-                }
-            }
-            catch (Exception _)
-            {
-                // ignored
-            }
-
-            return File.OpenRead(name);
         }
 
         public bool CheckPhrase(string inputPhrase, bool removePrepositions, params string[] expected)
