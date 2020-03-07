@@ -49,5 +49,20 @@ namespace Nestor
         {
             return tags.Select(t => AddTag(t)).ToArray();
         }
+
+        public List<string> GetPrefixes()
+        {
+            return _prefixes;
+        }
+
+        public List<string> GetSuffixes()
+        {
+            return _suffixes;
+        }
+
+        public List<string> GetTags()
+        {
+            return _tags;
+        }
     }
 }

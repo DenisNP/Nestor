@@ -8,10 +8,8 @@ namespace Nestor.Models
     public class Paradigm
     {
         public string Stem { get; set; }
-        public int[] Prefixes { get; set; }
-        public int[] Suffixes { get; set; }
-        public int[] Accents { get; set; }
-        public int[][] Tags { get; set; }
+        public MorphRule[] Rules { get; set; }
+        public bool TwoLemmas { get; set; }
         
         private readonly Storage _storage;
         
@@ -27,22 +25,42 @@ namespace Nestor.Models
 
         public string[] GetAllForms()
         {
-            var forms = new string[Prefixes.Length];
-            for (var i = 0; i < Prefixes.Length; i++)
+            var forms = new string[Rules.Length];
+            for (var i = 0; i < Rules.Length; i++)
             {
-                forms[i] = $"{_storage.GetPrefix(Prefixes[i])}{Stem}{_storage.GetSuffix(Suffixes[i])}";
+                forms[i] = GetForm(i);
             }
 
             return forms;
         }
 
+        public string GetForm(int idx)
+        {
+            return $"{_storage.GetPrefix(Rules[idx].Prefix)}{Stem}{_storage.GetSuffix(Rules[idx].Suffix)}";
+        }
+
+        public string[] Lemmas()
+        {
+            return TwoLemmas ? new[] {GetForm(0), GetForm(1)} : new[] {GetForm(0)};
+        }
+
         public override string ToString()
         {
             return $"{Stem}" +
-                   $"|{Prefixes.Join(";")}" +
-                   $"|{Suffixes.Join(";")}" +
-                   $"|{Accents.Join(";")}" +
-                   $"|{Tags.Select(tag => tag.Join(",")).Join(";")}";
+                   $"!{Rules.Join("|")}";
+        }
+    }
+
+    public struct MorphRule
+    {
+        public int Prefix;
+        public int Suffix;
+        public int Accent;
+        public int[] Tags;
+
+        public override string ToString()
+        {
+            return $"{Prefix};{Suffix};{Accent};{Tags.Join(",")}";
         }
     }
 }

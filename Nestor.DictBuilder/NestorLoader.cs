@@ -82,6 +82,14 @@ namespace Nestor.DictBuilder
             using var saveStream = File.Create(outputFileName);
             dawg.SaveTo(saveStream, (writer, list) => writer.Write(string.Join("|", list)));
             Console.WriteLine("Ok.");
+            
+            // save storage
+            Utils.SaveListToFile(_storage.GetPrefixes(), "prefixes.txt");
+            Utils.SaveListToFile(_storage.GetSuffixes(), "suffixes.txt");
+            Utils.SaveListToFile(_storage.GetTags(), "tags.txt");
+            
+            // save paradigms
+            Utils.SaveListToFile(_paradigms, "paradigms.txt");
         }
 
         /// <summary>
