@@ -9,7 +9,7 @@
 
         private static void LoadNestorDictionary()
         {
-            new NestorLoader().BuildDictionary("hagen", "dict_new.bin");
+            new NestorLoader().BuildDictionary("hagen");
         }
     }
 }

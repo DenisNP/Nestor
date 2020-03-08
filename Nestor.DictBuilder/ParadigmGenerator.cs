@@ -24,19 +24,20 @@ namespace Nestor.DictBuilder
             
             // fill paradigm rules with deconstructed values
             var rules = new List<MorphRule>();
-            for (var i = 0; i < forms.Length; i++)
+
+            foreach (var (word, tags, accent) in forms)
             {
-                var (word, tags, accent) = forms[i];
                 var (prefix, suffix) = RemoveStem(word, stem);
 
-                rules[i] = new MorphRule{
+                rules.Add(new MorphRule
+                {
                     Prefix = storage.AddPrefix(prefix),
                     Suffix = storage.AddSuffix(suffix),
                     Accent = accent,
                     Tags = storage.AddTags(tags).OrderBy(t => t).ToArray()
-                };
+                });
             }
-            
+
             // sort paradigm rules, exclude first
             var lemmaRules = new List<MorphRule>{rules.First()};
             rules.RemoveAt(0);
