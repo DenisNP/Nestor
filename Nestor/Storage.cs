@@ -8,6 +8,7 @@ namespace Nestor
         private readonly List<string> _prefixes = new List<string>();
         private readonly List<string> _suffixes = new List<string>();
         private readonly List<string> _tags = new List<string>();
+        private readonly List<string> _tagGroups = new List<string>();
 
         public string GetPrefix(int id)
         {
@@ -32,6 +33,11 @@ namespace Nestor
         public List<string> GetTags()
         {
             return _tags;
+        }
+
+        public List<string> GetTagGroups()
+        {
+            return _tagGroups;
         }
     }
 }

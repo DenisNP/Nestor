@@ -29,6 +29,9 @@ namespace Nestor
             
             Utils.LoadFileToList(Storage.GetTags(), "tags.txt");
             Console.WriteLine($"...tags: {Storage.GetTags().Count}");
+            
+            Utils.LoadFileToList(Storage.GetTagGroups(), "tag_groups.txt");
+            Console.WriteLine($"...tag groups: {Storage.GetTagGroups().Count}");
         }
 
         private void LoadParadigms()
