@@ -61,7 +61,7 @@ namespace Nestor.DictBuilder
                     count++;
                     
                     // log progress
-                    if (count % 1000 == 0)
+                    if (count % 5000 == 0)
                     {
                         Console.WriteLine(
                             $"Lines loaded: {count}, " +
@@ -123,6 +123,11 @@ namespace Nestor.DictBuilder
             }
             
             var paradigm = ParadigmGenerator.Generate(lines, _storage);
+            if (paradigm.Stem == "")
+            {
+                Console.WriteLine($"...stem is zero for: {lemmaLine[0]}");
+            }
+            
             int paradigmId;
 
             // find if there is this kind of paradigm already
