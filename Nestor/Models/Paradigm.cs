@@ -1,5 +1,3 @@
-using Nestor.Data;
-
 namespace Nestor.Models
 {
     public class Paradigm
@@ -13,9 +11,7 @@ namespace Nestor.Models
         
         public Paradigm(string rawLine)
         {
-            var rawData = rawLine.Split("!");
-
-            var rulesData = rawData[1].Split("|");
+            var rulesData = rawLine.Split("|");
             Rules = new MorphRule[rulesData.Length];
 
             for (var i = 0; i < rulesData.Length; i++)
@@ -39,7 +35,7 @@ namespace Nestor.Models
 
         public override string ToString()
         {
-            return $"{Prefix};{Suffix};{Accent}{TagGroup}";
+            return $"{Prefix};{Suffix};{Accent};{TagGroup}";
         }
 
         public MorphRule FromString(string s)

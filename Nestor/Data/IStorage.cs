@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Nestor.Models;
 
 namespace Nestor.Data
 {

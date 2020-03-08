@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using DawgSharp;
+using Nestor.Data;
 using Nestor.Models;
 
 namespace Nestor
@@ -14,9 +15,9 @@ namespace Nestor
 
         public NestorMorph()
         {
-            LoadMorphology();
             LoadAdditional();
             LoadParadigms();
+            LoadMorphology();
             GC.Collect();
 
             Console.ReadKey();

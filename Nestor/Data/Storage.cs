@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using Nestor.Data;
 
-namespace Nestor
+namespace Nestor.Data
 {
     public class Storage : IStorage
     {

@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.IO.Compression;
 using System.Linq;
 using DawgSharp;
-using Nestor.Data;
 using Nestor.Models;
 
 namespace Nestor
