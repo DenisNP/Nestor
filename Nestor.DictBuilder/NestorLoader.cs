@@ -163,13 +163,13 @@ namespace Nestor.DictBuilder
                 }
                 else
                 {
+                    if (list.Contains(paradigmId))
+                    {
+                        continue;
+                    }
+                    
                     var insertArray = list.Append(paradigmId).ToArray();
                     _dawgBuilder.Insert(word, insertArray);
-
-                    if (insertArray.Length >= 3)
-                    {
-                        Console.WriteLine($"...3+ paradigms for word: {paradigm.Lemma()}");
-                    }
                 }
             }
         }

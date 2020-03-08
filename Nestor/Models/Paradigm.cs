@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using Nestor.Data;
 
 namespace Nestor.Models
@@ -68,7 +66,7 @@ namespace Nestor.Models
 
         public override string ToString()
         {
-            return $"{Prefix};{Suffix};{Accent};{TagGroup}";
+            return $"{Prefix};{Suffix};{Accent}{TagGroup}";
         }
 
         public MorphRule FromString(string s)
