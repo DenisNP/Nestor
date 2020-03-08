@@ -34,8 +34,8 @@
       <EmbeddedResource Include="Dict\dict.bin">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </EmbeddedResource>
-      <None Remove="Dict\paradigms.zip" />
-      <EmbeddedResource Include="Dict\paradigms.zip">
+      <None Remove="Dict\paradigms.txt" />
+      <EmbeddedResource Include="Dict\paradigms.txt">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </EmbeddedResource>
       <None Remove="Dict\prefixes.txt" />
@@ -54,6 +54,10 @@
       <EmbeddedResource Include="Dict\tags.txt">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </EmbeddedResource>
+        <None Remove="Dict\tag_groups.txt" />
+        <EmbeddedResource Include="Dict\tag_groups.txt">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </EmbeddedResource>
     </ItemGroup>
 
 </Project>

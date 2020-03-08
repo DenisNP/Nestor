@@ -38,10 +38,8 @@ namespace Nestor
         private void LoadParadigms()
         {
             // paradigms
-            var zip = new ZipArchive(Utils.LoadFile("paradigms.zip"));
-            var paradigmsFile = zip.Entries.First();
             var paradigmsRaw = new List<string>();
-            Utils.LoadStreamToList(paradigmsRaw, paradigmsFile.Open());
+            Utils.LoadFileToList(paradigmsRaw, "paradigms.txt");
 
             foreach (var paradigm in paradigmsRaw)
             {
