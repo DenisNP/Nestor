@@ -126,15 +126,13 @@ namespace Nestor.DictBuilder
         /// Extract words data from dictionary lines
         /// </summary>
         /// <param name="lines">Dict lines</param>
-        /// <param name="twoLemmas">Return true if there are two different lemmas of this word</param>
         /// <returns>Tuple list with words data</returns>
         private static (string word, string[] tags, int accent, string altForm)[] ExtractForms(List<string> lines)
         {
             var result = new List<(string word, string[] tags, int accent, string altForm)>();
             
-            for (var i = 0; i < lines.Count; i++)
+            foreach (var line in lines)
             {
-                var line = lines[i];
                 var lineData = line.Split("|");
 
                 // extract word form
@@ -162,6 +160,11 @@ namespace Nestor.DictBuilder
                         // other types
                         result.Add((firstWord, tags, accent, secondWord));
                     }
+                }
+                else
+                {
+                    // just add result
+                    result.Add((firstWord, tags, accent, secondWord));
                 }
             }
 
