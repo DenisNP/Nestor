@@ -13,15 +13,16 @@ namespace Nestor.DictBuilder
         /// </summary>
         /// <param name="lines">Dict lines</param>
         /// <param name="storage">Storage</param>
-        /// <returns>Paradigm object</returns>
-        public static Paradigm Generate(List<string> lines, HashedStorage storage, out HashSet<string> altForms)
+        /// <param name="altForms">Word alternative forms</param>
+        /// <returns>Paradigm and stem for word</returns>
+        public static (Paradigm paradigm, string Stem) Generate(List<string> lines, HashedStorage storage, out HashSet<string> altForms)
         {
             var forms = ExtractForms(lines);
             var stem = FindStem(forms.Select(f => f.word).ToList());
             altForms = new HashSet<string>();
-
+            
             // create new paradigm
-            var paradigm = new Paradigm(storage) { Stem = stem };
+            var paradigm = new Paradigm(storage);
             
             // fill paradigm rules with deconstructed values
             var rules = new List<MorphRule>();
@@ -60,7 +61,7 @@ namespace Nestor.DictBuilder
             
             // fill paradigm and return
             paradigm.Rules = rules.ToArray();
-            return paradigm;
+            return (paradigm, stem);
         }
 
         /// <summary>

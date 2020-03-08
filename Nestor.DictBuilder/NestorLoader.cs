@@ -12,7 +12,7 @@ namespace Nestor.DictBuilder
 {
     public class NestorLoader
     {
-        private readonly DawgBuilder<int[]> _dawgBuilder = new DawgBuilder<int[]> ();
+        private readonly DawgBuilder<Word[]> _dawgBuilder = new DawgBuilder<Word[]> ();
         private readonly List<Paradigm> _paradigms = new List<Paradigm>();
         private readonly Dictionary<string, int> _paradigmsByHash = new Dictionary<string, int>();
         private readonly HashedStorage _storage = new HashedStorage();
@@ -93,7 +93,13 @@ namespace Nestor.DictBuilder
             
             // save it to file
             using var saveStream = File.Create("dict.bin");
-            dawg.SaveTo(saveStream, (writer, list) => writer.Write(string.Join("|", list)));
+            dawg.SaveTo(
+                saveStream,
+                (writer, words) => writer.Write(
+                        string.Join("|", words.Select(w => w.ToString())
+                    )
+                )
+            );
             Console.WriteLine("Ok.");
             
             // save storage
@@ -124,11 +130,7 @@ namespace Nestor.DictBuilder
                 return;
             }
             
-            var paradigm = ParadigmGenerator.Generate(lines, _storage, out var altForms);
-            if (paradigm.Stem == "")
-            {
-                Console.WriteLine($"...stem is zero for: {lemmaLine[0]}");
-            }
+            var (paradigm, stem) = ParadigmGenerator.Generate(lines, _storage, out var altForms);
             
             int paradigmId;
 
@@ -145,31 +147,36 @@ namespace Nestor.DictBuilder
             else
             {
                 paradigmId = _paradigmsByHash[hash];
-                paradigm = _paradigms[paradigmId];
             }
 
             // write all words
-            var forms = paradigm.GetAllForms().ToList();
+            var word = new Word
+            {
+                Stem = stem,
+                ParadigmId = paradigmId
+            }.Load(_storage, _paradigms);
+            
+            var forms = word.GetAllForms().ToList();
             var altFormsToAdd = altForms.Where(af => af != "" && !forms.Contains(af));
             forms.AddRange(altFormsToAdd);
 
-            foreach (var word in forms)
+            foreach (var form in forms)
             {
-                _dawgBuilder.TryGetValue(word, out var list);
+                _dawgBuilder.TryGetValue(form, out var list);
 
                 if (list == null)
                 {
-                    _dawgBuilder.Insert(word, new[] {paradigmId});
+                    _dawgBuilder.Insert(form, new[] {word});
                 }
                 else
                 {
-                    if (list.Contains(paradigmId))
+                    if (list.Any(w => w.ToString() == word.ToString()))
                     {
                         continue;
                     }
                     
-                    var insertArray = list.Append(paradigmId).ToArray();
-                    _dawgBuilder.Insert(word, insertArray);
+                    var insertArray = list.Append(word).ToArray();
+                    _dawgBuilder.Insert(form, insertArray);
                 }
             }
         }
