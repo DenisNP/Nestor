@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using DawgSharp;
+using Nestor.Models;
 
 namespace Nestor
 {
@@ -12,30 +14,52 @@ namespace Nestor
     {
         private Dawg<string[]> _dawg;
         private static readonly HashSet<string> Prepositions = new HashSet<string>();
+        private static readonly Storage Storage = new Storage();
+        private static readonly List<Paradigm> Paradigms = new List<Paradigm>();
 
         public NestorMorph()
         {
             LoadMorphology();
             LoadAdditional();
+            LoadParadigms();
         }
 
         private void LoadAdditional()
         {
-            Console.Write("Nestor loading additional data...");
+            Console.WriteLine("Nestor loading additional data...");
+            
+            // prepositions
+            var prepositions = new List<string>();
+            Utils.LoadFileToList(prepositions, "prepositions.txt");
+            prepositions.ForEach(p => Prepositions.Add(p));
 
-            using var fileStream = Utils.LoadFile("prepositions.txt");
-            using var reader = new StreamReader(fileStream, Encoding.UTF8);
+            Console.WriteLine($"...prepositions: {Prepositions.Count}");
+            
+            // storage
+            Utils.LoadFileToList(Storage.GetPrefixes(), "prefixes.txt");
+            Console.WriteLine($"...prefixes: {Storage.GetPrefixes().Count}");
+            
+            Utils.LoadFileToList(Storage.GetSuffixes(), "suffixes.txt");
+            Console.WriteLine($"...suffixes: {Storage.GetSuffixes().Count}");
+            
+            Utils.LoadFileToList(Storage.GetTags(), "tags.txt");
+            Console.WriteLine($"...tags: {Storage.GetTags().Count}");
+        }
 
-            string line;
-            while ((line = reader.ReadLine()) != null)
+        private void LoadParadigms()
+        {
+            // paradigms
+            var zip = new ZipArchive(Utils.LoadFile("paradigms.zip"));
+            var paradigmsFile = zip.Entries.First();
+            var paradigmsRaw = new List<string>();
+            Utils.LoadStreamToList(paradigmsRaw, paradigmsFile.Open());
+
+            foreach (var paradigm in paradigmsRaw)
             {
-                if (!line.IsNullOrEmpty())
-                {
-                    Prepositions.Add(line);
-                }
+                Paradigms.Add(new Paradigm(Storage, paradigm));
             }
 
-            Console.WriteLine("Ok");
+            Console.WriteLine($"...paradigms: {Paradigms.Count}");
         }
 
         private void LoadMorphology()

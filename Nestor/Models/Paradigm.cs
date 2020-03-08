@@ -1,12 +1,28 @@
+using System.Linq;
+
 namespace Nestor.Models
 {
     public class Paradigm
     {
         public string Stem { get; set; }
         public MorphRule[] Rules { get; set; }
-        public bool TwoLemmas { get; set; }
         
         private readonly Storage _storage;
+
+        public Paradigm(Storage storage, string rawLine)
+        {
+            _storage = storage;
+            var rawData = rawLine.Split("!");
+            Stem = rawData[0];
+
+            var rulesData = rawData[1].Split("|");
+            Rules = new MorphRule[rulesData.Length];
+
+            for (var i = 0; i < rulesData.Length; i++)
+            {
+                Rules[i] = (new MorphRule()).FromString(rawData[i]);
+            }
+        }
         
         public Paradigm(Storage storage)
         {
@@ -34,9 +50,9 @@ namespace Nestor.Models
             return $"{_storage.GetPrefix(Rules[idx].Prefix)}{Stem}{_storage.GetSuffix(Rules[idx].Suffix)}";
         }
 
-        public string[] Lemmas()
+        public string Lemma()
         {
-            return TwoLemmas ? new[] {GetForm(0), GetForm(1)} : new[] {GetForm(0)};
+            return GetForm(0);
         }
 
         public override string ToString()
@@ -56,6 +72,17 @@ namespace Nestor.Models
         public override string ToString()
         {
             return $"{Prefix};{Suffix};{Accent};{Tags.Join(",")}";
+        }
+
+        public MorphRule FromString(string s)
+        {
+            var data = s.Split(";");
+            Prefix = int.Parse(data[0]);
+            Suffix = int.Parse(data[1]);
+            Accent = int.Parse(data[2]);
+            Tags = data[3].Split(",").Select(int.Parse).ToArray();
+            
+            return this;
         }
     }
 }

@@ -46,7 +46,6 @@ namespace Nestor.DictBuilder
             {
                 lemmaRules.Add(rules.First());
                 rules.RemoveAt(0);
-                paradigm.TwoLemmas = true;
             }
 
             rules = rules

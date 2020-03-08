@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Text;
 
 namespace Nestor
 {
@@ -17,6 +18,26 @@ namespace Nestor
             }
             
             throw new IOException($"Cannot load file {fileName}");
+        }
+
+        internal static void LoadFileToList(List<string> list, string fileName)
+        {
+            using var fileStream = LoadFile(fileName);
+            LoadStreamToList(list, fileStream);
+        }
+
+        internal static void LoadStreamToList(List<string> list, Stream stream)
+        {
+            using var reader = new StreamReader(stream, Encoding.UTF8);
+
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                if (!line.IsNullOrEmpty())
+                {
+                    list.Add(line);
+                }
+            }
         }
 
         internal static bool IsNullOrEmpty(this string s)
