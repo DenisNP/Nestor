@@ -6,10 +6,22 @@ namespace Nestor.Models
     public class Word
     {
         public string Stem { get; set; }
-        public int ParadigmId { get; set; }
+        public ushort ParadigmId { get; set; }
         
         private IStorage _storage;
         private Paradigm _paradigm;
+
+        public Word()
+        {
+            
+        }
+
+        public Word(string rawString)
+        {
+            var data = rawString.Split(";");
+            Stem = data[0];
+            ParadigmId = ushort.Parse(data[1]);
+        }
 
         public Word Load(IStorage storage, List<Paradigm> paradigms)
         {

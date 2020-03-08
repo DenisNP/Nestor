@@ -22,7 +22,7 @@ namespace Nestor.DictBuilder
             altForms = new HashSet<string>();
             
             // create new paradigm
-            var paradigm = new Paradigm(storage);
+            var paradigm = new Paradigm();
             
             // fill paradigm rules with deconstructed values
             var rules = new List<MorphRule>();

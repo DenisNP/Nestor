@@ -153,7 +153,7 @@ namespace Nestor.DictBuilder
             var word = new Word
             {
                 Stem = stem,
-                ParadigmId = paradigmId
+                ParadigmId = (ushort)paradigmId
             }.Load(_storage, _paradigms);
             
             var forms = word.GetAllForms().ToList();

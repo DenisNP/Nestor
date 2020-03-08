@@ -5,12 +5,14 @@ namespace Nestor.Models
     public class Paradigm
     {
         public MorphRule[] Rules { get; set; }
-        
-        private readonly IStorage _storage;
 
-        public Paradigm(IStorage storage, string rawLine)
+        public Paradigm()
         {
-            _storage = storage;
+            
+        }
+        
+        public Paradigm(string rawLine)
+        {
             var rawData = rawLine.Split("!");
 
             var rulesData = rawData[1].Split("|");
@@ -20,11 +22,6 @@ namespace Nestor.Models
             {
                 Rules[i] = (new MorphRule()).FromString(rulesData[i]);
             }
-        }
-        
-        public Paradigm(IStorage storage)
-        {
-            _storage = storage;
         }
         
         public override string ToString()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
 using DawgSharp;
+using Nestor.Data;
 using Nestor.Models;
 
 namespace Nestor
@@ -44,7 +45,7 @@ namespace Nestor
 
             foreach (var paradigm in paradigmsRaw)
             {
-                Paradigms.Add(new Paradigm(Storage, paradigm));
+                Paradigms.Add(new Paradigm(paradigm));
             }
 
             Console.WriteLine($"...paradigms: {Paradigms.Count}");
@@ -54,11 +55,13 @@ namespace Nestor
         {
             Console.Write("Nestor loading morphology...");
 
-            _dawg = Dawg<int[]>.Load(Utils.LoadFile("dict.bin"),
+            _dawg = Dawg<Word[]>.Load(Utils.LoadFile("dict.bin"),
                 reader =>
                 {
                     var str = reader.ReadString();
-                    return str.Split("|").Select(int.Parse).ToArray();
+                    return str.Split("|")
+                        .Select(w => new Word(w).Load(Storage, Paradigms))
+                        .ToArray();
                 });
             
             Console.WriteLine("Ok");
