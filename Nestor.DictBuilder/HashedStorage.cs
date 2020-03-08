@@ -66,12 +66,12 @@ namespace Nestor.DictBuilder
 
         public string GetPrefix(int id)
         {
-            return _prefixes[id];
+            return id == 0 ? "" : _prefixes[id - 1];
         }
 
         public string GetSuffix(int id)
         {
-            return _suffixes[id];
+            return id == 0 ? "" : _suffixes[id - 1];
         }
 
         private int ComplexAdd<T>(Dictionary<T, int> dict, List<T> list, T value)

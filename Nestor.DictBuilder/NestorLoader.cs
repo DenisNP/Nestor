@@ -156,12 +156,21 @@ namespace Nestor.DictBuilder
             foreach (var word in forms)
             {
                 _dawgBuilder.TryGetValue(word, out var list);
-                _dawgBuilder.Insert(
-                    word,
-                    list == null
-                        ? new[] {paradigmId}
-                        : list.Append(paradigmId).ToArray()
-                );
+
+                if (list == null)
+                {
+                    _dawgBuilder.Insert(word, new[] {paradigmId});
+                }
+                else
+                {
+                    var insertArray = list.Append(paradigmId).ToArray();
+                    _dawgBuilder.Insert(word, insertArray);
+
+                    if (insertArray.Length >= 3)
+                    {
+                        Console.WriteLine($"...3+ paradigms for word: {paradigm.Lemma()}");
+                    }
+                }
             }
         }
     }
