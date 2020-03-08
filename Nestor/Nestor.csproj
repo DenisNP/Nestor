@@ -27,18 +27,33 @@
       <None Update="dict\prepositions.txt">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="Dict\paradigms.zip">
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Dict\dict.bin" />
+      <EmbeddedResource Include="Dict\dict.bin">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="Dict\prefixes.txt">
+      </EmbeddedResource>
+      <None Remove="Dict\paradigms.zip" />
+      <EmbeddedResource Include="Dict\paradigms.zip">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="Dict\suffixes.txt">
+      </EmbeddedResource>
+      <None Remove="Dict\prefixes.txt" />
+      <EmbeddedResource Include="Dict\prefixes.txt">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="Dict\tags.txt">
+      </EmbeddedResource>
+      <None Remove="Dict\prepositions.txt" />
+      <EmbeddedResource Include="Dict\prepositions.txt">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
+      </EmbeddedResource>
+      <None Remove="Dict\suffixes.txt" />
+      <EmbeddedResource Include="Dict\suffixes.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <None Remove="Dict\tags.txt" />
+      <EmbeddedResource Include="Dict\tags.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
     </ItemGroup>
 
 </Project>

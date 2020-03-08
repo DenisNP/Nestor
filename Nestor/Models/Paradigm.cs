@@ -20,7 +20,7 @@ namespace Nestor.Models
 
             for (var i = 0; i < rulesData.Length; i++)
             {
-                Rules[i] = (new MorphRule()).FromString(rawData[i]);
+                Rules[i] = (new MorphRule()).FromString(rulesData[i]);
             }
         }
         

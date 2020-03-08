@@ -4,7 +4,8 @@
     {
         public static void Main(string[] args)
         {
-            LoadNestorDictionary();
+            var n = new NestorMorph();
+            // LoadNestorDictionary();
         }
 
         private static void LoadNestorDictionary()
