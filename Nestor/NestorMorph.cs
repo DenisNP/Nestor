@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using DawgSharp;
 using Nestor.Models;
 
@@ -16,6 +17,9 @@ namespace Nestor
             LoadMorphology();
             LoadAdditional();
             LoadParadigms();
+            GC.Collect();
+
+            Console.ReadKey();
         }
     }
 }

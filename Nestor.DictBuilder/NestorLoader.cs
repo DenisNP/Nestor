@@ -15,7 +15,7 @@ namespace Nestor.DictBuilder
         private readonly DawgBuilder<int[]> _dawgBuilder = new DawgBuilder<int[]> ();
         private readonly List<Paradigm> _paradigms = new List<Paradigm>();
         private readonly Dictionary<string, int> _paradigmsByHash = new Dictionary<string, int>();
-        private readonly Storage _storage = new Storage();
+        private readonly HashedStorage _storage = new HashedStorage();
 
         private volatile int _numberOfThreads = 0;
         
@@ -67,7 +67,8 @@ namespace Nestor.DictBuilder
                             $"Lines loaded: {count}, " +
                             $"paradigms: {_paradigms.Count}, " +
                             $"prefixes: {_storage.GetPrefixes().Count}, " +
-                            $"suffixes: {_storage.GetSuffixes().Count}"
+                            $"suffixes: {_storage.GetSuffixes().Count}, " +
+                            $"tagGroups: {_storage.GetTagGroups().Count}"
                         );
                     }
                 }
@@ -122,7 +123,7 @@ namespace Nestor.DictBuilder
                 return;
             }
             
-            var paradigm = ParadigmGenerator.Generate(lines, _storage);
+            var paradigm = ParadigmGenerator.Generate(lines, _storage, out var altForms);
             if (paradigm.Stem == "")
             {
                 Console.WriteLine($"...stem is zero for: {lemmaLine[0]}");
@@ -131,15 +132,10 @@ namespace Nestor.DictBuilder
             int paradigmId;
 
             // find if there is this kind of paradigm already
-            Paradigm similar = null;
             var hash = paradigm.ToString();
-            if (_paradigmsByHash.ContainsKey(hash))
-            {
-                similar = _paradigms[_paradigmsByHash[hash]];
-            }
 
             // assign paradigm identifier
-            if (similar == null)
+            if (!_paradigmsByHash.ContainsKey(hash))
             {
                 paradigmId = _paradigms.Count;
                 _paradigms.Add(paradigm);
@@ -147,12 +143,15 @@ namespace Nestor.DictBuilder
             }
             else
             {
-                paradigmId = _paradigms.IndexOf(similar);
-                paradigm = similar;
+                paradigmId = _paradigmsByHash[hash];
+                paradigm = _paradigms[paradigmId];
             }
 
             // write all words
-            var forms = paradigm.GetAllForms();
+            var forms = paradigm.GetAllForms().ToList();
+            var altFormsToAdd = altForms.Where(af => af != "" && !forms.Contains(af));
+            forms.AddRange(altFormsToAdd);
+
             foreach (var word in forms)
             {
                 _dawgBuilder.TryGetValue(word, out var list);

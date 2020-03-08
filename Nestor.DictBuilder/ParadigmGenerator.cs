@@ -14,10 +14,11 @@ namespace Nestor.DictBuilder
         /// <param name="lines">Dict lines</param>
         /// <param name="storage">Storage</param>
         /// <returns>Paradigm object</returns>
-        public static Paradigm Generate(List<string> lines, Storage storage)
+        public static Paradigm Generate(List<string> lines, HashedStorage storage, out HashSet<string> altForms)
         {
-            var forms = ExtractForms(lines, out var twoLemmas);
+            var forms = ExtractForms(lines);
             var stem = FindStem(forms.Select(f => f.word).ToList());
+            altForms = new HashSet<string>();
 
             // create new paradigm
             var paradigm = new Paradigm(storage) { Stem = stem };
@@ -25,38 +26,37 @@ namespace Nestor.DictBuilder
             // fill paradigm rules with deconstructed values
             var rules = new List<MorphRule>();
 
-            foreach (var (word, tags, accent) in forms)
+            foreach (var (word, tags, accent, altForm) in forms)
             {
                 var (prefix, suffix) = RemoveStem(word, stem);
 
                 rules.Add(new MorphRule
                 {
-                    Prefix = storage.AddPrefix(prefix),
-                    Suffix = storage.AddSuffix(suffix),
-                    Accent = accent,
-                    Tags = storage.AddTags(tags).OrderBy(t => t).ToArray()
+                    Prefix = (ushort)storage.AddPrefix(prefix),
+                    Suffix = (ushort)storage.AddSuffix(suffix),
+                    Accent = (byte)accent,
+                    TagGroup = (ushort)storage.AddTagGroup(tags)
                 });
+
+                if (altForm != "")
+                {
+                    altForms.Add(altForm);
+                }
             }
 
             // sort paradigm rules, exclude first
-            var lemmaRules = new List<MorphRule>{rules.First()};
+            var lemmaRule = rules.First();
             rules.RemoveAt(0);
-
-            if (twoLemmas)
-            {
-                lemmaRules.Add(rules.First());
-                rules.RemoveAt(0);
-            }
 
             rules = rules
                 .OrderBy(r => r.Prefix)
                 .ThenBy(r => r.Suffix)
-                .ThenBy(r => r.Tags.Length == 0 ? 0 : r.Tags[0])
+                .ThenBy(r => r.TagGroup)
                 .ThenBy(r => r.Accent)
                 .ToList();
             
-            // return lemma(s)
-            rules.InsertRange(0, lemmaRules);
+            // return lemma
+            rules.Insert(0, lemmaRule);
             
             // fill paradigm and return
             paradigm.Rules = rules.ToArray();
@@ -128,10 +128,9 @@ namespace Nestor.DictBuilder
         /// <param name="lines">Dict lines</param>
         /// <param name="twoLemmas">Return true if there are two different lemmas of this word</param>
         /// <returns>Tuple list with words data</returns>
-        private static (string word, string[] tags, int accent)[] ExtractForms(List<string> lines, out bool twoLemmas)
+        private static (string word, string[] tags, int accent, string altForm)[] ExtractForms(List<string> lines)
         {
-            var result = new List<(string word, string[] tags, int accent)>();
-            twoLemmas = false;
+            var result = new List<(string word, string[] tags, int accent, string altForm)>();
             
             for (var i = 0; i < lines.Count; i++)
             {
@@ -143,27 +142,55 @@ namespace Nestor.DictBuilder
                 var secondWord = Regex.Replace(lineData[2], "[^а-яё\\-']+", "");
 
                 // accent
-                var accent = secondWord.IndexOf("'", StringComparison.Ordinal) - 1;
+                var accent = FindAccent(secondWord);
                 secondWord = secondWord.Replace("'", "");
 
                 // tags
                 var tags = lineData[1].Trim().Split(" ");
 
-                // add to result list
-                result.Add((firstWord, tags, accent));
-
-                // if second form is different from first one, add it too
+                // if second form is different from first one
                 if (secondWord != firstWord)
                 {
-                    result.Add((secondWord, tags, accent));
-                    if (i == 0)
+                    // if it is just 'ё' letter
+                    if (secondWord.Replace("ё", "е") == firstWord)
                     {
-                        twoLemmas = true;
+                        // add to result list
+                        result.Add((secondWord, tags, accent, firstWord));
+                    }
+                    else
+                    {
+                        // other types
+                        result.Add((firstWord, tags, accent, secondWord));
                     }
                 }
             }
 
             return result.ToArray();
+        }
+
+        private static int FindAccent(string word)
+        {
+            const string vowels = "аоуыэяёюие";
+            var vCount = 0;
+            for (var i = 0; i < word.Length; i++)
+            {
+                var chr = word.Substring(i, 1);
+                if (vowels.Contains(chr))
+                {
+                    vCount++;
+                } 
+                else if (chr == "'")
+                {
+                    return vCount;
+                }
+            }
+
+            if (vCount == 1)
+            {
+                return 1;
+            }
+
+            return 0; // no accent presented
         }
     }
 }

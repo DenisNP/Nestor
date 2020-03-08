@@ -1,4 +1,6 @@
+using System;
 using System.Linq;
+using Nestor.Data;
 
 namespace Nestor.Models
 {
@@ -7,9 +9,9 @@ namespace Nestor.Models
         public string Stem { get; set; }
         public MorphRule[] Rules { get; set; }
         
-        private readonly Storage _storage;
+        private readonly IStorage _storage;
 
-        public Paradigm(Storage storage, string rawLine)
+        public Paradigm(IStorage storage, string rawLine)
         {
             _storage = storage;
             var rawData = rawLine.Split("!");
@@ -24,14 +26,9 @@ namespace Nestor.Models
             }
         }
         
-        public Paradigm(Storage storage)
+        public Paradigm(IStorage storage)
         {
             _storage = storage;
-        }
-
-        public bool IsEqualTo(Paradigm other)
-        {
-            return ToString() == other.ToString();
         }
 
         public string[] GetAllForms()
@@ -64,23 +61,24 @@ namespace Nestor.Models
 
     public struct MorphRule
     {
-        public int Prefix;
-        public int Suffix;
-        public int Accent;
-        public int[] Tags;
+        public ushort Prefix;
+        public ushort Suffix;
+        public byte Accent;
+        public ushort TagGroup;
 
         public override string ToString()
         {
-            return $"{Prefix};{Suffix};{Accent};{Tags.Join(",")}";
+            return $"{Prefix};{Suffix};{Accent};{TagGroup}";
         }
 
         public MorphRule FromString(string s)
         {
             var data = s.Split(";");
-            Prefix = int.Parse(data[0]);
-            Suffix = int.Parse(data[1]);
-            Accent = int.Parse(data[2]);
-            Tags = data[3].Split(",").Select(int.Parse).ToArray();
+            
+            Prefix = ushort.Parse(data[0]);
+            Suffix = ushort.Parse(data[1]);
+            Accent = byte.Parse(data[2]);
+            TagGroup = ushort.Parse(data[3]);
             
             return this;
         }
