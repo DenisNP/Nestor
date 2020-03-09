@@ -12,7 +12,7 @@ namespace Nestor.DictBuilder
 {
     public class NestorBuilder
     {
-        private readonly Dictionary<string, Word[]> _dictionary = new Dictionary<string, Word[]>();
+        private readonly Dictionary<string, int[]> _dictionary = new Dictionary<string, int[]>();
         private readonly List<ushort[]> _paradigms = new List<ushort[]>();
         private readonly Dictionary<string, int> _paradigmsByHash = new Dictionary<string, int>();
         private readonly HashedStorage _storage = new HashedStorage();
@@ -82,28 +82,14 @@ namespace Nestor.DictBuilder
                 _dictionary.Where(x => x.Value.Length == 1),
                 "dict_single.bin",
                 "single-paradigma words",
-                (writer, words) => writer.Write(words.First().ToString())
+                (writer, wordIds) => writer.Write(wordIds[0])
             );
-
-            // clear stems if they are the same for all paradigms
-            var multiWords = _dictionary.Where(x => x.Value.Length > 1).ToList();
-            foreach (var mw in multiWords)
-            {
-                var allStems = mw.Value.Select(w => w.Stem).ToHashSet();
-                if (allStems.Count == 1)
-                {
-                    for (var k = 1; k < mw.Value.Length; k++)
-                    {
-                        mw.Value[k] = new Word{ Stem = "", ParadigmId = mw.Value[k].ParadigmId };
-                    }
-                }
-            }
             
             BuildSaveDawg(
-                multiWords,
+                _dictionary.Where(x => x.Value.Length > 1).ToList(),
                 "dict_multiple.bin",
                 "multiple-paradigma words",
-                (writer, words) => writer.Write(string.Join("|", words.Select(x => x.ToString())))
+                (writer, wordIds) => writer.Write(string.Join(" ", wordIds))
             );
             
             // save storage
@@ -111,6 +97,7 @@ namespace Nestor.DictBuilder
             Utils.SaveListToFile(_storage.GetSuffixes(), "suffixes.txt");
             Utils.SaveListToFile(_storage.GetTags(), "tags.txt");
             Utils.SaveListToFile(_storage.GetTagGroups(), "tag_groups.txt");
+            Utils.SaveListToFile(_storage.GetWords().Select(x => x.ToString()).ToList(), "words.txt");
             
             // save paradigms
             Utils.SaveListToFile(_paradigms.Select(ParadigmHelper.ToString).ToList(), "paradigms.txt");
@@ -154,13 +141,15 @@ namespace Nestor.DictBuilder
                 paradigm = _paradigms[paradigmId];
             }
 
-            // write all words
+            // store new word (stem + paradigma)
             var word = new Word
             {
                 Stem = stem,
                 ParadigmId = (ushort)paradigmId
             };
+            var wordId = _storage.GetAddWord(word);
             
+            // write this word id for all forms
             var forms = word.GetAllForms(paradigm, _storage).ToList();
             var altFormsToAdd = altForms.Where(af => af != "" && !forms.Contains(af));
             forms.AddRange(altFormsToAdd);
@@ -169,16 +158,16 @@ namespace Nestor.DictBuilder
             {
                 if (!_dictionary.ContainsKey(form))
                 {
-                    _dictionary.Add(form, new []{word});
+                    _dictionary.Add(form, new []{wordId});
                 }
                 else
                 {
                     var oldList = _dictionary[form];
-                    if (oldList.Any(w => w.Stem == word.Stem && w.ParadigmId == word.ParadigmId))
+                    if (oldList.Contains(wordId))
                     {
                         continue;
                     }
-                    _dictionary[form] = oldList.Append(word).ToArray();
+                    _dictionary[form] = oldList.Append(wordId).ToArray();
                 }
             }
         }

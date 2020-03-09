@@ -2,34 +2,31 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nestor.Data;
+using Nestor.Models;
 
 namespace Nestor.DictBuilder
 {
-    public class HashedStorage : IStorage
+    public class HashedStorage : Storage
     {
         private readonly Dictionary<string, int> _prefixesDict = new Dictionary<string, int>();
         private readonly Dictionary<string, int> _suffixesDict = new Dictionary<string, int>();
         private readonly Dictionary<string, int> _tagsDict = new Dictionary<string, int>();
         private readonly Dictionary<string, int> _tagGroupsDict = new Dictionary<string, int>();
-        
-        private readonly List<string> _prefixes = new List<string>();
-        private readonly List<string> _suffixes = new List<string>();
-        private readonly List<string> _tags = new List<string>();
-        private readonly List<string> _tagGroups = new List<string>();
+        private readonly Dictionary<string, int> _wordsDict = new Dictionary<string, int>();
 
         public int AddPrefix(string prefix)
         {
-            return ComplexAdd(_prefixesDict, _prefixes, prefix);
+            return Utils.ComplexAdd(_prefixesDict, Prefixes, prefix, x => x) + 1;
         }
 
         public int AddSuffix(string suffix)
         {
-            return ComplexAdd(_suffixesDict, _suffixes, suffix);
+            return Utils.ComplexAdd(_suffixesDict, Suffixes, suffix, x => x) + 1;
         }
         
         public int AddTag(string tag)
         {
-            return ComplexAdd(_tagsDict, _tags, tag);
+            return Utils.ComplexAdd(_tagsDict, Tags, tag, x => x) + 1;
         }
 
         public int[] AddTags(string[] tags)
@@ -41,59 +38,12 @@ namespace Nestor.DictBuilder
         {
             var tagIds = AddTags(tags);
             var tagGroup = string.Join("|", tagIds);
-            return ComplexAdd(_tagGroupsDict, _tagGroups, tagGroup);
-        }
-        
-        public List<string> GetPrefixes()
-        {
-            return _prefixes;
+            return Utils.ComplexAdd(_tagGroupsDict, TagGroups, tagGroup, x => x) + 1;
         }
 
-        public List<string> GetSuffixes()
+        public int GetAddWord(Word w)
         {
-            return _suffixes;
-        }
-
-        public List<string> GetTags()
-        {
-            return _tags;
-        }
-
-        public List<string> GetTagGroups()
-        {
-            return _tagGroups;
-        }
-
-        public string GetPrefix(int id)
-        {
-            return id == 0 ? "" : _prefixes[id - 1];
-        }
-
-        public string GetSuffix(int id)
-        {
-            return id == 0 ? "" : _suffixes[id - 1];
-        }
-
-        private int ComplexAdd<T>(Dictionary<T, int> dict, List<T> list, T value)
-        {
-            if (value == null || (value is string s && s == ""))
-            {
-                return 0;
-            }
-            
-            var index = dict.AddOrCheck(value);
-            if (index == list.Count)
-            {
-                list.Add(value);
-            } 
-            else if (index > list.Count)
-            {
-                throw new ArgumentException(
-                    "Index in dictionary is greater than list size, something went wrong"
-                );    
-            }
-
-            return index + 1;
+            return Utils.ComplexAdd(_wordsDict, Words, w, x => x.ToString());
         }
     }
 }

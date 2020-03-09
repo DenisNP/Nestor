@@ -30,5 +30,27 @@ namespace Nestor.DictBuilder
 
             return index;
         }
+        
+        internal static int ComplexAdd<T>(Dictionary<string, int> dict, List<T> list, T value, Func<T, string> convert)
+        {
+            if (value == null || (value is string s && s == ""))
+            {
+                return -1;
+            }
+            
+            var index = dict.AddOrCheck(convert(value));
+            if (index == list.Count)
+            {
+                list.Add(value);
+            } 
+            else if (index > list.Count)
+            {
+                throw new ArgumentException(
+                    "Index in dictionary is greater than list size, something went wrong"
+                );    
+            }
+
+            return index;
+        }
     }
 }

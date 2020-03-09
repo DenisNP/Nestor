@@ -1,42 +1,64 @@
 using System.Collections.Generic;
+using Nestor.Models;
 
 namespace Nestor.Data
 {
-    public class Storage : IStorage
+    public class Storage
     {
-        private readonly List<string> _prefixes = new List<string>();
-        private readonly List<string> _suffixes = new List<string>();
-        private readonly List<string> _tags = new List<string>();
-        private readonly List<string> _tagGroups = new List<string>();
+        protected readonly List<string> Prefixes = new List<string>();
+        protected readonly List<string> Suffixes = new List<string>();
+        protected readonly List<string> Tags = new List<string>();
+        protected readonly List<string> TagGroups = new List<string>();
+        protected readonly List<Word> Words = new List<Word>();
 
         public string GetPrefix(int id)
         {
-            return id == 0 ? "" : _prefixes[id - 1];
+            return Prefixes.GetOrEmpty(id);
         }
 
         public string GetSuffix(int id)
         {
-            return id == 0 ? "" : _suffixes[id - 1];
+            return Suffixes.GetOrEmpty(id);
+        }
+
+        public string GetTag(int id)
+        {
+            return Tags.GetOrEmpty(id);
+        }
+
+        public string GetTagGroup(int id)
+        {
+            return TagGroups.GetOrEmpty(id);
+        }
+
+        public Word GetWord(int id)
+        {
+            return Words[id];
         }
 
         public List<string> GetPrefixes()
         {
-            return _prefixes;
+            return Prefixes;
         }
 
         public List<string> GetSuffixes()
         {
-            return _suffixes;
+            return Suffixes;
         }
 
         public List<string> GetTags()
         {
-            return _tags;
+            return Tags;
         }
 
         public List<string> GetTagGroups()
         {
-            return _tagGroups;
+            return TagGroups;
+        }
+
+        public List<Word> GetWords()
+        {
+            return Words;
         }
     }
 }

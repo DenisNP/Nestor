@@ -63,6 +63,10 @@
         <EmbeddedResource Include="Dict\dict_single.bin">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </EmbeddedResource>
+        <None Remove="Dict\words.txt" />
+        <EmbeddedResource Include="Dict\words.txt">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </EmbeddedResource>
     </ItemGroup>
 
 </Project>

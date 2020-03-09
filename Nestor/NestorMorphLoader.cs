@@ -47,22 +47,31 @@ namespace Nestor
             Console.WriteLine($"...paradigms: {Paradigms.Count}");
         }
 
+        private void LoadWords()
+        {
+            var wordsRaw = new List<string>();
+            Utils.LoadFileToList(wordsRaw, "words.txt");
+
+            foreach (var wordRaw in wordsRaw)
+            {
+                Storage.GetWords().Add(new Word(wordRaw));
+            }
+
+            Console.WriteLine($"...words: {Storage.GetWords().Count}");
+        }
+
         private void LoadMorphology()
         {
             Console.Write("Nestor loading morphology...");
 
-            _dawgSingle = Dawg<Word>.Load(Utils.LoadFile("dict_single.bin"),
-                reader =>
-                {
-                    var str = reader.ReadString();
-                    return new Word(str);
-                });
+            _dawgSingle = Dawg<int>.Load(Utils.LoadFile("dict_single.bin"),
+                reader => int.Parse(reader.ReadString()));
             
-            _dawgMulti = Dawg<Word[]>.Load(Utils.LoadFile("dict_multiple.bin"),
+            _dawgMulti = Dawg<int[]>.Load(Utils.LoadFile("dict_multiple.bin"),
                 reader =>
                 {
                     var str = reader.ReadString();
-                    return str.Split("|").Select(x => new Word(x)).ToArray();
+                    return str.Split(" ").Select(int.Parse).ToArray();
                 });
             
             Console.WriteLine("Ok");

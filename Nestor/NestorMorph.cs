@@ -8,8 +8,8 @@ namespace Nestor
 {
     public partial class NestorMorph
     {
-        private Dawg<Word> _dawgSingle;
-        private Dawg<Word[]> _dawgMulti;
+        private Dawg<int> _dawgSingle;
+        private Dawg<int[]> _dawgMulti;
         private static readonly HashSet<string> Prepositions = new HashSet<string>();
         private static readonly Storage Storage = new Storage();
         private static readonly List<ushort[]> Paradigms = new List<ushort[]>();
@@ -18,6 +18,7 @@ namespace Nestor
         {
             LoadAdditional();
             LoadParadigms();
+            LoadWords();
             LoadMorphology();
             GC.Collect();
 

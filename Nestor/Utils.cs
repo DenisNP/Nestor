@@ -61,5 +61,10 @@ namespace Nestor
         {
             return string.Join(separator, list);
         }
+        
+        internal static string GetOrEmpty(this List<string> list, int id)
+        {
+            return id == 0 ? "" : list[id - 1];
+        }
     }
 }
