@@ -113,7 +113,7 @@ namespace Nestor.DictBuilder
             Utils.SaveListToFile(_storage.GetTagGroups(), "tag_groups.txt");
             
             // save paradigms
-            Utils.SaveListToFile(_paradigms, "paradigms.txt");
+            Utils.SaveListToFile(_paradigms.Select(ParadigmHelper.ToString).ToList(), "paradigms.txt");
         }
 
         /// <summary>
