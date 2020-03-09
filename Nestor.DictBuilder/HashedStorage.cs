@@ -41,9 +41,9 @@ namespace Nestor.DictBuilder
             return Utils.ComplexAdd(_tagGroupsDict, TagGroups, tagGroup, x => x) + 1;
         }
 
-        public int GetAddWord(Word w)
+        public int AddWord(WordRaw w)
         {
-            return Utils.ComplexAdd(_wordsDict, Words, w, x => x.ToString());
+            return Utils.ComplexAdd(_wordsDict, Words, w, x => x.ToString()) + 1;
         }
     }
 }

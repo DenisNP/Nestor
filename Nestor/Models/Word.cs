@@ -1,44 +1,54 @@
+using System.Collections.Generic;
 using Nestor.Data;
 
 namespace Nestor.Models
 {
-    public struct Word
+    public class Word
     {
-        public string Stem { get; set; }
-        public ushort ParadigmId { get; set; }
+        public string Stem { get; }
+        
+        private readonly Storage _storage;
+        private ushort[] _paradigm;
+        private readonly short _paradigmId;
 
-        public Word(string rawString)
+        public Word(WordRaw raw, Storage storage, List<ushort[]> paradigms)
         {
-            var data = rawString.Split("|");
-            Stem = data[0];
-            ParadigmId = ushort.Parse(data[1]);
+            Stem = raw.Stem;
+            _storage = storage;
+            _paradigmId = raw.ParadigmId;
+            _paradigm = _paradigmId == -1 ? ParadigmHelper.Empty() : paradigms[_paradigmId];
+        }
+        
+        public string[] GetAllForms()
+        {
+            return GetAllForms(_paradigm, Stem, _storage);
         }
 
-        public string[] GetAllForms(ushort[] paradigm, Storage storage)
+        public string GetForm(int idx, Storage storage, List<ushort[]> paradigms)
+        {
+            return GetForm(idx, _paradigm, Stem, storage);
+        }
+
+        public string Lemma(Storage storage, List<ushort[]> paradigms)
+        {
+            return GetForm(0, storage, paradigms);
+        }
+
+        public static string[] GetAllForms(ushort[] paradigm, string stem, Storage storage)
         {
             var forms = new string[paradigm.Length / 4];
             for (var i = 0; i < forms.Length; i++)
             {
-                forms[i] = GetForm(i, paradigm, storage);
+                forms[i] = GetForm(i, paradigm, stem, storage);
             }
 
             return forms;
         }
 
-        public string GetForm(int idx, ushort[] paradigm, Storage storage)
+        public static string GetForm(int idx, ushort[] paradigm, string stem, Storage storage)
         {
             var formsCount = paradigm.Length / 4;
-            return $"{storage.GetPrefix(paradigm[idx])}{Stem}{storage.GetSuffix(paradigm[formsCount + idx])}";
-        }
-
-        public string Lemma(ushort[] paradigm, Storage storage)
-        {
-            return GetForm(0, paradigm, storage);
-        }
-
-        public override string ToString()
-        {
-            return $"{Stem}|{ParadigmId}";
+            return $"{storage.GetPrefix(paradigm[idx])}{stem}{storage.GetSuffix(paradigm[formsCount + idx])}";
         }
     }
 }

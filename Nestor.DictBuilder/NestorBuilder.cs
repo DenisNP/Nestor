@@ -122,35 +122,21 @@ namespace Nestor.DictBuilder
             }
             
             var (paradigm, stem) = ParadigmGenerator.Generate(lines, _storage, out var altForms);
-            
-            int paradigmId;
-
-            // find if there is this kind of paradigm already
-            var hash = ParadigmHelper.ToString(paradigm);
 
             // assign paradigm identifier
-            if (!_paradigmsByHash.ContainsKey(hash))
-            {
-                paradigmId = _paradigms.Count;
-                _paradigms.Add(paradigm);
-                _paradigmsByHash.Add(hash, paradigmId);
-            }
-            else
-            {
-                paradigmId = _paradigmsByHash[hash];
-                paradigm = _paradigms[paradigmId];
-            }
+            var paradigmId = Utils.ComplexAdd(_paradigmsByHash, _paradigms, paradigm, ParadigmHelper.ToString) + 1;
+            paradigm = _paradigms[paradigmId - 1];
 
             // store new word (stem + paradigma)
-            var word = new Word
+            var word = new WordRaw
             {
                 Stem = stem,
-                ParadigmId = (ushort)paradigmId
+                ParadigmId = (short)paradigmId
             };
-            var wordId = _storage.GetAddWord(word);
+            var wordId = _storage.AddWord(word);
             
             // write this word id for all forms
-            var forms = word.GetAllForms(paradigm, _storage).ToList();
+            var forms = Word.GetAllForms(paradigm, stem, _storage).ToList();
             var altFormsToAdd = altForms.Where(af => af != "" && !forms.Contains(af));
             forms.AddRange(altFormsToAdd);
 

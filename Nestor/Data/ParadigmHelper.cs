@@ -24,6 +24,11 @@ namespace Nestor.Data
 
             return p;
         }
+
+        public static ushort[] Empty()
+        {
+            return new ushort[4];
+        }
     }
     
     public struct MorphRule

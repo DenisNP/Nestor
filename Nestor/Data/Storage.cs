@@ -9,7 +9,7 @@ namespace Nestor.Data
         protected readonly List<string> Suffixes = new List<string>();
         protected readonly List<string> Tags = new List<string>();
         protected readonly List<string> TagGroups = new List<string>();
-        protected readonly List<Word> Words = new List<Word>();
+        protected readonly List<WordRaw> Words = new List<WordRaw>();
 
         public string GetPrefix(int id)
         {
@@ -31,9 +31,9 @@ namespace Nestor.Data
             return TagGroups.GetOrEmpty(id);
         }
 
-        public Word GetWord(int id)
+        public WordRaw GetWord(int id)
         {
-            return Words[id];
+            return id == 0 ? default : Words[id - 1];
         }
 
         public List<string> GetPrefixes()
@@ -56,7 +56,7 @@ namespace Nestor.Data
             return TagGroups;
         }
 
-        public List<Word> GetWords()
+        public List<WordRaw> GetWords()
         {
             return Words;
         }

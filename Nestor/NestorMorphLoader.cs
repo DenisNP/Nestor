@@ -54,7 +54,7 @@ namespace Nestor
 
             foreach (var wordRaw in wordsRaw)
             {
-                Storage.GetWords().Add(new Word(wordRaw));
+                Storage.GetWords().Add(new WordRaw(wordRaw));
             }
 
             Console.WriteLine($"...words: {Storage.GetWords().Count}");
@@ -65,7 +65,7 @@ namespace Nestor
             Console.Write("Nestor loading morphology...");
 
             _dawgSingle = Dawg<int>.Load(Utils.LoadFile("dict_single.bin"),
-                reader => int.Parse(reader.ReadString()));
+                reader => reader.ReadInt32());
             
             _dawgMulti = Dawg<int[]>.Load(Utils.LoadFile("dict_multiple.bin"),
                 reader =>
