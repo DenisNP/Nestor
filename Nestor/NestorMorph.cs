@@ -12,7 +12,7 @@ namespace Nestor
         private Dawg<Word[]> _dawgMulti;
         private static readonly HashSet<string> Prepositions = new HashSet<string>();
         private static readonly Storage Storage = new Storage();
-        private static readonly List<Paradigm> Paradigms = new List<Paradigm>();
+        private static readonly List<ushort[]> Paradigms = new List<ushort[]>();
 
         public NestorMorph()
         {

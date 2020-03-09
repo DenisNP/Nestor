@@ -41,7 +41,7 @@ namespace Nestor
 
             foreach (var paradigm in paradigmsRaw)
             {
-                Paradigms.Add(new Paradigm(paradigm));
+                Paradigms.Add(paradigm.Split(" ").Select(ushort.Parse).ToArray());
             }
 
             Console.WriteLine($"...paradigms: {Paradigms.Count}");

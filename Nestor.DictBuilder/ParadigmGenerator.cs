@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Nestor.Data;
 using Nestor.Models;
 
 namespace Nestor.DictBuilder
 {
-    public static class ParadigmGenerator
+    internal static class ParadigmGenerator
     {
         /// <summary>
         /// Generate paradigm from dict lines
@@ -15,14 +16,11 @@ namespace Nestor.DictBuilder
         /// <param name="storage">Storage</param>
         /// <param name="altForms">Word alternative forms</param>
         /// <returns>Paradigm and stem for word</returns>
-        public static (Paradigm paradigm, string Stem) Generate(List<string> lines, HashedStorage storage, out HashSet<string> altForms)
+        public static (ushort[] paradigm, string Stem) Generate(List<string> lines, HashedStorage storage, out HashSet<string> altForms)
         {
             var forms = ExtractForms(lines);
             var stem = FindStem(forms.Select(f => f.word).ToList());
             altForms = new HashSet<string>();
-            
-            // create new paradigm
-            var paradigm = new Paradigm();
             
             // fill paradigm rules with deconstructed values
             var rules = new List<MorphRule>();
@@ -60,8 +58,7 @@ namespace Nestor.DictBuilder
             rules.Insert(0, lemmaRule);
             
             // fill paradigm and return
-            paradigm.Rules = rules.ToArray();
-            return (paradigm, stem);
+            return (ParadigmHelper.FromRules(rules), stem);
         }
 
         /// <summary>

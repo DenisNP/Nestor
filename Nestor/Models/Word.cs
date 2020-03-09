@@ -14,10 +14,10 @@ namespace Nestor.Models
             ParadigmId = ushort.Parse(data[1]);
         }
 
-        public string[] GetAllForms(Paradigm paradigm, IStorage storage)
+        public string[] GetAllForms(ushort[] paradigm, IStorage storage)
         {
-            var forms = new string[paradigm.Rules.Length];
-            for (var i = 0; i < paradigm.Rules.Length; i++)
+            var forms = new string[paradigm.Length / 4];
+            for (var i = 0; i < forms.Length; i++)
             {
                 forms[i] = GetForm(i, paradigm, storage);
             }
@@ -25,12 +25,13 @@ namespace Nestor.Models
             return forms;
         }
 
-        public string GetForm(int idx, Paradigm paradigm, IStorage storage)
+        public string GetForm(int idx, ushort[] paradigm, IStorage storage)
         {
-            return $"{storage.GetPrefix(paradigm.Rules[idx].Prefix)}{Stem}{storage.GetSuffix(paradigm.Rules[idx].Suffix)}";
+            var formsCount = paradigm.Length / 4;
+            return $"{storage.GetPrefix(paradigm[idx])}{Stem}{storage.GetSuffix(paradigm[formsCount + idx])}";
         }
 
-        public string Lemma(Paradigm paradigm, Storage storage)
+        public string Lemma(ushort[] paradigm, Storage storage)
         {
             return GetForm(0, paradigm, storage);
         }

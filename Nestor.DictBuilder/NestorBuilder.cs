@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text.RegularExpressions;
 using DawgSharp;
+using Nestor.Data;
 using Nestor.Models;
 
 namespace Nestor.DictBuilder
@@ -12,7 +13,7 @@ namespace Nestor.DictBuilder
     public class NestorBuilder
     {
         private readonly Dictionary<string, Word[]> _dictionary = new Dictionary<string, Word[]>();
-        private readonly List<Paradigm> _paradigms = new List<Paradigm>();
+        private readonly List<ushort[]> _paradigms = new List<ushort[]>();
         private readonly Dictionary<string, int> _paradigmsByHash = new Dictionary<string, int>();
         private readonly HashedStorage _storage = new HashedStorage();
         
@@ -138,7 +139,7 @@ namespace Nestor.DictBuilder
             int paradigmId;
 
             // find if there is this kind of paradigm already
-            var hash = paradigm.ToString();
+            var hash = ParadigmHelper.ToString(paradigm);
 
             // assign paradigm identifier
             if (!_paradigmsByHash.ContainsKey(hash))
