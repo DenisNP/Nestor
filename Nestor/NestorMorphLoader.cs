@@ -51,13 +51,18 @@ namespace Nestor
         {
             Console.Write("Nestor loading morphology...");
 
-            _dawg = Dawg<Word[]>.Load(Utils.LoadFile("dict.bin"),
+            _dawgSingle = Dawg<Word>.Load(Utils.LoadFile("dict_single.bin"),
                 reader =>
                 {
                     var str = reader.ReadString();
-                    return str.Split("|")
-                        .Select(w => new Word(w).Load(Storage, Paradigms))
-                        .ToArray();
+                    return new Word(str);
+                });
+            
+            _dawgMulti = Dawg<Word[]>.Load(Utils.LoadFile("dict_multiple.bin"),
+                reader =>
+                {
+                    var str = reader.ReadString();
+                    return str.Split("|").Select(x => new Word(x)).ToArray();
                 });
             
             Console.WriteLine("Ok");

@@ -4,12 +4,13 @@
     {
         public static void Main(string[] args)
         {
+            // var n = new NestorMorph();
             LoadNestorDictionary();
         }
 
         private static void LoadNestorDictionary()
         {
-            new NestorLoader().BuildDictionary("hagen");
+            new NestorBuilder().BuildDictionary("hagen");
         }
     }
 }

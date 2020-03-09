@@ -1,20 +1,11 @@
-using System.Collections.Generic;
 using Nestor.Data;
 
 namespace Nestor.Models
 {
-    public class Word
+    public struct Word
     {
         public string Stem { get; set; }
         public ushort ParadigmId { get; set; }
-        
-        private IStorage _storage;
-        private Paradigm _paradigm;
-
-        public Word()
-        {
-            
-        }
 
         public Word(string rawString)
         {
@@ -23,33 +14,25 @@ namespace Nestor.Models
             ParadigmId = ushort.Parse(data[1]);
         }
 
-        public Word Load(IStorage storage, List<Paradigm> paradigms)
+        public string[] GetAllForms(Paradigm paradigm, IStorage storage)
         {
-            _storage = storage;
-            _paradigm = paradigms[ParadigmId];
-
-            return this;
-        }
-        
-        public string[] GetAllForms()
-        {
-            var forms = new string[_paradigm.Rules.Length];
-            for (var i = 0; i < _paradigm.Rules.Length; i++)
+            var forms = new string[paradigm.Rules.Length];
+            for (var i = 0; i < paradigm.Rules.Length; i++)
             {
-                forms[i] = GetForm(i);
+                forms[i] = GetForm(i, paradigm, storage);
             }
 
             return forms;
         }
 
-        public string GetForm(int idx)
+        public string GetForm(int idx, Paradigm paradigm, IStorage storage)
         {
-            return $"{_storage.GetPrefix(_paradigm.Rules[idx].Prefix)}{Stem}{_storage.GetSuffix(_paradigm.Rules[idx].Suffix)}";
+            return $"{storage.GetPrefix(paradigm.Rules[idx].Prefix)}{Stem}{storage.GetSuffix(paradigm.Rules[idx].Suffix)}";
         }
 
-        public string Lemma()
+        public string Lemma(Paradigm paradigm, Storage storage)
         {
-            return GetForm(0);
+            return GetForm(0, paradigm, storage);
         }
 
         public override string ToString()
