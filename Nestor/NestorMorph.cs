@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using DawgSharp;
 using Nestor.Data;
 using Nestor.Models;
@@ -21,8 +22,43 @@ namespace Nestor
             LoadWords();
             LoadMorphology();
             GC.Collect();
+        }
 
-            Console.ReadKey();
+        public Word[] Parse(string form)
+        {
+            int[] found = null;
+            var single = _dawgSingle[form];
+            if (single == 0)
+            {
+                var multiple = _dawgMulti[form];
+                if (multiple != null)
+                {
+                    found = multiple;
+                }
+            }
+            else
+            {
+                found = new[] {single};
+            }
+
+            // word not found, return default with its initial form
+            if (found == null)
+            {
+                var raw = new WordRaw
+                {
+                    Stem = form,
+                    ParadigmId = 0
+                };
+                return new []{ new Word(raw, Storage, Paradigms) };
+            }
+
+            return found.Select(WordById).ToArray();
+        }
+
+        private Word WordById(int id)
+        {
+            var wordRaw = Storage.GetWord(id);
+            return new Word(wordRaw, Storage, Paradigms);
         }
     }
 }

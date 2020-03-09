@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using Nestor.Data;
-
 namespace Nestor.Models
 {
     public struct WordRaw

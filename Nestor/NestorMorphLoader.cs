@@ -28,8 +28,13 @@ namespace Nestor
             
             Utils.LoadFileToList(Storage.GetTags(), "tags.txt");
             Console.WriteLine($"...tags: {Storage.GetTags().Count}");
-            
-            Utils.LoadFileToList(Storage.GetTagGroups(), "tag_groups.txt");
+
+            var tagGroupsRaw = new List<string>();
+            Utils.LoadFileToList(tagGroupsRaw, "tag_groups.txt");
+            foreach (var tagGroupRaw in tagGroupsRaw)
+            {
+                Storage.GetTagGroups().Add(tagGroupRaw.Split(" ").Select(byte.Parse).ToArray());
+            }
             Console.WriteLine($"...tag groups: {Storage.GetTagGroups().Count}");
         }
 

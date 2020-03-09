@@ -1,10 +1,11 @@
-﻿namespace Nestor.DictBuilder
+﻿using System;
+
+namespace Nestor.DictBuilder
 {
     class Program
     {
         public static void Main(string[] args)
         {
-            // var n = new NestorMorph();
             LoadNestorDictionary();
         }
 

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nestor.Data;
@@ -36,9 +35,8 @@ namespace Nestor.DictBuilder
 
         public int AddTagGroup(string[] tags)
         {
-            var tagIds = AddTags(tags);
-            var tagGroup = string.Join("|", tagIds);
-            return Utils.ComplexAdd(_tagGroupsDict, TagGroups, tagGroup, x => x) + 1;
+            var tagIds = AddTags(tags).Select(x => (byte)x).ToArray();
+            return Utils.ComplexAdd(_tagGroupsDict, TagGroups, tagIds, x => string.Join(" ", x)) + 1;
         }
 
         public int AddWord(WordRaw w)

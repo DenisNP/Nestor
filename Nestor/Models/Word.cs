@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Nestor.Data;
 
 namespace Nestor.Models
@@ -6,32 +7,25 @@ namespace Nestor.Models
     public class Word
     {
         public string Stem { get; }
-        
-        private readonly Storage _storage;
-        private ushort[] _paradigm;
-        private readonly short _paradigmId;
+        public WordForm[] Forms { get; }
+        public WordForm Lemma => Forms[0];
 
         public Word(WordRaw raw, Storage storage, List<ushort[]> paradigms)
         {
             Stem = raw.Stem;
-            _storage = storage;
-            _paradigmId = raw.ParadigmId;
-            _paradigm = _paradigmId == -1 ? ParadigmHelper.Empty() : paradigms[_paradigmId];
-        }
-        
-        public string[] GetAllForms()
-        {
-            return GetAllForms(_paradigm, Stem, _storage);
-        }
+            var paradigm = raw.ParadigmId == 0 ? ParadigmHelper.Empty() : paradigms[raw.ParadigmId - 1];
 
-        public string GetForm(int idx, Storage storage, List<ushort[]> paradigms)
-        {
-            return GetForm(idx, _paradigm, Stem, storage);
-        }
-
-        public string Lemma(Storage storage, List<ushort[]> paradigms)
-        {
-            return GetForm(0, storage, paradigms);
+            Forms = new WordForm[paradigm.Length / 4];
+            for (var i = 0; i < Forms.Length; i++)
+            {
+                var tagGroup = storage.GetTagGroup(paradigm[Forms.Length * 3 + i]);
+                Forms[i] = new WordForm
+                {
+                    Word = GetForm(i, paradigm, Stem, storage),
+                    Accent = paradigm[Forms.Length * 2 + i],
+                    Tags = tagGroup.Select(tag => storage.GetTag(tag)).ToHashSet()
+                };
+            }
         }
 
         public static string[] GetAllForms(ushort[] paradigm, string stem, Storage storage)
