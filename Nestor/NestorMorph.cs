@@ -37,23 +37,23 @@ namespace Nestor
         public Word[] WordInfo(string wordForm, MorphOption options = MorphOption.None)
         {
             var wForm = options != MorphOption.None ? Clean(wordForm, options) : wordForm; 
-            int[] found = null;
+            int[] wordIds = null;
             var single = _dawgSingle[wForm];
             if (single == 0)
             {
                 var multiple = _dawgMulti[wForm];
                 if (multiple != null)
                 {
-                    found = multiple;
+                    wordIds = multiple;
                 }
             }
             else
             {
-                found = new[] {single};
+                wordIds = new[] {single};
             }
 
             // word not found, return default with its initial form
-            if (found == null)
+            if (wordIds == null)
             {
                 var raw = new WordRaw
                 {
@@ -63,7 +63,20 @@ namespace Nestor
                 return new []{ new Word(raw, Storage, Paradigms) };
             }
 
-            return found.Select(WordById).ToArray();
+            return wordIds.Select(WordById).ToArray();
+        }
+
+        /// <summary>
+        /// Get exact word forms
+        /// </summary>
+        /// <param name="wordForm">Word form string</param>
+        /// <param name="options">Additional options for operation</param>
+        /// <returns>Word forms array</returns>
+        public WordForm[] WordForms(string wordForm, MorphOption options = MorphOption.None)
+        {
+            var form = options != MorphOption.None ? Clean(wordForm, options) : wordForm; 
+            var words = WordInfo(form);
+            return words.SelectMany(w => w.Forms.Where(f => f.Word == form)).ToArray();
         }
 
         /// <summary>
