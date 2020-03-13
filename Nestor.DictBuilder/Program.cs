@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Nestor.DictBuilder
+﻿namespace Nestor.DictBuilder
 {
     class Program
     {

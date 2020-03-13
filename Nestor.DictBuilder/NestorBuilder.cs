@@ -96,7 +96,10 @@ namespace Nestor.DictBuilder
             Utils.SaveListToFile(_storage.GetPrefixes(), "prefixes.txt");
             Utils.SaveListToFile(_storage.GetSuffixes(), "suffixes.txt");
             Utils.SaveListToFile(_storage.GetTags(), "tags.txt");
-            Utils.SaveListToFile(_storage.GetTagGroups(), "tag_groups.txt");
+            Utils.SaveListToFile(
+                _storage.GetTagGroups().Select(tg => string.Join(" ", tg)).ToList(),
+                "tag_groups.txt"
+            );
             Utils.SaveListToFile(_storage.GetWords().Select(x => x.ToString()).ToList(), "words.txt");
             
             // save paradigms
@@ -144,7 +147,7 @@ namespace Nestor.DictBuilder
             {
                 if (!_dictionary.ContainsKey(form))
                 {
-                    _dictionary.Add(form, new []{wordId});
+                    _dictionary.Add(form, new[] {wordId});
                 }
                 else
                 {
@@ -153,6 +156,7 @@ namespace Nestor.DictBuilder
                     {
                         continue;
                     }
+
                     _dictionary[form] = oldList.Append(wordId).ToArray();
                 }
             }
