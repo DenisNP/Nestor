@@ -88,7 +88,7 @@ namespace Nestor
         public string[] Tokenize(string s, MorphOption options = MorphOption.None)
         {
             var regex = options.HasFlag(MorphOption.KeepNumbers) ? WithNumbers : NonNumbers;
-            var tokens = Regex.Split(regex, s.ToLower());
+            var tokens = Regex.Split(s.ToLower(), regex);
 
             return tokens
                 .Select(t => t.Trim().Trim('-'))
