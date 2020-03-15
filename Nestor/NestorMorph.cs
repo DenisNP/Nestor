@@ -1,225 +1,164 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using DawgSharp;
+using Nestor.Data;
+using Nestor.Models;
 
 namespace Nestor
 {
-    public class NestorMorph
+    public partial class NestorMorph
     {
-        private Dawg<string[]> _dawg;
-        private static readonly string[] Prepositions =
-        {
-            "или", 
-            "иль",
-            "о",
-            "в", 
-            "у", 
-            "к", 
-            "а", 
-            "и", 
-            "с", 
-            "на", 
-            "по", 
-            "за", 
-            "ко", 
-            "из", 
-            "об", 
-            "от", 
-            "во", 
-            "то",
-            "до",
-            "без", 
-            "про", 
-            "вне", 
-            "для", 
-            "изо", 
-            "меж", 
-            "над", 
-            "под", 
-            "обо", 
-            "ото", 
-            "при"
-        };
+        private const string NonNumbers = "[^а-яё\\-]+";
+        private const string WithNumbers = "[^0-9а-яё\\-]+";
+        
+        private Dawg<int> _dawgSingle;
+        private Dawg<int[]> _dawgMulti;
+        private static readonly HashSet<string> Prepositions = new HashSet<string>();
+        private static readonly Storage Storage = new Storage();
+        private static readonly List<ushort[]> Paradigms = new List<ushort[]>();
 
         public NestorMorph()
         {
-            Console.Write("Nestor loading data...");
-
-            _dawg = Dawg<string[]>.Load(LoadFile("dict.bin"),
-                reader =>
-                {
-                    var str = reader.ReadString();
-                    var lemmas = str.Split("|").Where(l => l != "");
-                    return lemmas.ToArray();
-                });
-            
-            Console.WriteLine("Ok");
+            LoadAdditional();
+            LoadParadigms();
+            LoadWords();
+            LoadMorphology();
+            GC.Collect();
         }
 
-        private Stream LoadFile(string name)
+        /// <summary>
+        /// Get info about entire word by its single form
+        /// </summary>
+        /// <param name="wordForm">Word form</param>
+        /// <param name="options">Additional options for operation</param>
+        /// <returns>List of all words from its form</returns>
+        public Word[] WordInfo(string wordForm, MorphOption options = MorphOption.None)
         {
-            try
+            var wForm = options != MorphOption.None ? Clean(wordForm, options) : wordForm; 
+            int[] wordIds = null;
+            var single = _dawgSingle[wForm];
+            if (single == 0)
             {
-                var assembly = Assembly.GetCallingAssembly();
-                var file = assembly.GetManifestResourceStream("Nestor." + name);
-                if (file != null)
+                var multiple = _dawgMulti[wForm];
+                if (multiple != null)
                 {
-                    return file;
+                    wordIds = multiple;
                 }
             }
-            catch (Exception _)
+            else
             {
-                // ignored
+                wordIds = new[] {single};
             }
 
-            return File.OpenRead(name);
-        }
-
-        public bool CheckPhrase(string inputPhrase, bool removePrepositions, params string[] expected)
-        {
-            return CheckPhrase(inputPhrase, -1, removePrepositions, expected);
-        }
-
-        public bool CheckPhrase(
-            string inputPhrase,
-            int maxDifference,
-            bool removePrepositions,
-            params string[] expected
-        )
-        {
-            var inputTokens = CleanString(inputPhrase, removePrepositions);
-            return expected.Any(
-                expectedPhrase => CheckPhraseCleared(
-                    inputTokens,
-                    maxDifference,
-                    expectedPhrase
-                )
-            );
-        }
-
-        public bool CheckPhrase(
-            string inputPhrase,
-            int maxDifference,
-            bool removePrepositions,
-            string expected
-        )
-        {
-            return CheckPhraseCleared(
-                CleanString(
-                    inputPhrase,
-                    removePrepositions
-                ),
-                maxDifference,
-                expected
-            );
-        }
-
-        private bool CheckPhraseCleared(IEnumerable<string> input, int maxDifference, string expected)
-        {
-            var expectedTokens = new HashSet<string>(expected.Split(" "));
-            var matches = 0;
-            var inputList = input.ToList();
-            if (maxDifference == -1)
+            // word not found, return default with its initial form
+            if (wordIds == null)
             {
-                maxDifference = DefaultParameters(inputList.Count, expectedTokens.Count);
-            }
-            
-            foreach (var s in inputList)
-            {
-                var expectedMatch = expectedTokens.FirstOrDefault(exp => HasLemma(s, exp));
-                if (string.IsNullOrEmpty(expectedMatch)) continue;
-                
-                matches++;
-                expectedTokens.Remove(expectedMatch);
+                var raw = new WordRaw
+                {
+                    Stem = wordForm,
+                    ParadigmId = 0
+                };
+                return new []{ new Word(raw, Storage, Paradigms) };
             }
 
-            return expectedTokens.Count == 0 && inputList.Count - matches <= maxDifference;
+            return wordIds.Select(WordById).ToArray();
+        }
+
+        /// <summary>
+        /// Get exact word forms
+        /// </summary>
+        /// <param name="wordForm">Word form string</param>
+        /// <param name="options">Additional options for operation</param>
+        /// <returns>Word forms array</returns>
+        public WordForm[] WordForms(string wordForm, MorphOption options = MorphOption.None)
+        {
+            var form = options != MorphOption.None ? Clean(wordForm, options) : wordForm; 
+            var words = WordInfo(form);
+            return words.SelectMany(w => w.Forms.Where(f => f.Word == form)).ToArray();
+        }
+
+        /// <summary>
+        /// Tokenize input string to cyrillic words lowercased
+        /// </summary>
+        /// <param name="s">Input string</param>
+        /// <param name="options">Additional options for operation</param>
+        /// <returns>Array of tokens</returns>
+        public string[] Tokenize(string s, MorphOption options = MorphOption.None)
+        {
+            var regex = options.HasFlag(MorphOption.KeepNumbers) ? WithNumbers : NonNumbers;
+            var tokens = Regex.Split(s.ToLower(), regex);
+
+            return tokens
+                .Select(t => t.Trim().Trim('-'))
+                .Where(t => t != "")
+                .Where(t => !options.HasFlag(MorphOption.RemovePrepositions) || !Prepositions.Contains(t))
+                .Where(t => !options.HasFlag(MorphOption.RemoveNonExistent) || WordExists(t))
+                .ToArray();
+        }
+
+        /// <summary>
+        /// Remove all non-cyrillic symbols and turn string to lowercase
+        /// </summary>
+        /// <param name="s">Input string</param>
+        /// <param name="options">Additional options for operation</param>
+        /// <returns>Cleaned string</returns>
+        public string Clean(string s, MorphOption options = MorphOption.None)
+        {
+            return Tokenize(s, options).Join(" ");
+        }
+
+        /// <summary>
+        /// Convert all words in string to its lemmas
+        /// </summary>
+        /// <param name="s">Input string</param>
+        /// <param name="options">Additional options for operation</param>
+        /// <returns>Array of lemmas</returns>
+        public string[] Lemmatize(string s, MorphOption options = MorphOption.None)
+        {
+            var tokens = Tokenize(s, options);
+            var words = tokens.Select(t => WordInfo(t));
+
+            var selectedWords = words
+                .SelectMany(w => options.HasFlag(MorphOption.InsertAllLemmas) ? w : new[] {w[0]})
+                .Select(w => w.Lemma.Word);
+
+            return options.HasFlag(MorphOption.Distinct) 
+                ? selectedWords.Distinct().ToArray() 
+                : selectedWords.ToArray();
+        }
+
+        /// <summary>
+        /// Check if word form exists in dictionary
+        /// </summary>
+        /// <param name="wordForm">Word form to check</param>
+        /// <returns>True if exists</returns>
+        public bool WordExists(string wordForm)
+        {
+            return _dawgSingle[wordForm] != 0 || _dawgMulti[wordForm] != null;
         }
         
-        public IEnumerable<string> Lemmatize(string phrase, bool removeUndictionaried = false, bool allLemmas = false)
+        /// <summary>
+        /// Get word by id
+        /// </summary>
+        /// <param name="id">Word id</param>
+        /// <returns>Word object</returns>
+        private Word WordById(int id)
         {
-            var tokens = Regex.Split(phrase.ToLower().Trim(), "[^\\w\\-]")
-                .Where(x => x.Trim() != "" && !x.StartsWith("-") && !x.EndsWith("-"));
-            return Lemmatize(tokens, removeUndictionaried, allLemmas);
+            var wordRaw = Storage.GetWord(id);
+            return new Word(wordRaw, Storage, Paradigms);
         }
+    }
 
-        public IEnumerable<string> Lemmatize(IEnumerable<string> phrase, bool removeUndictionaried = false, bool allLemmas = false)
-        {
-            var list = new List<string>();
-            
-            foreach (var p in phrase)
-            {
-                var l = GetLemmas(p);
-                if (l == null)
-                {
-                     if (!removeUndictionaried) list.Add(p);
-                     continue;
-                }
-
-                if (l.Length == 0)
-                {
-                    list.Add(p);
-                    continue;
-                }
-
-                if (allLemmas)
-                {
-                    list.AddRange(l);
-                }
-                else
-                {
-                    list.Add(l.First());                }
-            }
-
-            return list.Count <= 1 ? list : new List<string>(new HashSet<string>(list));
-        }
-
-        private IEnumerable<string> CleanString(string s, bool removePrepositions)
-        {
-            return Regex.Split(s.ToLower().Trim(), "[^а-яё\\-]+")
-                .Where(t => !removePrepositions || !Prepositions.Contains(t));
-        }
-
-        public bool HasOneOfLemmas(string inputWord, params string[] lemmas)
-        {
-            return lemmas.Any(l => HasLemma(inputWord, l));
-        }
-
-        public bool HasLemma(string inputWord, string lemma)
-        {
-            var word = inputWord.ToLower().Trim();
-            if (word == lemma) return true;
-            var lemmas = GetLemmas(word);
-
-            return lemmas != null && lemmas.Contains(lemma);
-        }
-
-        public string[] GetLemmas(string inputWord)
-        {
-            var word = inputWord.ToLower().Trim();
-            var lemmas = _dawg[word];
-            if (lemmas != null && lemmas.Length == 0) return new[] {word};
-            return lemmas;
-        }
-
-        private static int DefaultParameters(int inputLength, int expectedLength)
-        {
-            switch (expectedLength)
-            {
-                case 1:
-                case 2:
-                    return 1;
-                case 3:
-                    return 2;
-                case 4:
-                    return 3;    
-            }
-
-            return 5;
-        }
+    [Flags]
+    public enum MorphOption
+    {
+        None = 0,
+        RemovePrepositions = 1,
+        RemoveNonExistent = 2,
+        KeepNumbers = 4,
+        InsertAllLemmas = 8,
+        Distinct = 16
     }
 }

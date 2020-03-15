@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
@@ -13,16 +13,9 @@
       <None Update="hagen.zip">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="model_large.zip">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="model_small.zip">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Nestor.Chronicles\Nestor.Chronicles.csproj" />
       <ProjectReference Include="..\Nestor\Nestor.csproj" />
     </ItemGroup>
 

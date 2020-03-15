@@ -1,155 +1,67 @@
+using System;
 using System.Linq;
 using Nestor;
 using NUnit.Framework;
 
 namespace NestorTests
 {
+    [TestFixture]
     public class Tests
     {
-        [Test]
-        public void TestLemmatizeAll()
+        private NestorMorph _nMorph;
+        
+        [SetUp]
+        public void SetUp()
         {
-            var nestor = new NestorMorph();
-            var tokens = nestor.Lemmatize("стали", false, true).ToArray();
-            Assert.AreEqual(2, tokens.Length);
+            _nMorph = new NestorMorph();
         }
         
         [Test]
-        public void TestHyphen()
+        public void TestTokenize()
         {
-            var nestor = new NestorMorph();
-            var tokens = nestor.Lemmatize("Привет как-нибудь как дела").ToArray();
-            Assert.AreEqual(4, tokens.Length);
-        }
-
-        [Test]
-        public void TestNonCyrillic()
-        {
-            var nestor = new NestorMorph();
-            var tokens = nestor.Lemmatize("Нажал кабаны, on 102 ++ -/  баклажана!").ToArray();
+            var tokens = _nMorph.Tokenize("Пришёл, увидел, победил. 123-45, 67//# Как-то раз.");
             Assert.AreEqual(5, tokens.Length);
-            Assert.AreEqual("нажать", tokens[0]);
-            Assert.AreEqual("кабан", tokens[1]);
-            Assert.AreEqual("on", tokens[2]);
-            Assert.AreEqual("102", tokens[3]);
-            Assert.AreEqual("баклажан", tokens[4]);
+            Assert.AreEqual("пришёл", tokens[0]);
+            Assert.AreEqual("как-то", tokens[3]);
+
+            var tokensNum = _nMorph.Tokenize("В 140 солнц закат пылал.", MorphOption.KeepNumbers);
+            Assert.AreEqual(5, tokensNum.Length);
+            Assert.AreEqual("140", tokensNum[1]);
+
+            var tokensPrepositions = _nMorph.Tokenize("Под о ш в а", MorphOption.RemovePrepositions);
+            Assert.AreEqual(1, tokensPrepositions.Length);
+            Assert.AreEqual("ш", tokensPrepositions[0]);
+
+            var tokensExistent = _nMorph.Tokenize(
+                "Съешь ещё этих бурдылек и выпей куздру", 
+                MorphOption.RemoveNonExistent
+                );
+            Assert.AreEqual(5, tokensExistent.Length);
+            Assert.False(tokensExistent.Contains("бурдылек"));
         }
 
         [Test]
         public void TestLemmatize()
         {
-            var nestor = new NestorMorph();
-            var tokens = nestor.Lemmatize("Нажал кабаны, на бурдыльку, баклажана").ToArray();
-            Assert.AreEqual(5, tokens.Length);
-            Assert.AreEqual("нажать", tokens[0]);
-            Assert.AreEqual("кабан", tokens[1]);
-            Assert.AreEqual("на", tokens[2]);
-            Assert.AreEqual("бурдыльку", tokens[3]);
-            Assert.AreEqual("баклажан", tokens[4]);
+            var lemmas = _nMorph.Lemmatize("Кошки стали бурлеть в округе");
+            Assert.AreEqual(5, lemmas.Length);
+            Assert.True(lemmas.Contains("кошка"));
 
-            var tokens2 = nestor.Lemmatize("Нажал кабаны, на бурдыльку, баклажана", true).ToArray();
-            Assert.AreEqual(4, tokens2.Length);
-            Assert.AreEqual("нажать", tokens2[0]);
-            Assert.AreEqual("кабан", tokens2[1]);
-            Assert.AreEqual("на", tokens2[2]);
-            Assert.AreEqual("баклажан", tokens2[3]);
+            var lemmasFull = _nMorph.Lemmatize(
+                "Кошки стали бурлеть в округе",
+                MorphOption.InsertAllLemmas | MorphOption.Distinct
+            );
+            Assert.AreEqual(7, lemmasFull.Length);
+            Assert.True(lemmasFull.Contains("сталь"));
+            Assert.True(lemmasFull.Contains("стать"));
+            Assert.True(lemmasFull.Contains("округ"));
+            Assert.True(lemmasFull.Contains("округа"));
         }
 
-        [Test]
-        public void TestComplexPhrase()
+        [TearDown]
+        public void Dispose()
         {
-            var nestor = new NestorMorph();
-            var case1 = nestor.CheckPhrase("привет меня зовут Иван мне 40 лет и я молодец", true,  
-                "выход",
-                "выйти",
-                "выходить",
-                "закрыть",
-                "закрывать",
-                "хватит",
-                "хватить",
-                "конец",
-                "закончить",
-                "заканчивать"
-            );
-            Assert.AreEqual(false, case1);
-        }
-        
-        [Test]
-        public void TestOneWordPhrase()
-        {
-            var nestor = new NestorMorph();
-            var case1 = nestor.CheckPhrase("помощь", true,  
-                "выход",
-                "выйти",
-                "выходить",
-                "закрыть",
-                "закрывать",
-                "хватит",
-                "хватить",
-                "конец",
-                "закончить",
-                "заканчивать"
-            );
-            Assert.AreEqual(false, case1);
-        }
-        
-        [Test]
-        public void TestDefaultDifference()
-        {
-            var nestor = new NestorMorph();
-            
-            var case1 = nestor.CheckPhrase("я иду гулять", false,  "идти гулять");
-            Assert.AreEqual(true, case1);
-            
-            var case2 = nestor.CheckPhrase("я сейчас иду гулять", false,  "идти гулять");
-            Assert.AreEqual(false, case2);
-            
-            var case3 = nestor.CheckPhrase("я очень сейчас иду гулять", false,  "я идти гулять");
-            Assert.AreEqual(true, case3);
-            var case4 = nestor.CheckPhrase("я очень сильно сейчас иду гулять", false,  "идти гулять");
-            Assert.AreEqual(false, case4);
-        }
-        
-        [Test]
-        public void TestMaxDifference()
-        {
-            var nestor = new NestorMorph();
-            
-            var case1 = nestor.CheckPhrase("я иду гулять",1, false,  "идти гулять");
-            Assert.AreEqual(true, case1);
-            
-            var case2 = nestor.CheckPhrase("я иду гулять",0, false,  "идти гулять");
-            Assert.AreEqual(false, case2);
-        }
-        
-        [Test]
-        public void TestHasLemmas()
-        {
-            var nestor = new NestorMorph();
-            
-            var case1 = nestor.HasOneOfLemmas("стали", "сталь", "стать");
-            Assert.AreEqual(true, case1);
-            
-            var case2 = nestor.HasOneOfLemmas("душе", "душ", "душа");
-            Assert.AreEqual(true, case2);
-        }
-        
-        [Test]
-        public void TestHasLemma()
-        {
-            var nestor = new NestorMorph();
-            
-            var case1 = nestor.HasLemma("попугаи", "попугай");
-            Assert.AreEqual(true, case1);
-            
-            var case2 = nestor.HasLemma("ежи", "ёж");
-            Assert.AreEqual(true, case2);
-            
-            var case3 = nestor.HasLemma("стали", "сталь");
-            Assert.AreEqual(true, case3);
-            
-            var case4 = nestor.HasLemma("стали", "стать");
-            Assert.AreEqual(true, case4);
+            _nMorph = null;
         }
     }
 }
