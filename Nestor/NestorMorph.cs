@@ -99,14 +99,15 @@ namespace Nestor
             }
             regex += "]+";
             
-            var tokens = Regex.Split(s.ToLower(), regex);
-
-            return tokens
+            var tokens = Regex.Split(s.ToLower(), regex)
                 .Select(t => t.Trim().Trim('-'))
                 .Where(t => t != "")
                 .Where(t => !options.HasFlag(MorphOption.RemovePrepositions) || !Prepositions.Contains(t))
-                .Where(t => !options.HasFlag(MorphOption.RemoveNonExistent) || WordExists(t))
-                .ToArray();
+                .Where(t => !options.HasFlag(MorphOption.RemoveNonExistent) || WordExists(t));
+
+            return options.HasFlag(MorphOption.Distinct)
+                ? tokens.Distinct().ToArray()
+                : tokens.ToArray();
         }
 
         /// <summary>
