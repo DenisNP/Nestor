@@ -40,6 +40,24 @@ namespace NestorTests
             Assert.False(tokensExistent.Contains("бурдылек"));
         }
 
+        [Test]
+        public void TestLemmatize()
+        {
+            var lemmas = _nMorph.Lemmatize("Кошки стали бурлеть в округе");
+            Assert.AreEqual(5, lemmas.Length);
+            Assert.True(lemmas.Contains("кошка"));
+
+            var lemmasFull = _nMorph.Lemmatize(
+                "Кошки стали бурлеть в округе",
+                MorphOption.InsertAllLemmas | MorphOption.Distinct
+            );
+            Assert.AreEqual(7, lemmasFull.Length);
+            Assert.True(lemmasFull.Contains("сталь"));
+            Assert.True(lemmasFull.Contains("стать"));
+            Assert.True(lemmasFull.Contains("округ"));
+            Assert.True(lemmasFull.Contains("округа"));
+        }
+
         [TearDown]
         public void Dispose()
         {
