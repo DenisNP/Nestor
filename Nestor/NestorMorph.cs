@@ -10,9 +10,6 @@ namespace Nestor
 {
     public partial class NestorMorph
     {
-        private const string NonNumbers = "[^а-яё\\-]+";
-        private const string WithNumbers = "[^0-9а-яё\\-]+";
-        
         private Dawg<int> _dawgSingle;
         private Dawg<int[]> _dawgMulti;
         private static readonly HashSet<string> Prepositions = new HashSet<string>();
@@ -87,7 +84,21 @@ namespace Nestor
         /// <returns>Array of tokens</returns>
         public string[] Tokenize(string s, MorphOption options = MorphOption.None)
         {
-            var regex = options.HasFlag(MorphOption.KeepNumbers) ? WithNumbers : NonNumbers;
+            var regex = "[^а-яё";
+            if (options.HasFlag(MorphOption.KeepNumbers))
+            {
+                regex += "0-9";
+            }
+            if (options.HasFlag(MorphOption.KeepLatin))
+            {
+                regex += "a-z";
+            }
+            if (!options.HasFlag(MorphOption.RemoveHyphen))
+            {
+                regex += "\\-";
+            }
+            regex += "]+";
+            
             var tokens = Regex.Split(s.ToLower(), regex);
 
             return tokens
@@ -158,7 +169,9 @@ namespace Nestor
         RemovePrepositions = 1,
         RemoveNonExistent = 2,
         KeepNumbers = 4,
-        InsertAllLemmas = 8,
-        Distinct = 16
+        KeepLatin = 8,
+        InsertAllLemmas = 16,
+        Distinct = 32,
+        RemoveHyphen = 64
     }
 }
