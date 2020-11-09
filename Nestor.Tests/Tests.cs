@@ -33,9 +33,9 @@ namespace NestorTests
             Assert.AreEqual("ш", tokensPrepositions[0]);
 
             var tokensExistent = _nMorph.Tokenize(
-                "Съешь ещё этих бурдылек и выпей куздру", 
+                "Съешь ещё этих бурдылек и выпей куздру",
                 MorphOption.RemoveNonExistent
-                );
+            );
             Assert.AreEqual(5, tokensExistent.Length);
             Assert.False(tokensExistent.Contains("бурдылек"));
         }
@@ -56,6 +56,34 @@ namespace NestorTests
             Assert.True(lemmasFull.Contains("стать"));
             Assert.True(lemmasFull.Contains("округ"));
             Assert.True(lemmasFull.Contains("округа"));
+        }
+
+        [Test]
+        public void TestWordInfo()
+        {
+            const string word = "стали";
+            var info = _nMorph.WordInfo(word);
+            Assert.AreEqual(2, info.Length);
+
+            // first
+            var first = info.SingleOrDefault(w => w.Lemma.Word == "сталь");
+            Assert.IsNotNull(first);
+            
+            Assert.IsTrue(first.Grammatics.Pos == Pos.Noun);
+            Assert.IsTrue(first.Grammatics.Gender == Gender.Feminine);
+            
+            var firstForms = first.ExactForms(word);
+            Assert.IsTrue(firstForms.Any(f => f.Grammatics.Number == Number.Plural));
+            Assert.IsTrue(firstForms.Any(f => f.Grammatics.Case == Case.Genitive && f.Grammatics.Number == Number.Singular));
+            Assert.IsTrue(firstForms.Any(f => f.Grammatics.Case == Case.Accusative && f.Grammatics.Number == Number.Plural));
+            Assert.IsTrue(firstForms.Any(f => f.Grammatics.Case == Case.Dative && f.Grammatics.Number == Number.Singular));
+            Assert.IsTrue(firstForms.Any(f => f.Grammatics.Case == Case.Prepositional && f.Grammatics.Number == Number.Singular));
+            
+            // second
+            var second = info.SingleOrDefault(w => w.Lemma.Word == "стать");
+            Assert.IsNotNull(second);
+            
+            Assert.IsTrue(second.Grammatics.Pos == Pos.Verb);
         }
 
         [TearDown]

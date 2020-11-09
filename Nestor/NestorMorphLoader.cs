@@ -36,6 +36,8 @@ namespace Nestor
                 Storage.GetTagGroups().Add(tagGroupRaw.Split(" ").Select(byte.Parse).ToArray());
             }
             Console.WriteLine($"...tag groups: {Storage.GetTagGroups().Count}");
+            
+            Storage.ParseTags();
         }
 
         private void LoadParadigms()

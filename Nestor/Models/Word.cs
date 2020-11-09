@@ -9,6 +9,7 @@ namespace Nestor.Models
         public string Stem { get; }
         public WordForm[] Forms { get; }
         public WordForm Lemma => Forms[0];
+        public Grammatics Grammatics => Lemma.Grammatics;
 
         public Word(WordRaw raw, Storage storage, List<ushort[]> paradigms)
         {
@@ -20,12 +21,27 @@ namespace Nestor.Models
             {
                 var tagGroup = storage.GetTagGroup(paradigm[Forms.Length * 3 + i]);
                 Forms[i] = new WordForm
-                {
-                    Word = GetForm(i, paradigm, Stem, storage),
-                    Accent = paradigm[Forms.Length * 2 + i],
-                    Tags = tagGroup.Select(tag => storage.GetTag(tag)).ToHashSet()
-                };
+                (
+                    GetForm(i, paradigm, Stem, storage),
+                    paradigm[Forms.Length * 2 + i],
+                    tagGroup.Select(tag => storage.GetTag(tag)).ToArray(),
+                    storage
+                );
             }
+          
+            // there is unknown GENDER for plural nouns in dictionary, fix that
+            if (Grammatics.Pos == Pos.Noun)
+            {
+                foreach (var form in Forms)
+                {
+                    form.Grammatics.Gender = Grammatics.Gender;
+                }
+            }
+        }
+
+        public WordForm[] ExactForms(string word)
+        {
+            return Forms.Where(f => f.Word == word).ToArray();
         }
 
         public static string[] GetAllForms(ushort[] paradigm, string stem, Storage storage)

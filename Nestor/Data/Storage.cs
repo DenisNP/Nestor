@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Nestor.Models;
 
@@ -10,6 +11,12 @@ namespace Nestor.Data
         protected readonly List<string> Tags = new List<string>();
         protected readonly List<byte[]> TagGroups = new List<byte[]>();
         protected readonly List<WordRaw> Words = new List<WordRaw>();
+        
+        protected readonly Dictionary<string, Pos> PartsOfSpeech = new Dictionary<string, Pos>();
+        protected readonly Dictionary<string, Gender> Genders = new Dictionary<string, Gender>();
+        protected readonly Dictionary<string, Number> Numbers = new Dictionary<string, Number>();
+        protected readonly Dictionary<string, Case> Cases = new Dictionary<string, Case>();
+        private readonly TagMapper _tagMapper = new TagMapper();
 
         public string GetPrefix(int id)
         {
@@ -59,6 +66,52 @@ namespace Nestor.Data
         public List<WordRaw> GetWords()
         {
             return Words;
+        }
+
+        public void ParseTags()
+        {
+            foreach (var tag in Tags)
+            {
+                AddToDictionary(tag, _tagMapper.GetPos(tag), PartsOfSpeech);
+                AddToDictionary(tag, _tagMapper.GetGender(tag), Genders);
+                AddToDictionary(tag, _tagMapper.GetNumber(tag), Numbers);
+                AddToDictionary(tag, _tagMapper.GetCase(tag), Cases);
+            }
+        }
+
+        public Pos PosByTag(string tag)
+        {
+            return PartsOfSpeech.GetValueOrDefault(tag, Pos.None);
+        }
+
+        public Gender GenderByTag(string tag)
+        {
+            return Genders.GetValueOrDefault(tag, Gender.None);
+        }
+
+        public Number NumberByTag(string tag)
+        {
+            return Numbers.GetValueOrDefault(tag, Number.None);
+        }
+
+        public Case CaseByTag(string tag)
+        {
+            return Cases.GetValueOrDefault(tag, Case.None);
+        }
+
+        private void AddToDictionary<T>(
+            string tag,
+            T currentValue,
+            Dictionary<string, T> dictionary,
+            T defaultValue = default
+        ) where T : Enum
+        {
+            if (Equals(currentValue, defaultValue)) return;
+            
+            if (dictionary.ContainsKey(tag))
+                throw new InvalidOperationException($"Tag {tag} is already in {nameof(dictionary)} dictionary");
+                
+            dictionary.Add(tag, currentValue);
         }
     }
 }

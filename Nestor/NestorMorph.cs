@@ -33,7 +33,20 @@ namespace Nestor
         /// <returns>List of all words from its form</returns>
         public Word[] WordInfo(string wordForm, MorphOption options = MorphOption.None)
         {
-            var wForm = options != MorphOption.None ? Clean(wordForm, options) : wordForm; 
+            return WordInfo(wordForm, out _, options);
+        }
+
+        /// <summary>
+        /// Get info about entire word by its single form
+        /// </summary>
+        /// <param name="wordForm">Word form</param>
+        /// <param name="cleanWord">Input word after cleaning</param>
+        /// <param name="options">Additional options for operation</param>
+        /// <returns>List of all words from its form</returns>
+        public Word[] WordInfo(string wordForm, out string cleanWord, MorphOption options = MorphOption.None)
+        {
+            var wForm = options != MorphOption.None ? Clean(wordForm, options) : wordForm;
+            cleanWord = wordForm;
             int[] wordIds = null;
             var single = _dawgSingle[wForm];
             if (single == 0)
@@ -61,19 +74,6 @@ namespace Nestor
             }
 
             return wordIds.Select(WordById).ToArray();
-        }
-
-        /// <summary>
-        /// Get exact word forms
-        /// </summary>
-        /// <param name="wordForm">Word form string</param>
-        /// <param name="options">Additional options for operation</param>
-        /// <returns>Word forms array</returns>
-        public WordForm[] WordForms(string wordForm, MorphOption options = MorphOption.None)
-        {
-            var form = options != MorphOption.None ? Clean(wordForm, options) : wordForm; 
-            var words = WordInfo(form);
-            return words.SelectMany(w => w.Forms.Where(f => f.Word == form)).ToArray();
         }
 
         /// <summary>
@@ -174,5 +174,52 @@ namespace Nestor
         InsertAllLemmas = 16,
         Distinct = 32,
         RemoveHyphen = 64
+    }
+
+    public enum Pos
+    {
+        None,
+        Noun,
+        Verb,
+        Adjective,
+        Adverb,
+        Participle,
+        Transgressive,
+        Pronoun,
+        Preposition,
+        Conjunction,
+        Particle,
+        Interjection,
+        Predicative
+    }
+
+    public enum Gender
+    {
+        None,
+        Masculine,
+        Feminine,
+        Neuter,
+        Common,
+    }
+
+    public enum Number
+    {
+        None,
+        Singular,
+        Plural,
+    }
+
+    public enum Case
+    {
+        None,
+        Nominative,
+        Genitive,
+        Dative,
+        Accusative,
+        Instrumental,
+        Prepositional,
+        Locative,
+        Partitive,
+        Vocative,
     }
 }

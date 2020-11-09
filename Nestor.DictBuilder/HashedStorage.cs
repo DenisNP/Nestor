@@ -30,7 +30,7 @@ namespace Nestor.DictBuilder
 
         public int[] AddTags(string[] tags)
         {
-            return tags.Select(AddTag).OrderBy(t => t).ToArray();
+            return tags.Select(AddTag).ToArray();
         }
 
         public int AddTagGroup(string[] tags)
