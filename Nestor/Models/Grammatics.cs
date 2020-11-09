@@ -35,7 +35,7 @@ namespace Nestor.Models
             
         }
 
-        public int DifferenceFrom(Gender gender, Case @case, Number number, Tense tense, Person person, bool ignoreNotDefined = true)
+        public int DifferenceFrom(Gender gender, Case @case, Number number, Tense tense, Person person, bool ignoreNotDefined = false)
         {
             var dist = 0;
             

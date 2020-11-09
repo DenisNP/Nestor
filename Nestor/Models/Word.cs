@@ -45,20 +45,20 @@ namespace Nestor.Models
         }
 
         public WordForm ClosestForm(
-            Gender gender,
-            Case @case,
-            Number number,
-            Tense tense,
-            Person person,
-            out bool exactMatch,
-            bool ignoreNotDefined = true
+            Gender gender = Gender.None,
+            Case @case = Case.None,
+            Number number = Number.None,
+            Tense tense = Tense.None,
+            Person person = Person.None,
+            bool exactMatch = true,
+            bool ignoreNotDefined = false
         )
         {
             var (form, score) = Forms
                 .Select(f => (f, f.Grammatics.DifferenceFrom(gender, @case, number, tense, person, ignoreNotDefined)))
                 .MinBy(x => x.Item2);
 
-            exactMatch = score == 0;
+            if (exactMatch && score > 0) return null;
             return form;
         }
 

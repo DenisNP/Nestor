@@ -90,6 +90,38 @@ namespace NestorTests
             Assert.IsTrue(secondsForms.Any(f => f.Grammatics.Number == Number.Plural));
         }
 
+        [Test]
+        public void TestFindForm()
+        {
+            const string w1 = "красивый";
+            var info1 = _nMorph.WordInfo(w1);
+            Assert.GreaterOrEqual(1, info1.Length);
+
+            var first = info1[0];
+            var f1 = first.ClosestForm(gender: Gender.Feminine, Case.Nominative, Number.Singular);
+            Assert.IsNotNull(f1);
+            Assert.AreEqual("красивая", f1.Word);
+
+            var f2 = first.ClosestForm(Gender.Feminine, Case.Accusative, Number.Singular);
+            Assert.IsNotNull(f2);
+            Assert.AreEqual("красивую", f2.Word);
+
+            var f3 = first.ClosestForm(Gender.None, Case.Genitive, Number.Plural);
+            Assert.IsNotNull(f3);
+            Assert.AreEqual("красивых", f3.Word);
+
+            const string w2 = "красить";
+            var info2 = _nMorph.WordInfo(w2);
+            Assert.GreaterOrEqual(1, info2.Length);
+
+            var second = info2.FirstOrDefault(i => i.Grammatics.Pos == Pos.Verb);
+            Assert.IsNotNull(second);
+
+            var s1 = second.ClosestForm(Gender.Feminine, Case.None, Number.Singular, Tense.Past);
+            Assert.IsNotNull(s1);
+            Assert.AreEqual("красила", s1.Word);
+        }
+
         [TearDown]
         public void Dispose()
         {
