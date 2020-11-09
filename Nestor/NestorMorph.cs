@@ -222,4 +222,21 @@ namespace Nestor
         Partitive,
         Vocative,
     }
+
+    public enum Tense
+    {
+        None,
+        Past,
+        Present,
+        Future,
+        Infinitive,
+    }
+
+    public enum Person
+    {
+        None,
+        First,
+        Second,
+        Third,
+    }
 }

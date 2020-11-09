@@ -16,6 +16,8 @@ namespace Nestor.Data
         protected readonly Dictionary<string, Gender> Genders = new Dictionary<string, Gender>();
         protected readonly Dictionary<string, Number> Numbers = new Dictionary<string, Number>();
         protected readonly Dictionary<string, Case> Cases = new Dictionary<string, Case>();
+        protected readonly Dictionary<string, Tense> Tenses = new Dictionary<string, Tense>();
+        protected readonly Dictionary<string, Person> Persons = new Dictionary<string, Person>();
         private readonly TagMapper _tagMapper = new TagMapper();
 
         public string GetPrefix(int id)
@@ -76,6 +78,8 @@ namespace Nestor.Data
                 AddToDictionary(tag, _tagMapper.GetGender(tag), Genders);
                 AddToDictionary(tag, _tagMapper.GetNumber(tag), Numbers);
                 AddToDictionary(tag, _tagMapper.GetCase(tag), Cases);
+                AddToDictionary(tag, _tagMapper.GetTense(tag), Tenses);
+                AddToDictionary(tag, _tagMapper.GetPerson(tag), Persons);
             }
         }
 
@@ -97,6 +101,16 @@ namespace Nestor.Data
         public Case CaseByTag(string tag)
         {
             return Cases.GetValueOrDefault(tag, Case.None);
+        }
+
+        public Tense TenseByTag(string tag)
+        {
+            return Tenses.GetValueOrDefault(tag, Tense.None);
+        }
+
+        public Person PersonByTag(string tag)
+        {
+            return Persons.GetValueOrDefault(tag, Person.None);
         }
 
         private void AddToDictionary<T>(

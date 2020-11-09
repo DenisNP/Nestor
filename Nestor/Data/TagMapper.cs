@@ -60,5 +60,28 @@ namespace Nestor.Data
                 _ => Case.None
             };
         }
+
+        public Tense GetTense(string tag)
+        {
+            return tag switch
+            {
+                "прош" => Tense.Past,
+                "наст" => Tense.Present,
+                "буд" => Tense.Future,
+                "инф" => Tense.Infinitive,
+                _ => Tense.None
+            };
+        }
+
+        public Person GetPerson(string tag)
+        {
+            return tag switch
+            {
+                "1-е" => Person.First,
+                "2-е" => Person.Second,
+                "3-е" => Person.Third,
+                _ => Person.None
+            };
+        }
     }
 }

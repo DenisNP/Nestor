@@ -44,6 +44,24 @@ namespace Nestor.Models
             return Forms.Where(f => f.Word == word).ToArray();
         }
 
+        public WordForm ClosestForm(
+            Gender gender,
+            Case @case,
+            Number number,
+            Tense tense,
+            Person person,
+            out bool exactMatch,
+            bool ignoreNotDefined = true
+        )
+        {
+            var (form, score) = Forms
+                .Select(f => (f, f.Grammatics.DifferenceFrom(gender, @case, number, tense, person, ignoreNotDefined)))
+                .MinBy(x => x.Item2);
+
+            exactMatch = score == 0;
+            return form;
+        }
+
         public static string[] GetAllForms(ushort[] paradigm, string stem, Storage storage)
         {
             var forms = new string[paradigm.Length / 4];
