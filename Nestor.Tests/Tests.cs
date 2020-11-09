@@ -84,6 +84,10 @@ namespace NestorTests
             Assert.IsNotNull(second);
             
             Assert.IsTrue(second.Grammatics.Pos == Pos.Verb);
+
+            var secondsForms = second.ExactForms(word);
+            Assert.IsTrue(secondsForms.Any(f => f.Grammatics.Tense == Tense.Past));
+            Assert.IsTrue(secondsForms.Any(f => f.Grammatics.Number == Number.Plural));
         }
 
         [TearDown]
