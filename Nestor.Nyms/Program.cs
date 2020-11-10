@@ -1,12 +1,13 @@
-﻿using System;
-
-namespace Nestor.Nyms
+﻿namespace Nestor.Nyms
 {
-    class Program
+    public static class Program
     {
-        static void Main(string[] args)
+        private static NestorMorph _nMorph;
+        
+        public static void Main()
         {
-            Console.WriteLine("Hello World!");
+            _nMorph = new NestorMorph();
+            
         }
     }
 }
