@@ -76,7 +76,7 @@ Person Person; // лицо
 |Творительный|`Case.Instrumental`|
 |Предложный|`Case.Prepositional`|
 |Местный (*на мосту*)|`Case.Locative`|
-|Частиный/партитив (*чаю*)|`Case.Partitive`|
+|Частичный/партитив (*чаю*)|`Case.Partitive`|
 |Звательный (*старче*)|`Case.Vocative`|
 
 ### Gender — род
