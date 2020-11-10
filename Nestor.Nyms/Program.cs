@@ -13,7 +13,7 @@ namespace Nestor.Nyms
         {
             _nMorph = new NestorMorph();
 
-            //ParseFile("Data/synonyms.csv", "synonyms.txt");
+            ParseFile("Data/synonyms.csv", "synonyms.txt");
             ParseFile("Data/antonyms.csv", "antonyms.txt");
         }
 
