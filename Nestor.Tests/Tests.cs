@@ -117,7 +117,7 @@ namespace NestorTests
             var second = info2.FirstOrDefault(i => i.Grammatics.Pos == Pos.Verb);
             Assert.IsNotNull(second);
 
-            var s1 = second.ClosestForm(Gender.Feminine, Case.None, Number.Singular, Tense.Past);
+            var s1 = second.ClosestForm(gender: Gender.Feminine, number: Number.Singular, tense: Tense.Past);
             Assert.IsNotNull(s1);
             Assert.AreEqual("красила", s1.Word);
         }
