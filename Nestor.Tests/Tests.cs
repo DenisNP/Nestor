@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using Nestor;
 using NUnit.Framework;
@@ -13,7 +12,7 @@ namespace NestorTests
         [SetUp]
         public void SetUp()
         {
-            _nMorph = new NestorMorph();
+            _nMorph ??= new NestorMorph();
         }
         
         [Test]
@@ -69,25 +68,25 @@ namespace NestorTests
             var first = info.SingleOrDefault(w => w.Lemma.Word == "сталь");
             Assert.IsNotNull(first);
             
-            Assert.IsTrue(first.Grammatics.Pos == Pos.Noun);
-            Assert.IsTrue(first.Grammatics.Gender == Gender.Feminine);
+            Assert.IsTrue(first.Tag.Pos == Pos.Noun);
+            Assert.IsTrue(first.Tag.Gender == Gender.Feminine);
             
             var firstForms = first.ExactForms(word);
-            Assert.IsTrue(firstForms.Any(f => f.Grammatics.Number == Number.Plural));
-            Assert.IsTrue(firstForms.Any(f => f.Grammatics.Case == Case.Genitive && f.Grammatics.Number == Number.Singular));
-            Assert.IsTrue(firstForms.Any(f => f.Grammatics.Case == Case.Accusative && f.Grammatics.Number == Number.Plural));
-            Assert.IsTrue(firstForms.Any(f => f.Grammatics.Case == Case.Dative && f.Grammatics.Number == Number.Singular));
-            Assert.IsTrue(firstForms.Any(f => f.Grammatics.Case == Case.Prepositional && f.Grammatics.Number == Number.Singular));
+            Assert.IsTrue(firstForms.Any(f => f.Tag.Number == Number.Plural));
+            Assert.IsTrue(firstForms.Any(f => f.Tag.Case == Case.Genitive && f.Tag.Number == Number.Singular));
+            Assert.IsTrue(firstForms.Any(f => f.Tag.Case == Case.Accusative && f.Tag.Number == Number.Plural));
+            Assert.IsTrue(firstForms.Any(f => f.Tag.Case == Case.Dative && f.Tag.Number == Number.Singular));
+            Assert.IsTrue(firstForms.Any(f => f.Tag.Case == Case.Prepositional && f.Tag.Number == Number.Singular));
             
             // second
             var second = info.SingleOrDefault(w => w.Lemma.Word == "стать");
             Assert.IsNotNull(second);
             
-            Assert.IsTrue(second.Grammatics.Pos == Pos.Verb);
+            Assert.IsTrue(second.Tag.Pos == Pos.Verb);
 
             var secondsForms = second.ExactForms(word);
-            Assert.IsTrue(secondsForms.Any(f => f.Grammatics.Tense == Tense.Past));
-            Assert.IsTrue(secondsForms.Any(f => f.Grammatics.Number == Number.Plural));
+            Assert.IsTrue(secondsForms.Any(f => f.Tag.Tense == Tense.Past));
+            Assert.IsTrue(secondsForms.Any(f => f.Tag.Number == Number.Plural));
         }
 
         [Test]
@@ -114,7 +113,7 @@ namespace NestorTests
             var info2 = _nMorph.WordInfo(w2);
             Assert.GreaterOrEqual(1, info2.Length);
 
-            var second = info2.FirstOrDefault(i => i.Grammatics.Pos == Pos.Verb);
+            var second = info2.FirstOrDefault(i => i.Tag.Pos == Pos.Verb);
             Assert.IsNotNull(second);
 
             var s1 = second.ClosestForm(Gender.Feminine, Case.None, Number.Singular, Tense.Past);

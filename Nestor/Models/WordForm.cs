@@ -7,17 +7,17 @@ namespace Nestor.Models
         public string Word { get; }
         public int Accent { get; }
 
-        public Grammatics Grammatics { get; }
+        public Tag Tag { get; }
         
-        public string[] Tags { get; }
+        public string[] Grammemes { get; }
 
-        public WordForm(string word, int accent, string[] tags, Storage storage)
+        public WordForm(string word, int accent, string[] grammemes, Storage storage)
         {
             Word = word;
             Accent = accent;
-            Tags = tags;
+            Grammemes = grammemes;
 
-            Grammatics = new Grammatics(tags, storage);
+            Tag = new Tag(grammemes, storage);
         }
     }
 }

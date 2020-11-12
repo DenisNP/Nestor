@@ -9,7 +9,7 @@ namespace Nestor.Models
         public string Stem { get; }
         public WordForm[] Forms { get; }
         public WordForm Lemma => Forms[0];
-        public Grammatics Grammatics => Lemma.Grammatics;
+        public Tag Tag => Lemma.Tag;
 
         public Word(WordRaw raw, Storage storage, List<ushort[]> paradigms)
         {
@@ -19,22 +19,22 @@ namespace Nestor.Models
             Forms = new WordForm[paradigm.Length / 4];
             for (var i = 0; i < Forms.Length; i++)
             {
-                var tagGroup = storage.GetTagGroup(paradigm[Forms.Length * 3 + i]);
+                var tag = storage.GetTag(paradigm[Forms.Length * 3 + i]);
                 Forms[i] = new WordForm
                 (
                     GetForm(i, paradigm, Stem, storage),
                     paradigm[Forms.Length * 2 + i],
-                    tagGroup.Select(tag => storage.GetTag(tag)).ToArray(),
+                    tag.Select(g => storage.GetGrammeme(g)).ToArray(),
                     storage
                 );
             }
           
             // there is unknown GENDER for plural nouns in dictionary, fix that
-            if (Grammatics.Pos == Pos.Noun)
+            if (Tag.Pos == Pos.Noun)
             {
                 foreach (var form in Forms)
                 {
-                    form.Grammatics.Gender = Grammatics.Gender;
+                    form.Tag.Gender = Tag.Gender;
                 }
             }
         }
@@ -55,7 +55,7 @@ namespace Nestor.Models
         )
         {
             var (form, score) = Forms
-                .Select(f => (f, f.Grammatics.DifferenceFrom(gender, @case, number, tense, person, ignoreNotDefined)))
+                .Select(f => (f, f.Tag.DifferenceFrom(gender, @case, number, tense, person, ignoreNotDefined)))
                 .MinBy(x => x.Item2);
 
             if (exactMatch && score > 0) return null;

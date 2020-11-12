@@ -1,10 +1,10 @@
 namespace Nestor.Data
 {
-    public class TagMapper
+    public class GrammemeMapper
     {
-        public Pos GetPos(string tag)
+        public Pos GetPos(string grammeme)
         {
-            return tag switch
+            return grammeme switch
             {
                 "сущ" => Pos.Noun,
                 "прл" => Pos.Adjective,
@@ -22,9 +22,9 @@ namespace Nestor.Data
             };
         }
 
-        public Gender GetGender(string tag)
+        public Gender GetGender(string grammeme)
         {
-            return tag switch
+            return grammeme switch
             {
                 "муж" => Gender.Masculine,
                 "жен" => Gender.Feminine,
@@ -34,9 +34,9 @@ namespace Nestor.Data
             };
         }
 
-        public Number GetNumber(string tag)
+        public Number GetNumber(string grammeme)
         {
-            return tag switch
+            return grammeme switch
             {
                 "ед" => Number.Singular,
                 "мн" => Number.Plural,
@@ -44,9 +44,9 @@ namespace Nestor.Data
             };
         }
 
-        public Case GetCase(string tag)
+        public Case GetCase(string grammeme)
         {
-            return tag switch
+            return grammeme switch
             {
                 "им" => Case.Nominative,
                 "род" => Case.Genitive,
@@ -61,9 +61,9 @@ namespace Nestor.Data
             };
         }
 
-        public Tense GetTense(string tag)
+        public Tense GetTense(string grammeme)
         {
-            return tag switch
+            return grammeme switch
             {
                 "прош" => Tense.Past,
                 "наст" => Tense.Present,
@@ -73,9 +73,9 @@ namespace Nestor.Data
             };
         }
 
-        public Person GetPerson(string tag)
+        public Person GetPerson(string grammeme)
         {
-            return tag switch
+            return grammeme switch
             {
                 "1-е" => Person.First,
                 "2-е" => Person.Second,

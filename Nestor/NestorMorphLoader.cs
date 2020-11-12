@@ -15,29 +15,29 @@ namespace Nestor
             // prepositions
             var prepositions = new List<string>();
             Utils.LoadFileToList(prepositions, "prepositions.txt");
-            prepositions.ForEach(p => Prepositions.Add(p));
+            prepositions.ForEach(p => _prepositions.Add(p));
 
-            Console.WriteLine($"...prepositions: {Prepositions.Count}");
+            Console.WriteLine($"...prepositions: {_prepositions.Count}");
             
             // storage
-            Utils.LoadFileToList(Storage.GetPrefixes(), "prefixes.txt");
-            Console.WriteLine($"...prefixes: {Storage.GetPrefixes().Count}");
+            Utils.LoadFileToList(_storage.GetPrefixes(), "prefixes.txt");
+            Console.WriteLine($"...prefixes: {_storage.GetPrefixes().Count}");
             
-            Utils.LoadFileToList(Storage.GetSuffixes(), "suffixes.txt");
-            Console.WriteLine($"...suffixes: {Storage.GetSuffixes().Count}");
+            Utils.LoadFileToList(_storage.GetSuffixes(), "suffixes.txt");
+            Console.WriteLine($"...suffixes: {_storage.GetSuffixes().Count}");
             
-            Utils.LoadFileToList(Storage.GetTags(), "tags.txt");
-            Console.WriteLine($"...tags: {Storage.GetTags().Count}");
+            Utils.LoadFileToList(_storage.GetGrammemes(), "grammemes.txt");
+            Console.WriteLine($"...grammemes: {_storage.GetGrammemes().Count}");
 
-            var tagGroupsRaw = new List<string>();
-            Utils.LoadFileToList(tagGroupsRaw, "tag_groups.txt");
-            foreach (var tagGroupRaw in tagGroupsRaw)
+            var tagsRaw = new List<string>();
+            Utils.LoadFileToList(tagsRaw, "tags.txt");
+            foreach (var tagRaw in tagsRaw)
             {
-                Storage.GetTagGroups().Add(tagGroupRaw.Split(" ").Select(byte.Parse).ToArray());
+                _storage.GetTags().Add(tagRaw.Split(" ").Select(byte.Parse).ToArray());
             }
-            Console.WriteLine($"...tag groups: {Storage.GetTagGroups().Count}");
+            Console.WriteLine($"...tags: {_storage.GetTags().Count}");
             
-            Storage.ParseTags();
+            _storage.ParseGrammemes();
         }
 
         private void LoadParadigms()
@@ -48,10 +48,10 @@ namespace Nestor
 
             foreach (var paradigm in paradigmsRaw)
             {
-                Paradigms.Add(paradigm.Split(" ").Select(ushort.Parse).ToArray());
+                _paradigms.Add(paradigm.Split(" ").Select(ushort.Parse).ToArray());
             }
 
-            Console.WriteLine($"...paradigms: {Paradigms.Count}");
+            Console.WriteLine($"...paradigms: {_paradigms.Count}");
         }
 
         private void LoadWords()
@@ -61,10 +61,10 @@ namespace Nestor
 
             foreach (var wordRaw in wordsRaw)
             {
-                Storage.GetWords().Add(new WordRaw(wordRaw));
+                _storage.GetWords().Add(new WordRaw(wordRaw));
             }
 
-            Console.WriteLine($"...words: {Storage.GetWords().Count}");
+            Console.WriteLine($"...words: {_storage.GetWords().Count}");
         }
 
         private void LoadMorphology()

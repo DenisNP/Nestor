@@ -66,7 +66,7 @@ namespace Nestor.DictBuilder
                             $"paradigms: {_paradigms.Count}, " +
                             $"prefixes: {_storage.GetPrefixes().Count}, " +
                             $"suffixes: {_storage.GetSuffixes().Count}, " +
-                            $"tagGroups: {_storage.GetTagGroups().Count}"
+                            $"tags: {_storage.GetTags().Count}"
                         );
                     }
                 }
@@ -81,25 +81,22 @@ namespace Nestor.DictBuilder
             BuildSaveDawg(
                 _dictionary.Where(x => x.Value.Length == 1),
                 "dict_single.bin",
-                "single-paradigma words",
+                "single-paradigm words",
                 (writer, wordIds) => writer.Write(wordIds[0])
             );
             
             BuildSaveDawg(
                 _dictionary.Where(x => x.Value.Length > 1).ToList(),
                 "dict_multiple.bin",
-                "multiple-paradigma words",
+                "multiple-paradigm words",
                 (writer, wordIds) => writer.Write(string.Join(" ", wordIds))
             );
             
             // save storage
             Utils.SaveListToFile(_storage.GetPrefixes(), "prefixes.txt");
             Utils.SaveListToFile(_storage.GetSuffixes(), "suffixes.txt");
-            Utils.SaveListToFile(_storage.GetTags(), "tags.txt");
-            Utils.SaveListToFile(
-                _storage.GetTagGroups().Select(tg => string.Join(" ", tg)).ToList(),
-                "tag_groups.txt"
-            );
+            Utils.SaveListToFile(_storage.GetGrammemes(), "grammemes.txt");
+            Utils.SaveListToFile(_storage.GetTags().Select(t => string.Join(" ", t)).ToList(), "tags.txt");
             Utils.SaveListToFile(_storage.GetWords().Select(x => x.ToString()).ToList(), "words.txt");
             
             // save paradigms
@@ -130,7 +127,7 @@ namespace Nestor.DictBuilder
             var paradigmId = Utils.ComplexAdd(_paradigmsByHash, _paradigms, paradigm, ParadigmHelper.ToString) + 1;
             paradigm = _paradigms[paradigmId - 1];
 
-            // store new word (stem + paradigma)
+            // store new word (stem + paradigm)
             var word = new WordRaw
             {
                 Stem = stem,

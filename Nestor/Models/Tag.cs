@@ -2,7 +2,7 @@ using Nestor.Data;
 
 namespace Nestor.Models
 {
-    public class Grammatics
+    public class Tag
     {
         public Pos Pos { get; } = Pos.None;
         public Gender Gender { get; internal set; } = Gender.None;
@@ -11,26 +11,26 @@ namespace Nestor.Models
         public Tense Tense { get; } = Tense.None;
         public Person Person { get; } = Person.None;
 
-        public Grammatics(string[] tags, Storage storage)
+        public Tag(string[] grammemes, Storage storage)
         {
-            if (tags.Length == 0) return;
+            if (grammemes.Length == 0) return;
             
             // try to determine pos
-            Pos = storage.PosByTag(tags[0]);
+            Pos = storage.PosByGrammeme(grammemes[0]);
             
             // other
-            for (var i = 1; i < tags.Length; i++)
+            for (var i = 1; i < grammemes.Length; i++)
             {
-                var tag = tags[i];
-                if (Gender == Gender.None) Gender = storage.GenderByTag(tag);
-                if (Number == Number.None) Number = storage.NumberByTag(tag);
-                if (Case == Case.None) Case = storage.CaseByTag(tag);
-                if (Tense == Tense.None) Tense = storage.TenseByTag(tag);
-                if (Person == Person.None) Person = storage.PersonByTag(tag);
+                var tag = grammemes[i];
+                if (Gender == Gender.None) Gender = storage.GenderByGrammeme(tag);
+                if (Number == Number.None) Number = storage.NumberByGrammeme(tag);
+                if (Case == Case.None) Case = storage.CaseByGrammeme(tag);
+                if (Tense == Tense.None) Tense = storage.TenseByGrammeme(tag);
+                if (Person == Person.None) Person = storage.PersonByGrammeme(tag);
             }
         }
 
-        public Grammatics()
+        public Tag()
         {
             
         }

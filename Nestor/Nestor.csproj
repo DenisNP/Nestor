@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>0.1.3</PackageVersion>
+        <PackageVersion>0.2.0</PackageVersion>
         <Title>Nestor</Title>
         <Authors>Denis Peshekhonov</Authors>
         <Description>.NET Morphological library for Russian language</Description>
@@ -16,56 +16,45 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="DawgSharp" Version="1.3.0" />
+        <PackageReference Include="DawgSharp" Version="1.3.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="dict.bin" />
-      <None Update="dict\dict.bin">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="dict\prepositions.txt">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Remove="Dict\dict.bin" />
-      <None Remove="Dict\paradigms.txt" />
-      <EmbeddedResource Include="Dict\paradigms.txt">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </EmbeddedResource>
-      <None Remove="Dict\prefixes.txt" />
-      <EmbeddedResource Include="Dict\prefixes.txt">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </EmbeddedResource>
-      <None Remove="Dict\prepositions.txt" />
-      <EmbeddedResource Include="Dict\prepositions.txt">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </EmbeddedResource>
-      <None Remove="Dict\suffixes.txt" />
-      <EmbeddedResource Include="Dict\suffixes.txt">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </EmbeddedResource>
-      <None Remove="Dict\tags.txt" />
-      <EmbeddedResource Include="Dict\tags.txt">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </EmbeddedResource>
-        <None Remove="Dict\tag_groups.txt" />
-        <EmbeddedResource Include="Dict\tag_groups.txt">
+        <None Remove="Dict\paradigms.txt" />
+        <EmbeddedResource Include="Dict\paradigms.txt">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <None Remove="Dict\prefixes.txt" />
+        <EmbeddedResource Include="Dict\prefixes.txt">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <None Remove="Dict\prepositions.txt" />
+        <EmbeddedResource Include="Dict\prepositions.txt">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <None Remove="Dict\suffixes.txt" />
+        <EmbeddedResource Include="Dict\suffixes.txt">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <None Remove="Dict\tags.txt" />
+        <EmbeddedResource Include="Dict\tags.txt">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <None Remove="Dict\grammemes.txt" />
+        <EmbeddedResource Include="Dict\grammemes.txt">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </EmbeddedResource>
         <None Remove="Dict\dict_multiple.bin" />
         <EmbeddedResource Include="Dict\dict_multiple.bin">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </EmbeddedResource>
         <None Remove="Dict\dict_single.bin" />
         <EmbeddedResource Include="Dict\dict_single.bin">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </EmbeddedResource>
         <None Remove="Dict\words.txt" />
         <EmbeddedResource Include="Dict\words.txt">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </EmbeddedResource>
     </ItemGroup>
 

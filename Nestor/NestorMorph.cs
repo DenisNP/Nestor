@@ -12,9 +12,9 @@ namespace Nestor
     {
         private Dawg<int> _dawgSingle;
         private Dawg<int[]> _dawgMulti;
-        private static readonly HashSet<string> Prepositions = new HashSet<string>();
-        private static readonly Storage Storage = new Storage();
-        private static readonly List<ushort[]> Paradigms = new List<ushort[]>();
+        private readonly HashSet<string> _prepositions = new HashSet<string>();
+        private readonly Storage _storage = new Storage();
+        private readonly List<ushort[]> _paradigms = new List<ushort[]>();
 
         public NestorMorph()
         {
@@ -70,7 +70,7 @@ namespace Nestor
                     Stem = wordForm,
                     ParadigmId = 0
                 };
-                return new []{ new Word(raw, Storage, Paradigms) };
+                return new []{ new Word(raw, _storage, _paradigms) };
             }
 
             return wordIds.Select(WordById).ToArray();
@@ -102,7 +102,7 @@ namespace Nestor
             var tokens = Regex.Split(s.ToLower(), regex)
                 .Select(t => t.Trim().Trim('-'))
                 .Where(t => t != "")
-                .Where(t => !options.HasFlag(MorphOption.RemovePrepositions) || !Prepositions.Contains(t))
+                .Where(t => !options.HasFlag(MorphOption.RemovePrepositions) || !_prepositions.Contains(t))
                 .Where(t => !options.HasFlag(MorphOption.RemoveNonExistent) || WordExists(t));
 
             return options.HasFlag(MorphOption.Distinct)
@@ -158,8 +158,8 @@ namespace Nestor
         /// <returns>Word object</returns>
         private Word WordById(int id)
         {
-            var wordRaw = Storage.GetWord(id);
-            return new Word(wordRaw, Storage, Paradigms);
+            var wordRaw = _storage.GetWord(id);
+            return new Word(wordRaw, _storage, _paradigms);
         }
     }
 
