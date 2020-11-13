@@ -25,7 +25,7 @@ namespace Nestor.DictBuilder
         
         public int AddTag(string tag)
         {
-            return Utils.ComplexAdd(_tagsDict, Tags, tag, x => x) + 1;
+            return Utils.ComplexAdd(_tagsDict, Grammemes, tag, x => x) + 1;
         }
 
         public int[] AddTags(string[] tags)
@@ -36,7 +36,7 @@ namespace Nestor.DictBuilder
         public int AddTagGroup(string[] tags)
         {
             var tagIds = AddTags(tags).Select(x => (byte)x).ToArray();
-            return Utils.ComplexAdd(_tagGroupsDict, TagGroups, tagIds, x => string.Join(" ", x)) + 1;
+            return Utils.ComplexAdd(_tagGroupsDict, Tags, tagIds, x => string.Join(" ", x)) + 1;
         }
 
         public int AddWord(WordRaw w)

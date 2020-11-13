@@ -8,8 +8,8 @@ namespace Nestor.Data
     {
         protected readonly List<string> Prefixes = new List<string>();
         protected readonly List<string> Suffixes = new List<string>();
-        protected readonly List<string> Tags = new List<string>();
-        protected readonly List<byte[]> TagGroups = new List<byte[]>();
+        protected readonly List<string> Grammemes = new List<string>();
+        protected readonly List<byte[]> Tags = new List<byte[]>();
         protected readonly List<WordRaw> Words = new List<WordRaw>();
         
         protected readonly Dictionary<string, Pos> PartsOfSpeech = new Dictionary<string, Pos>();
@@ -18,7 +18,7 @@ namespace Nestor.Data
         protected readonly Dictionary<string, Case> Cases = new Dictionary<string, Case>();
         protected readonly Dictionary<string, Tense> Tenses = new Dictionary<string, Tense>();
         protected readonly Dictionary<string, Person> Persons = new Dictionary<string, Person>();
-        private readonly TagMapper _tagMapper = new TagMapper();
+        private readonly GrammemeMapper _grammemeMapper = new GrammemeMapper();
 
         public string GetPrefix(int id)
         {
@@ -30,14 +30,14 @@ namespace Nestor.Data
             return Suffixes.GetOrEmpty(id);
         }
 
-        public string GetTag(int id)
+        public string GetGrammeme(int id)
         {
-            return Tags.GetOrEmpty(id);
+            return Grammemes.GetOrEmpty(id);
         }
 
-        public byte[] GetTagGroup(int id)
+        public byte[] GetTag(int id)
         {
-            return id == 0 ? new byte[0] : TagGroups[id - 1];
+            return id == 0 ? new byte[0] : Tags[id - 1];
         }
 
         public WordRaw GetWord(int id)
@@ -55,14 +55,14 @@ namespace Nestor.Data
             return Suffixes;
         }
 
-        public List<string> GetTags()
+        public List<string> GetGrammemes()
         {
-            return Tags;
+            return Grammemes;
         }
 
-        public List<byte[]> GetTagGroups()
+        public List<byte[]> GetTags()
         {
-            return TagGroups;
+            return Tags;
         }
 
         public List<WordRaw> GetWords()
@@ -70,51 +70,51 @@ namespace Nestor.Data
             return Words;
         }
 
-        public void ParseTags()
+        public void ParseGrammemes()
         {
-            foreach (var tag in Tags)
+            foreach (var grammeme in Grammemes)
             {
-                AddToDictionary(tag, _tagMapper.GetPos(tag), PartsOfSpeech);
-                AddToDictionary(tag, _tagMapper.GetGender(tag), Genders);
-                AddToDictionary(tag, _tagMapper.GetNumber(tag), Numbers);
-                AddToDictionary(tag, _tagMapper.GetCase(tag), Cases);
-                AddToDictionary(tag, _tagMapper.GetTense(tag), Tenses);
-                AddToDictionary(tag, _tagMapper.GetPerson(tag), Persons);
+                AddToDictionary(grammeme, _grammemeMapper.GetPos(grammeme), PartsOfSpeech);
+                AddToDictionary(grammeme, _grammemeMapper.GetGender(grammeme), Genders);
+                AddToDictionary(grammeme, _grammemeMapper.GetNumber(grammeme), Numbers);
+                AddToDictionary(grammeme, _grammemeMapper.GetCase(grammeme), Cases);
+                AddToDictionary(grammeme, _grammemeMapper.GetTense(grammeme), Tenses);
+                AddToDictionary(grammeme, _grammemeMapper.GetPerson(grammeme), Persons);
             }
         }
 
-        public Pos PosByTag(string tag)
+        public Pos PosByGrammeme(string grammeme)
         {
-            return PartsOfSpeech.GetValueOrDefault(tag, Pos.None);
+            return PartsOfSpeech.GetValueOrDefault(grammeme, Pos.None);
         }
 
-        public Gender GenderByTag(string tag)
+        public Gender GenderByGrammeme(string grammeme)
         {
-            return Genders.GetValueOrDefault(tag, Gender.None);
+            return Genders.GetValueOrDefault(grammeme, Gender.None);
         }
 
-        public Number NumberByTag(string tag)
+        public Number NumberByGrammeme(string grammeme)
         {
-            return Numbers.GetValueOrDefault(tag, Number.None);
+            return Numbers.GetValueOrDefault(grammeme, Number.None);
         }
 
-        public Case CaseByTag(string tag)
+        public Case CaseByGrammeme(string grammeme)
         {
-            return Cases.GetValueOrDefault(tag, Case.None);
+            return Cases.GetValueOrDefault(grammeme, Case.None);
         }
 
-        public Tense TenseByTag(string tag)
+        public Tense TenseByGrammeme(string grammeme)
         {
-            return Tenses.GetValueOrDefault(tag, Tense.None);
+            return Tenses.GetValueOrDefault(grammeme, Tense.None);
         }
 
-        public Person PersonByTag(string tag)
+        public Person PersonByGrammeme(string grammeme)
         {
-            return Persons.GetValueOrDefault(tag, Person.None);
+            return Persons.GetValueOrDefault(grammeme, Person.None);
         }
 
         private void AddToDictionary<T>(
-            string tag,
+            string grammeme,
             T currentValue,
             Dictionary<string, T> dictionary,
             T defaultValue = default
@@ -122,10 +122,10 @@ namespace Nestor.Data
         {
             if (Equals(currentValue, defaultValue)) return;
             
-            if (dictionary.ContainsKey(tag))
-                throw new InvalidOperationException($"Tag {tag} is already in {nameof(dictionary)} dictionary");
+            if (dictionary.ContainsKey(grammeme))
+                throw new InvalidOperationException($"Grammeme {grammeme} is already in {typeof(T)} dictionary");
                 
-            dictionary.Add(tag, currentValue);
+            dictionary.Add(grammeme, currentValue);
         }
     }
 }
