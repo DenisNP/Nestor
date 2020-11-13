@@ -2,6 +2,17 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageVersion>0.0.1</PackageVersion>
+        <Title>Nestor.Nyms</Title>
+        <Authors>Denis Peshekhonov</Authors>
+        <Description>.NET synonyms and antonyms library for Russian language</Description>
+        <Copyright>Denis Peshekhonov, 2020</Copyright>
+        <PackageLicenseUrl>https://licenses.nuget.org/GPL-3.0-or-later</PackageLicenseUrl>
+        <RepositoryType>GitHub</RepositoryType>
+        <PackageTags>NLP Russian morphology</PackageTags>
+        <PackageProjectUrl>https://github.com/DenisNP/Nestor</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/DenisNP/Nestor</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
