@@ -10,9 +10,9 @@
         <Copyright>Denis Peshekhonov, 2020</Copyright>
         <PackageLicenseUrl>https://licenses.nuget.org/GPL-3.0-or-later</PackageLicenseUrl>
         <RepositoryType>GitHub</RepositoryType>
-        <PackageTags>NLP Russian morphology</PackageTags>
-        <PackageProjectUrl>https://github.com/DenisNP/Nestor</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/DenisNP/Nestor</RepositoryUrl>
+        <PackageTags>NLP Russian morphology synonyms antonyms</PackageTags>
+        <PackageProjectUrl>https://github.com/DenisNP/Nestor/tree/master/Nestor.Nyms</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/DenisNP/Nestor/tree/master/Nestor.Nyms</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
