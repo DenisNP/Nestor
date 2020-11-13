@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nestor.Tests", "Nestor.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nestor.Nyms", "Nestor.Nyms\Nestor.Nyms.csproj", "{C60911CA-BBDD-45BB-BA64-7EBE872EDA2C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nestor.Nyms.Tests", "Nestor.Nyms.Tests\Nestor.Nyms.Tests.csproj", "{90E6376F-6D1F-4F53-B7FE-39E39BEFDA06}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{C60911CA-BBDD-45BB-BA64-7EBE872EDA2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C60911CA-BBDD-45BB-BA64-7EBE872EDA2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C60911CA-BBDD-45BB-BA64-7EBE872EDA2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90E6376F-6D1F-4F53-B7FE-39E39BEFDA06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90E6376F-6D1F-4F53-B7FE-39E39BEFDA06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90E6376F-6D1F-4F53-B7FE-39E39BEFDA06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90E6376F-6D1F-4F53-B7FE-39E39BEFDA06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -36,5 +36,31 @@ namespace Nestor.Nyms
 
             Console.WriteLine($"done, total records: {dictionary.Count}");
         }
+
+        public HashSet<string> Synonyms(string word)
+        {
+            return _synonyms.GetValueOrDefault(word);
+        }
+
+        public HashSet<string> Antonyms(string word)
+        {
+            return _antonyms.GetValueOrDefault(word);
+        }
+
+        public bool AreSynonyms(string first, string second)
+        {
+            var f = Synonyms(first);
+            if (f?.Contains(second) == true) return true;
+            var s = Synonyms(second);
+            return s?.Contains(first) == true;
+        }
+
+        public bool AreAntonyms(string first, string second)
+        {
+            var f = Antonyms(first);
+            if (f?.Contains(second) == true) return true;
+            var s = Antonyms(second);
+            return s?.Contains(first) == true;
+        }
     }
 }
