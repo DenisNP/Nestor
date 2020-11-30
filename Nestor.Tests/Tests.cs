@@ -121,6 +121,18 @@ namespace NestorTests
             Assert.AreEqual("красила", s1.Word);
         }
 
+        [Test]
+        public void TestAccentIndex()
+        {
+            var info = _nMorph.WordInfo("трансформатор");
+            Assert.AreEqual(1, info.Length);
+
+            var first = info.First();
+            var index = first.Lemma.GetAccentIndex();
+            
+            Assert.AreEqual(9, index);
+        }
+
         [TearDown]
         public void Dispose()
         {

@@ -1,5 +1,5 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=158047ee_002D98f9_002D41d4_002D8873_002Ddc5f364c14c5/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from &amp;lt;Nestor.Tests&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=158047ee_002D98f9_002D41d4_002D8873_002Ddc5f364c14c5/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from &amp;lt;Nestor.Tests&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Or&gt;&#xD;
     &lt;Project Location="D:\_DEV\Nestor\Nestor.Tests" Presentation="&amp;lt;Nestor.Tests&amp;gt;" /&gt;&#xD;
     &lt;TestAncestor&gt;&#xD;
@@ -8,8 +8,9 @@
     &lt;/TestAncestor&gt;&#xD;
   &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=36d9c28b_002Dead7_002D47fe_002D839b_002Dea53120a3996/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TestSynonyms" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=36d9c28b_002Dead7_002D47fe_002D839b_002Dea53120a3996/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TestSynonyms" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;NUnit3x::90E6376F-6D1F-4F53-B7FE-39E39BEFDA06::.NETCoreApp,Version=v3.1::Nestor.Nyms.Tests.Tests.TestSynonyms&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::B3774EDE-F4F3-4FC7-B8D6-AD60BDD0AAB1::.NETCoreApp,Version=v3.1::NestorTests.Tests.TestAccentIndex&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

@@ -4,6 +4,8 @@ namespace Nestor.Models
 {
     public class WordForm
     {
+        private const string Vowels = "аоуыэяёюие";
+        
         public string Word { get; }
         public int Accent { get; }
 
@@ -18,6 +20,22 @@ namespace Nestor.Models
             Grammemes = grammemes;
 
             Tag = new Tag(grammemes, storage);
+        }
+
+        public int GetAccentIndex()
+        {
+            if (Accent <= 0) return -1;
+            var k = 0;
+            
+            for (var i = 0; i < Word.Length; i++)
+            {
+                var chr = Word[i];
+                if (Vowels.Contains(chr)) k++;
+
+                if (k == Accent) return i;
+            }
+
+            return -1;
         }
     }
 }
