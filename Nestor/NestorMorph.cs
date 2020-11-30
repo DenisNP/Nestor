@@ -183,6 +183,7 @@ namespace Nestor
         Verb,
         Adjective,
         Adverb,
+        Numeral,
         Participle,
         Transgressive,
         Pronoun,

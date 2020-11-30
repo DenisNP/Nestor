@@ -10,6 +10,7 @@ namespace Nestor.Data
                 "прл" => Pos.Adjective,
                 "гл" => Pos.Verb,
                 "нар" => Pos.Adverb,
+                "числ" => Pos.Numeral,
                 "прч" => Pos.Participle,
                 "дееп" => Pos.Transgressive,
                 "мест" => Pos.Pronoun,
