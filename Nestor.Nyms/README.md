@@ -19,5 +19,5 @@ var areSynonyms = nNyms.AreSynonyms("красивый", "прекрасный");
 HashSet<string> antonyms = nNyms.Antonyms("враг"); // друг
 ```
 ```cs
-var areAntonyms = nNyms.AreSynonyms("большой", "маленький"); // True
+var areAntonyms = nNyms.AreAntonyms("большой", "маленький"); // True
 ```
