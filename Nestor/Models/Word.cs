@@ -55,7 +55,7 @@ namespace Nestor.Models
         )
         {
             var (form, score) = Forms
-                .Select(f => (f, f.Tag.DifferenceFrom(gender, @case, number, tense, person, ignoreNotDefined)))
+                .Select(f => (f, f.Tag.DifferenceFrom(gender, @case, number, tense, person, ignoreNotDefined) + (f.Tag.Pos != Tag.Pos ? 10 : 0)))
                 .MinBy(x => x.Item2);
 
             if (exactMatch && score > 0) return null;
