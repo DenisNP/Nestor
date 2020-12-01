@@ -38,7 +38,25 @@ namespace Nestor.Models
                 }
             }
 
-            Forms = Forms.OrderBy(f => f.Tag.Case == Case.None ? int.MaxValue : (int)f.Tag.Case).ToArray();
+            var lemmaTag = Lemma.Tag;
+
+            Forms = Forms
+                .Select((f, idx) => (f, idx))
+                .OrderBy(x =>
+                {
+                    var (f, idx) = x;
+                    
+                    if (idx == 0) return int.MinValue;
+
+                    var c = (int) f.Tag.Case;
+                    if (c == 0) c = 100;
+                    
+                    if (f.Tag.Pos != lemmaTag.Pos) return c * 1000;
+
+                    return c;
+                })
+                .Select(x => x.f)
+                .ToArray();
         }
 
         public WordForm[] ExactForms(string word)
