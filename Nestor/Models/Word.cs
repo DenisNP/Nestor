@@ -37,6 +37,8 @@ namespace Nestor.Models
                     form.Tag.Gender = Tag.Gender;
                 }
             }
+
+            Forms = Forms.OrderBy(f => f.Tag.Case == Case.None ? int.MaxValue : (int)f.Tag.Case).ToArray();
         }
 
         public WordForm[] ExactForms(string word)
