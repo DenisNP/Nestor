@@ -5,7 +5,7 @@
 * **Информация об ударениях**
 
 # Инициализация библиотеки
-`Install-Package Nestor -Version 0.1.3`
+`Install-Package Nestor -Version 0.2.4`
 ```cs
 using Nestor;
 
