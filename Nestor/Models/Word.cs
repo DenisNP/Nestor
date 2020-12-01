@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nestor.Data;
@@ -16,47 +17,59 @@ namespace Nestor.Models
             Stem = raw.Stem;
             var paradigm = raw.ParadigmId == 0 ? ParadigmHelper.Empty() : paradigms[raw.ParadigmId - 1];
 
-            Forms = new WordForm[paradigm.Length / 4];
-            for (var i = 0; i < Forms.Length; i++)
+            var forms = new WordForm[paradigm.Length / 4];
+            for (var i = 0; i < forms.Length; i++)
             {
-                var tag = storage.GetTag(paradigm[Forms.Length * 3 + i]);
-                Forms[i] = new WordForm
+                var tag = storage.GetTag(paradigm[forms.Length * 3 + i]);
+                forms[i] = new WordForm
                 (
                     GetForm(i, paradigm, Stem, storage),
-                    paradigm[Forms.Length * 2 + i],
+                    paradigm[forms.Length * 2 + i],
                     tag.Select(g => storage.GetGrammeme(g)).ToArray(),
                     storage
                 );
             }
           
             // there is unknown GENDER for plural nouns in dictionary, fix that
-            if (Tag.Pos == Pos.Noun)
+            if (forms[0].Tag.Pos == Pos.Noun)
             {
-                foreach (var form in Forms)
+                foreach (var form in forms)
                 {
-                    form.Tag.Gender = Tag.Gender;
+                    form.Tag.Gender = forms[0].Tag.Gender;
                 }
             }
 
-            var lemmaTag = Lemma.Tag;
-
-            Forms = Forms
-                .Select((f, idx) => (f, idx))
-                .OrderBy(x =>
+            if (forms.Length > 1)
+            {
+                var lemma = forms[0];
+                var formsList = forms.ToList();
+                formsList.RemoveAt(0);
+                
+                // order
+                int PosDifference(WordForm f)
                 {
-                    var (f, idx) = x;
-                    
-                    if (idx == 0) return int.MinValue;
+                    return lemma.Tag.Pos == f.Tag.Pos ? 0 : 1;
+                }
 
-                    var c = (int) f.Tag.Case;
-                    if (c == 0) c = 100;
-                    
-                    if (f.Tag.Pos != lemmaTag.Pos) return c * 1000;
+                int EnumValue<T>(T @enum, T defaultValue = default) where T : Enum
+                {
+                    if (Equals(@enum, defaultValue)) return 100;
+                    return (int)(object)@enum;
+                }
 
-                    return c;
-                })
-                .Select(x => x.f)
-                .ToArray();
+                formsList = formsList
+                    .OrderBy(PosDifference)
+                    .ThenBy(f => EnumValue(f.Tag.Number))
+                    .ThenBy(f => EnumValue(f.Tag.Gender))
+                    .ThenBy(f => EnumValue(f.Tag.Person))
+                    .ThenBy(f => EnumValue(f.Tag.Tense))
+                    .ThenBy(f => EnumValue(f.Tag.Case))
+                    .ToList();
+
+                forms = formsList.Prepend(lemma).ToArray();
+            }
+
+            Forms = forms;
         }
 
         public WordForm[] ExactForms(string word)
