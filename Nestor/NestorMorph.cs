@@ -191,7 +191,8 @@ namespace Nestor
         Conjunction,
         Particle,
         Interjection,
-        Predicative
+        Predicative,
+        Parenthesis
     }
 
     public enum Gender

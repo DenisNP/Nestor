@@ -5,7 +5,7 @@
 * **Информация об ударениях**
 
 # Инициализация библиотеки
-`Install-Package Nestor -Version 0.2.4`
+`Install-Package Nestor -Version 0.2.5`
 ```cs
 using Nestor;
 
@@ -63,6 +63,7 @@ Person Person; // лицо
 |Частица|`Pos.Particle`|
 |Междометие|`Pos.Interjection`|
 |Предикатив|`Pos.Predicative`|
+|Вводное слово|`Pos.Parenthesis`|
 
 \* при нормальной работе слов без части речи не должно быть
 

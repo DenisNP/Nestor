@@ -19,6 +19,7 @@ namespace Nestor.Data
                 "част" => Pos.Particle,
                 "межд" => Pos.Interjection,
                 "предик" => Pos.Predicative,
+                "ввод" => Pos.Parenthesis,
                 _ => Pos.None
             };
         }
