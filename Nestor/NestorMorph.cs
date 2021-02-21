@@ -102,7 +102,7 @@ namespace Nestor
             var tokens = Regex.Split(s.ToLower(), regex)
                 .Select(t => t.Trim().Trim('-'))
                 .Where(t => t != "")
-                .Where(t => !options.HasFlag(MorphOption.RemovePrepositions) || !_prepositions.Contains(t))
+                .Where(t => !options.HasFlag(MorphOption.RemoveServicePos) || !_prepositions.Contains(t))
                 .Where(t => !options.HasFlag(MorphOption.RemoveNonExistent) || WordExists(t));
 
             return options.HasFlag(MorphOption.Distinct)
@@ -150,6 +150,16 @@ namespace Nestor
         {
             return _dawgSingle[wordForm] != 0 || _dawgMulti[wordForm] != null;
         }
+
+        /// <summary>
+        /// Check if word is service part of speech based on internal list of common prepositions, conjunctions and particles
+        /// </summary>
+        /// <param name="word">Single word to check</param>
+        /// <returns>True if this word is from internal list of service parts of speech</returns>
+        public bool IsServicePos(string word)
+        {
+            return _prepositions.Contains(word.ToLower());
+        }
         
         /// <summary>
         /// Get word by id
@@ -167,7 +177,7 @@ namespace Nestor
     public enum MorphOption
     {
         None = 0,
-        RemovePrepositions = 1,
+        RemoveServicePos = 1,
         RemoveNonExistent = 2,
         KeepNumbers = 4,
         KeepLatin = 8,

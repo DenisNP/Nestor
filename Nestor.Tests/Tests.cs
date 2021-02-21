@@ -27,7 +27,7 @@ namespace NestorTests
             Assert.AreEqual(5, tokensNum.Length);
             Assert.AreEqual("140", tokensNum[1]);
 
-            var tokensPrepositions = _nMorph.Tokenize("Под о ш в а", MorphOption.RemovePrepositions);
+            var tokensPrepositions = _nMorph.Tokenize("Под о ш в а", MorphOption.RemoveServicePos);
             Assert.AreEqual(1, tokensPrepositions.Length);
             Assert.AreEqual("ш", tokensPrepositions[0]);
 
@@ -55,6 +55,17 @@ namespace NestorTests
             Assert.True(lemmasFull.Contains("стать"));
             Assert.True(lemmasFull.Contains("округ"));
             Assert.True(lemmasFull.Contains("округа"));
+        }
+
+        [Test]
+        public void TestRemovePrepositions()
+        {
+            const string phrase = "чай с вареньем и мятой в тени";
+            string[] tokens = _nMorph.Tokenize(phrase, MorphOption.RemoveServicePos);
+            
+            Assert.False(tokens.Contains("с"));
+            Assert.False(tokens.Contains("и"));
+            Assert.False(tokens.Contains("в"));
         }
 
         [Test]
