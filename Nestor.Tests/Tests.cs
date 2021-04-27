@@ -60,12 +60,23 @@ namespace NestorTests
         [Test]
         public void TestRemovePrepositions()
         {
-            const string phrase = "чай с вареньем и мятой в тени";
+            const string phrase = "чай с вареньем и мятой в тени со светом";
             string[] tokens = _nMorph.Tokenize(phrase, MorphOption.RemoveServicePos);
-            
+
             Assert.False(tokens.Contains("с"));
+            Assert.False(tokens.Contains("со"));
             Assert.False(tokens.Contains("и"));
             Assert.False(tokens.Contains("в"));
+
+            string[] lemmas = _nMorph.Lemmatize(
+                phrase,
+                MorphOption.RemoveServicePos | MorphOption.InsertAllLemmas | MorphOption.Distinct
+            );
+            
+            Assert.False(lemmas.Contains("с"));
+            Assert.False(lemmas.Contains("со"));
+            Assert.False(lemmas.Contains("и"));
+            Assert.False(lemmas.Contains("в"));
         }
 
         [Test]
