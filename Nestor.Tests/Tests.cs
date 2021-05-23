@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Nestor;
 using NUnit.Framework;
@@ -77,6 +78,19 @@ namespace NestorTests
             Assert.False(lemmas.Contains("со"));
             Assert.False(lemmas.Contains("и"));
             Assert.False(lemmas.Contains("в"));
+        }
+
+        [Test]
+        public void TestMultiAccent()
+        {
+            const string word = "пустынных";
+            var info = _nMorph.WordInfo(word);
+            Assert.AreEqual(1, info.Length);
+
+            var forms = info.First().ExactForms(word);
+            var accents = forms.Select(f => f.Accent).Distinct().ToArray();
+            
+            Assert.AreEqual(2, accents.Length);
         }
 
         [Test]

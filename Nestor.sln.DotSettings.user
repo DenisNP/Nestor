@@ -8,14 +8,14 @@
     &lt;/TestAncestor&gt;&#xD;
   &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=36d9c28b_002Dead7_002D47fe_002D839b_002Dea53120a3996/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TestSynonyms" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=36d9c28b_002Dead7_002D47fe_002D839b_002Dea53120a3996/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TestSynonyms" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;NUnit3x::90E6376F-6D1F-4F53-B7FE-39E39BEFDA06::.NETCoreApp,Version=v3.1::Nestor.Nyms.Tests.Tests.TestSynonyms&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::B3774EDE-F4F3-4FC7-B8D6-AD60BDD0AAB1::.NETCoreApp,Version=v3.1::NestorTests.Tests.TestAccentIndex&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::B3774EDE-F4F3-4FC7-B8D6-AD60BDD0AAB1::.NETCoreApp,Version=v3.1::NestorTests.Tests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d450749c_002Df6e2_002D47ea_002Da18f_002D8a1bad60e887/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TestRemovePrepositions" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d450749c_002Df6e2_002D47ea_002Da18f_002D8a1bad60e887/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TestRemovePrepositions" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;NUnit3x::B3774EDE-F4F3-4FC7-B8D6-AD60BDD0AAB1::.NETCoreApp,Version=v3.1::NestorTests.Tests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;

@@ -135,34 +135,54 @@ namespace Nestor.DictBuilder
                 // extract word form
                 var firstWord = Regex.Replace(lineData[0], "[^а-яё\\-]+", "");
                 var secondWord = Regex.Replace(lineData[2], "[^а-яё\\-']+", "");
+                
+                // multiple accents
+                int[] accentIndexes = secondWord
+                    .Select((c, i) => (c, i))
+                    .Where(x => x.c.ToString() == "'")
+                    .Select(x => x.i)
+                    .ToArray();
 
-                // accent
-                var accent = FindAccent(secondWord);
-                secondWord = secondWord.Replace("'", "");
-
-                // tags
-                var tags = lineData[1].Trim().Split(" ");
-
-                // if second form is different from first one
-                if (secondWord != firstWord)
+                if (accentIndexes.Length == 0)
+                    accentIndexes = new[] {-1};
+                
+                foreach (int accentIndex in accentIndexes)
                 {
-                    // if it is just 'ё' letter
-                    if (secondWord.Replace("ё", "е") == firstWord)
+                    // create word with only one current accent
+                    var secondSubword = accentIndex == -1
+                        ? secondWord
+                        : secondWord[..accentIndex].Replace("'", "") + "'" + secondWord[(accentIndex + 1)..].Replace("'", "");
+                    
+                    // accent
+                    var accent = FindAccent(secondSubword);
+                    secondSubword = secondSubword.Replace("'", "");
+
+                    // tags
+                    var tags = lineData[1].Trim().Split(" ");
+
+                    // if second form is different from first one
+                    if (secondSubword != firstWord)
                     {
-                        // add to result list
-                        result.Add((secondWord, tags, accent, firstWord));
+                        // if it is just 'ё' letter
+                        if (secondSubword.Replace("ё", "е") == firstWord)
+                        {
+                            // add to result list
+                            result.Add((secondSubword, tags, accent, firstWord));
+                        }
+                        else
+                        {
+                            // other types
+                            result.Add((firstWord, tags, accent, secondSubword));
+                        }
                     }
                     else
                     {
-                        // other types
-                        result.Add((firstWord, tags, accent, secondWord));
+                        // just add result
+                        result.Add((firstWord, tags, accent, secondSubword));
                     }
                 }
-                else
-                {
-                    // just add result
-                    result.Add((firstWord, tags, accent, secondWord));
-                }
+
+                
             }
 
             return result.ToArray();
