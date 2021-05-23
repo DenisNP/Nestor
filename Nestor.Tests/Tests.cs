@@ -92,6 +92,20 @@ namespace NestorTests
             
             Assert.AreEqual(2, accents.Length);
         }
+        
+        [Test]
+        public void TestAbsentMainForm()
+        {
+            const string word = "некому";
+            var info = _nMorph.WordInfo(word);
+            Assert.AreEqual(1, info.Length);
+
+            var forms = info[0].ExactForms(word);
+            Assert.AreEqual(1, forms.Length);
+
+            var form = forms[0];
+            Assert.AreEqual(1, form.Accent);
+        }
 
         [Test]
         public void TestWordInfo()

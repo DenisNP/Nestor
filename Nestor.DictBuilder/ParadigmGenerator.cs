@@ -18,6 +18,12 @@ namespace Nestor.DictBuilder
         public static (ushort[] paradigm, string Stem) Generate(List<string> lines, HashedStorage storage, out HashSet<string> altForms)
         {
             var forms = ExtractForms(lines);
+            if (forms.Length == 0)
+            {
+                altForms = null;
+                return (new ushort[0], null);
+            }
+            
             var stem = FindStem(forms.Select(f => f.word).ToList());
             altForms = new HashSet<string>();
             
@@ -131,6 +137,10 @@ namespace Nestor.DictBuilder
             foreach (var line in lines)
             {
                 var lineData = line.Split("|");
+                
+                // skip forms with spaces
+                if (lineData[0].Trim().Contains(" ")) 
+                    continue;
 
                 // extract word form
                 var firstWord = Regex.Replace(lineData[0], "[^а-яё\\-]+", "");

@@ -113,15 +113,17 @@ namespace Nestor.DictBuilder
             var lemmaLine = lines.First().Split("|");
             if (
                 lemmaLine.Length == 0
-                || lemmaLine[0].Trim().Contains(" ")
+                // || lemmaLine[0].Trim().Contains(" ")
                 || Regex.Match(lemmaLine[0], "[a-z]+").Success
             )
             {
-                // dont load empty words, words with space and words with english letters
+                // dont load empty words and words with english letters
                 return;
             }
             
             var (paradigm, stem) = ParadigmGenerator.Generate(lines, _storage, out var altForms);
+            if (stem == null)
+                return;
 
             // assign paradigm identifier
             var paradigmId = Utils.ComplexAdd(_paradigmsByHash, _paradigms, paradigm, ParadigmHelper.ToString) + 1;
