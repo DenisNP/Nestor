@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>0.0.2</PackageVersion>
+        <PackageVersion>0.0.3</PackageVersion>
         <Title>Nestor.Poetry</Title>
         <Authors>Denis Peshekhonov</Authors>
         <Description>.NET poetic library for Russian language</Description>
@@ -13,9 +13,11 @@
         <PackageTags>NLP Russian morphology poetry foot rhyme</PackageTags>
         <PackageProjectUrl>https://github.com/DenisNP/Nestor/tree/master/Nestor.Poetry</PackageProjectUrl>
         <RepositoryUrl>https://github.com/DenisNP/Nestor/tree/master/Nestor.Poetry</RepositoryUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
     
     <ItemGroup>
         <ProjectReference Include="..\Nestor\Nestor.csproj" />
+        <None Include="README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 </Project>
