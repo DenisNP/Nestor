@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>0.0.1</PackageVersion>
+        <PackageVersion>0.0.2</PackageVersion>
         <Title>Nestor.Nyms</Title>
         <Authors>Denis Peshekhonov</Authors>
         <Description>.NET synonyms and antonyms library for Russian language</Description>
@@ -16,12 +16,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Update="Dict\antonyms.txt">
+      <None Remove="Dict\antonyms.txt" />
+      <EmbeddedResource Include="Dict\antonyms.txt">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="Dict\synonyms.txt">
+      </EmbeddedResource>
+      <None Remove="Dict\synonyms.txt" />
+      <EmbeddedResource Include="Dict\synonyms.txt">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
+      </EmbeddedResource>
+      <None Include="README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
 </Project>

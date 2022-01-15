@@ -25,5 +25,6 @@
     &lt;TestId&gt;NUnit3x::BDA342A1-6986-499E-AEC8-F60544AC1572::net5.0::Nestor.Poetry.Tests.FootAnalyzerTests.AmphibrachiumlTests&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::BDA342A1-6986-499E-AEC8-F60544AC1572::net5.0::Nestor.Poetry.Tests.FootAnalyzerTests.AnapestTests&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::BDA342A1-6986-499E-AEC8-F60544AC1572::net5.0::Nestor.Poetry.Tests.FootAnalyzerTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::90E6376F-6D1F-4F53-B7FE-39E39BEFDA06::.NETCoreApp,Version=v3.1::Nestor.Nyms.Tests.Tests.TestSynonyms&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

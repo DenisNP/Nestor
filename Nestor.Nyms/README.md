@@ -1,23 +1,23 @@
 **Nestor.Nyms** — библиотека для быстрого получения синонимов и антонимов к словам. На текущий момент демонстрационная версия, поддерживает только леммы слов.
 
 ## Инициализация
-`Install-Package Nestor.Nyms -Version 0.0.1`
-```cs
+`Install-Package Nestor.Nyms -Version 0.0.2`
+```c#
 var nNyms = new NestorNyms();
 ```
 
 ## Синонимы
-```cs
+```c#
 HashSet<string> synonyms = nNyms.Synonyms("враг"); // неприятель, противник, ....
 ```
-```cs
+```c#
 var areSynonyms = nNyms.AreSynonyms("красивый", "прекрасный"); // True
 ```
 
 ## Антонимы
-```cs
+```c#
 HashSet<string> antonyms = nNyms.Antonyms("враг"); // друг
 ```
-```cs
+```c#
 var areAntonyms = nNyms.AreAntonyms("большой", "маленький"); // True
 ```

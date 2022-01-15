@@ -1,3 +1,4 @@
+using System;
 using NUnit.Framework;
 
 namespace Nestor.Nyms.Tests
@@ -15,9 +16,9 @@ namespace Nestor.Nyms.Tests
         [Test]
         public void TestSynonyms()
         {
-            const string word = "враг";
+            const string word = "рыболов";
             var s = _nNyms.Synonyms(word);
-            
+            Console.WriteLine(s.Count);
             Assert.IsTrue(s.Contains("противник"));
 
             var areSynonyms = _nNyms.AreSynonyms("красивый", "прекрасный");

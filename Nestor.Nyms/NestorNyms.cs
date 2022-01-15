@@ -21,15 +21,15 @@ namespace Nestor.Nyms
         {
             Console.Write($"Loading {fileName}... ");
             
-            foreach (var line in File.ReadLines(fileName))
+            foreach (string line in File.ReadLines(fileName))
             {
                 if (string.IsNullOrEmpty(line)) continue;
 
-                var data = line.Split(";");
+                string[] data = line.Split(";");
                 if (data.Length != 2) continue;
 
-                var word = data[0];
-                var otherWords = data[1].Split("|").ToHashSet();
+                string word = data[0];
+                HashSet<string> otherWords = data[1].Split("|").ToHashSet();
                 
                 dictionary.Add(word, otherWords);
             }
@@ -49,17 +49,17 @@ namespace Nestor.Nyms
 
         public bool AreSynonyms(string first, string second)
         {
-            var f = Synonyms(first);
+            HashSet<string> f = Synonyms(first);
             if (f?.Contains(second) == true) return true;
-            var s = Synonyms(second);
+            HashSet<string> s = Synonyms(second);
             return s?.Contains(first) == true;
         }
 
         public bool AreAntonyms(string first, string second)
         {
-            var f = Antonyms(first);
+            HashSet<string> f = Antonyms(first);
             if (f?.Contains(second) == true) return true;
-            var s = Antonyms(second);
+            HashSet<string> s = Antonyms(second);
             return s?.Contains(first) == true;
         }
     }
