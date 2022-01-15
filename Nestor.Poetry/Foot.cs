@@ -60,4 +60,11 @@ namespace Nestor.Poetry
         Amphibrachium,
         Anapest
     }
+    
+    public enum StressType
+    {
+        StrictlyUnstressed,
+        CanBeStressed,
+        StrictlyStressed,
+    }
 }
