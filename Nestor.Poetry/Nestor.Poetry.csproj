@@ -2,6 +2,17 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageVersion>0.0.1</PackageVersion>
+        <Title>Nestor.Poetry</Title>
+        <Authors>Denis Peshekhonov</Authors>
+        <Description>.NET poetic library for Russian language</Description>
+        <Copyright>Denis Peshekhonov, 2022</Copyright>
+        <PackageLicenseUrl>https://licenses.nuget.org/GPL-3.0-or-later</PackageLicenseUrl>
+        <RepositoryType>GitHub</RepositoryType>
+        <PackageTags>NLP Russian morphology poetry foot rhyme</PackageTags>
+        <PackageProjectUrl>https://github.com/DenisNP/Nestor/tree/master/Nestor.Poetry</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/DenisNP/Nestor/tree/master/Nestor.Poetry</RepositoryUrl>
     </PropertyGroup>
     
     <ItemGroup>

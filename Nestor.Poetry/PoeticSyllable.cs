@@ -15,8 +15,8 @@
 
     public enum StressType
     {
+        StrictlyUnstressed,
         CanBeStressed,
         StrictlyStressed,
-        StrictlyUnstressed
     }
 }

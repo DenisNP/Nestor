@@ -8,10 +8,120 @@ namespace Nestor.Poetry
     public class FootAnalyser
     {
         private readonly NestorMorph _nestor;
+        private const int WordToMaskMismatchPenalty = 5;
+        private const int MaskToWordMismatchPenalty = 2;
+        private const int LastMismatchPenalty = 1;
 
         public FootAnalyser(NestorMorph nestor = null)
         {
             _nestor = nestor ?? new NestorMorph();
+        }
+        
+        /// <summary>
+        /// Find best matching foot for entire poem
+        /// </summary>
+        /// <param name="poem">String contains lines of poem separated by newline character</param>
+        /// <returns>Best foot matched</returns>
+        public Foot FindBestFootByPoem(string poem)
+        {
+            IEnumerable<string> lines = poem.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None)
+                .Where(l => !string.IsNullOrEmpty(l.Trim()));
+            
+            var distances = new Dictionary<Foot, int>();
+            foreach (string line in lines)
+            {
+                (Foot foot, int distance)[] result = ScoreAllFootsByLine(line);
+                foreach ((Foot foot, int distance) in result)
+                {
+                    if (!distances.ContainsKey(foot))
+                    {
+                        distances.Add(foot, distance);
+                    }
+                    else
+                    {
+                        distances[foot] += distance;
+                    }
+                }
+            }
+            
+            // sort result and return
+            KeyValuePair<Foot, int> best = distances.OrderBy(d => d.Value).First();
+            return best.Key;
+        }
+
+        /// <summary>
+        /// Find best matching foot for current line
+        /// </summary>
+        /// <param name="line">String contains single poem line</param>
+        /// <param name="distance">Distance to foot found, less is better</param>
+        /// <returns>Best foot matched</returns>
+        public Foot FindBestFootByLine(string line, out int distance)
+        {
+            (Foot foot, int distance)[] allFoots = ScoreAllFootsByLine(line);
+            distance = allFoots.First().distance;
+            return allFoots.First().foot;
+        }
+
+        /// <summary>
+        /// Score all basic foots by distance to current line, less distance is better
+        /// </summary>
+        /// <param name="line">String contains single poem line</param>
+        /// <returns>Array af all foots with distances</returns>
+        public (Foot foot, int distance)[] ScoreAllFootsByLine(string line)
+        {
+            string[] tokens = _nestor.Tokenize(line, MorphOption.RemoveHyphen);
+            StressType[] lineStresses = tokens.SelectMany(GetPoeticStresses).ToArray();
+            
+            // score all foots foot
+            var result = new List<(Foot foot, int distance)>();
+            foreach (FootType footType in Enum.GetValues<FootType>())
+            {
+                if (footType == FootType.Unknown) continue;
+                var foot = new Foot(footType);
+                result.Add((foot, DistanceToFoot(foot, lineStresses)));
+            }
+
+            return result.OrderBy(r => r.distance).ToArray();
+        }
+
+        /// <summary>
+        /// Calculate distance between line stresses and foot stresses
+        /// </summary>
+        /// <param name="foot">Current foot</param>
+        /// <param name="lineStresses">Current line stresses</param>
+        /// <returns>Distance, less is better</returns>
+        public int DistanceToFoot(Foot foot, IList<StressType> lineStresses)
+        {
+            StressType[] mask = foot.GetMaskOfLength(lineStresses.Count);
+            var dist = 0;
+            for (var i = 0; i < mask.Length; i++)
+            {
+                StressType lineStress = lineStresses[i];
+                StressType maskStress = mask[i];
+                bool isLastVowel = i == mask.Length - 1;
+                
+                // if line vowel can be stressed or not, this is zero distance to mask
+                // otherwise:
+                if (lineStress != StressType.CanBeStressed)
+                {
+                    switch (lineStress)
+                    {
+                        // mask is strictly unstressed when line vowel is not, this is a big penalty
+                        case StressType.StrictlyStressed when maskStress == StressType.StrictlyUnstressed:
+                            dist += WordToMaskMismatchPenalty + (isLastVowel ? LastMismatchPenalty : 0);
+                            break;
+                        // mask can be stressed when line vowel in unstressed, light penalty
+                        case StressType.StrictlyUnstressed when maskStress == StressType.CanBeStressed:
+                            dist += MaskToWordMismatchPenalty + (isLastVowel ? LastMismatchPenalty : 0);
+                            break;
+                    }
+                    
+                    // when line vowel is strictly stressed and mask can be stressed, there is no penalty
+                    // when line vowel and mask both strictly unstressed, there is no penalty too
+                }
+            }
+
+            return dist;
         }
         
         /// <summary>
@@ -29,7 +139,7 @@ namespace Nestor.Poetry
                 return Array.Empty<StressType>();
             }
 
-                // with one vowel return single fuzzy stress
+            // with one vowel return single fuzzy stress
             // in poetry word with one syllable can be both stressed and unstressed
             if (vCount == 1)
             {
