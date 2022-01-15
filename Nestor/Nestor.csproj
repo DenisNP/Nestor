@@ -57,9 +57,7 @@
         <EmbeddedResource Include="Dict\words.txt">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </EmbeddedResource>
-        <None Update="README.md">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
+        <None Include="..\README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
 </Project>
