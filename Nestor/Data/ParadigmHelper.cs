@@ -11,14 +11,14 @@ namespace Nestor.Data
 
         public static ushort[] FromRules(List<MorphRule> rules)
         {
-            var len = rules.Count;
+            int len = rules.Count;
             var p = new ushort[len * 4];
             for (var i = 0; i < rules.Count; i++)
             {
-                var rule = rules[i];
+                MorphRule rule = rules[i];
                 p[i] = rule.Prefix;
                 p[len + i] = rule.Suffix;
-                p[len * 2 + i] = rule.Accent;
+                p[len * 2 + i] = rule.Stress;
                 p[len * 3 + i] = rule.TagGroup;
             }
 
@@ -35,7 +35,7 @@ namespace Nestor.Data
     {
         public ushort Prefix;
         public ushort Suffix;
-        public ushort Accent;
+        public ushort Stress;
         public ushort TagGroup;
     }
 }

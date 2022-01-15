@@ -18,5 +18,6 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d450749c_002Df6e2_002D47ea_002Da18f_002D8a1bad60e887/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TestRemovePrepositions" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;NUnit3x::B3774EDE-F4F3-4FC7-B8D6-AD60BDD0AAB1::.NETCoreApp,Version=v3.1::NestorTests.Tests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::BDA342A1-6986-499E-AEC8-F60544AC1572::net5.0::Nestor.Poetry.Tests.FootAnalyzerTests.GetStressesTest&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

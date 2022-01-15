@@ -15,6 +15,7 @@ namespace Nestor
         private readonly HashSet<string> _prepositions = new HashSet<string>();
         private readonly Storage _storage = new Storage();
         private readonly List<ushort[]> _paradigms = new List<ushort[]>();
+        private readonly HashSet<string> _vowels = new HashSet<string> {"а", "о", "у", "ы", "э", "я", "ё", "ю", "и", "е"};
 
         public NestorMorph()
         {
@@ -45,13 +46,13 @@ namespace Nestor
         /// <returns>List of all words from its form</returns>
         public Word[] WordInfo(string wordForm, out string cleanWord, MorphOption options = MorphOption.None)
         {
-            var wForm = options != MorphOption.None ? Clean(wordForm, options) : wordForm;
+            string wForm = options != MorphOption.None ? Clean(wordForm, options) : wordForm;
             cleanWord = wordForm;
             int[] wordIds = null;
-            var single = _dawgSingle[wForm];
+            int single = _dawgSingle[wForm];
             if (single == 0)
             {
-                var multiple = _dawgMulti[wForm];
+                int[] multiple = _dawgMulti[wForm];
                 if (multiple != null)
                 {
                     wordIds = multiple;
@@ -70,7 +71,7 @@ namespace Nestor
                     Stem = wordForm,
                     ParadigmId = 0
                 };
-                return new []{ new Word(raw, _storage, _paradigms) };
+                return new []{ new Word(raw, _storage, _paradigms, _vowels) };
             }
 
             return wordIds.Select(WordById).ToArray();
@@ -129,10 +130,10 @@ namespace Nestor
         /// <returns>Array of lemmas</returns>
         public string[] Lemmatize(string s, MorphOption options = MorphOption.None)
         {
-            var tokens = Tokenize(s, options);
-            var words = tokens.Select(t => WordInfo(t));
+            string[] tokens = Tokenize(s, options);
+            IEnumerable<Word[]> words = tokens.Select(t => WordInfo(t));
 
-            var selectedWords = words
+            IEnumerable<string> selectedWords = words
                 .SelectMany(w => options.HasFlag(MorphOption.InsertAllLemmas) ? w : new[] {w[0]})
                 .Select(w => w.Lemma.Word);
 
@@ -160,6 +161,31 @@ namespace Nestor
         {
             return _prepositions.Contains(word.ToLower());
         }
+
+        /// <summary>
+        /// Check if letter is a vowel or not
+        /// </summary>
+        /// <param name="letter">String contains single letter</param>
+        /// <returns>True if letter is vowel</returns>
+        public bool IsVowel(string letter)
+        {
+            if (letter.Length != 1)
+            {
+                throw new ArgumentException("Letter length must be equal to 1");
+            }
+            
+            return _vowels.Contains(letter.ToLower());
+        }
+
+        /// <summary>
+        /// Check if letter is a vowel or not
+        /// </summary>
+        /// <param name="c">Char contains single letter</param>
+        /// <returns>True if letter is vowel</returns>
+        public bool IsVowel(char c)
+        {
+            return IsVowel(c.ToString());
+        }
         
         /// <summary>
         /// Get word by id
@@ -168,8 +194,8 @@ namespace Nestor
         /// <returns>Word object</returns>
         private Word WordById(int id)
         {
-            var wordRaw = _storage.GetWord(id);
-            return new Word(wordRaw, _storage, _paradigms);
+            WordRaw wordRaw = _storage.GetWord(id);
+            return new Word(wordRaw, _storage, _paradigms, _vowels);
         }
     }
 

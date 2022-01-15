@@ -5,9 +5,9 @@ namespace Nestor.Models
         public string Stem { get; set; }
         public short ParadigmId { get; set; }
 
-        public WordRaw(string rawString)
+        internal WordRaw(string rawString)
         {
-            var data = rawString.Split("|");
+            string[] data = rawString.Split("|");
             Stem = data[0];
             ParadigmId = short.Parse(data[1]);
         }

@@ -1,8 +1,8 @@
 namespace Nestor.Data
 {
-    public class GrammemeMapper
+    public static class GrammemeMapper
     {
-        public Pos GetPos(string grammeme)
+        public static Pos GetPos(string grammeme)
         {
             return grammeme switch
             {
@@ -24,7 +24,7 @@ namespace Nestor.Data
             };
         }
 
-        public Gender GetGender(string grammeme)
+        public static Gender GetGender(string grammeme)
         {
             return grammeme switch
             {
@@ -36,7 +36,7 @@ namespace Nestor.Data
             };
         }
 
-        public Number GetNumber(string grammeme)
+        public static Number GetNumber(string grammeme)
         {
             return grammeme switch
             {
@@ -46,7 +46,7 @@ namespace Nestor.Data
             };
         }
 
-        public Case GetCase(string grammeme)
+        public static Case GetCase(string grammeme)
         {
             return grammeme switch
             {
@@ -63,7 +63,7 @@ namespace Nestor.Data
             };
         }
 
-        public Tense GetTense(string grammeme)
+        public static Tense GetTense(string grammeme)
         {
             return grammeme switch
             {
@@ -75,7 +75,7 @@ namespace Nestor.Data
             };
         }
 
-        public Person GetPerson(string grammeme)
+        public static Person GetPerson(string grammeme)
         {
             return grammeme switch
             {

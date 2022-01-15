@@ -11,7 +11,7 @@ namespace Nestor.Models
         public Tense Tense { get; } = Tense.None;
         public Person Person { get; } = Person.None;
 
-        public Tag(string[] grammemes, Storage storage)
+        internal Tag(string[] grammemes, Storage storage)
         {
             if (grammemes.Length == 0) return;
             
@@ -21,7 +21,7 @@ namespace Nestor.Models
             // other
             for (var i = 1; i < grammemes.Length; i++)
             {
-                var tag = grammemes[i];
+                string tag = grammemes[i];
                 if (Gender == Gender.None) Gender = storage.GenderByGrammeme(tag);
                 if (Number == Number.None) Number = storage.NumberByGrammeme(tag);
                 if (Case == Case.None) Case = storage.CaseByGrammeme(tag);

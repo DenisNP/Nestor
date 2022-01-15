@@ -38,7 +38,7 @@ namespace Nestor.DictBuilder
                 {
                     Prefix = (ushort)storage.AddPrefix(prefix),
                     Suffix = (ushort)storage.AddSuffix(suffix),
-                    Accent = (byte)accent,
+                    Stress = (byte)accent,
                     TagGroup = (ushort)storage.AddTagGroup(tags)
                 });
 
@@ -56,7 +56,7 @@ namespace Nestor.DictBuilder
                 .OrderBy(r => r.Prefix)
                 .ThenBy(r => r.Suffix)
                 .ThenBy(r => r.TagGroup)
-                .ThenBy(r => r.Accent)
+                .ThenBy(r => r.Stress)
                 .ToList();
             
             // return lemma

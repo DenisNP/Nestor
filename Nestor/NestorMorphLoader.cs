@@ -10,7 +10,7 @@ namespace Nestor
     {
         private void LoadAdditional()
         {
-            Console.WriteLine("Nestor loading additional data...");
+            Console.WriteLine("Nestor is loading additional data...");
             
             // prepositions
             var prepositions = new List<string>();
@@ -31,7 +31,7 @@ namespace Nestor
 
             var tagsRaw = new List<string>();
             Utils.LoadFileToList(tagsRaw, "tags.txt");
-            foreach (var tagRaw in tagsRaw)
+            foreach (string tagRaw in tagsRaw)
             {
                 _storage.GetTags().Add(tagRaw.Split(" ").Select(byte.Parse).ToArray());
             }
@@ -46,7 +46,7 @@ namespace Nestor
             var paradigmsRaw = new List<string>();
             Utils.LoadFileToList(paradigmsRaw, "paradigms.txt");
 
-            foreach (var paradigm in paradigmsRaw)
+            foreach (string paradigm in paradigmsRaw)
             {
                 _paradigms.Add(paradigm.Split(" ").Select(ushort.Parse).ToArray());
             }
@@ -59,7 +59,7 @@ namespace Nestor
             var wordsRaw = new List<string>();
             Utils.LoadFileToList(wordsRaw, "words.txt");
 
-            foreach (var wordRaw in wordsRaw)
+            foreach (string wordRaw in wordsRaw)
             {
                 _storage.GetWords().Add(new WordRaw(wordRaw));
             }
@@ -69,7 +69,7 @@ namespace Nestor
 
         private void LoadMorphology()
         {
-            Console.Write("Nestor loading morphology...");
+            Console.Write("Nestor is loading morphology...");
 
             _dawgSingle = Dawg<int>.Load(Utils.LoadFile("dict_single.bin"),
                 reader => reader.ReadInt32());
@@ -77,7 +77,7 @@ namespace Nestor
             _dawgMulti = Dawg<int[]>.Load(Utils.LoadFile("dict_multiple.bin"),
                 reader =>
                 {
-                    var str = reader.ReadString();
+                    string str = reader.ReadString();
                     return str.Split(" ").Select(int.Parse).ToArray();
                 });
             

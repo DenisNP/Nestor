@@ -1,38 +1,40 @@
+using System.Collections.Generic;
 using Nestor.Data;
 
 namespace Nestor.Models
 {
     public class WordForm
     {
-        private const string Vowels = "аоуыэяёюие";
-        
         public string Word { get; }
-        public int Accent { get; }
+        public int Stress { get; }
 
         public Tag Tag { get; }
         
         public string[] Grammemes { get; }
+        
+        private readonly HashSet<string> _vowels;
 
-        public WordForm(string word, int accent, string[] grammemes, Storage storage)
+        internal WordForm(string word, int stress, string[] grammemes, Storage storage, HashSet<string> vowels)
         {
+            _vowels = vowels;
             Word = word;
-            Accent = accent;
+            Stress = stress;
             Grammemes = grammemes;
 
             Tag = new Tag(grammemes, storage);
         }
 
-        public int GetAccentIndex()
+        public int GetStressIndex()
         {
-            if (Accent <= 0) return -1;
+            if (Stress <= 0) return -1;
             var k = 0;
             
             for (var i = 0; i < Word.Length; i++)
             {
-                var chr = Word[i];
-                if (Vowels.Contains(chr)) k++;
+                char chr = Word[i];
+                if (_vowels.Contains(chr.ToString())) k++;
 
-                if (k == Accent) return i;
+                if (k == Stress) return i;
             }
 
             return -1;

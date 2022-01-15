@@ -18,7 +18,6 @@ namespace Nestor.Data
         protected readonly Dictionary<string, Case> Cases = new Dictionary<string, Case>();
         protected readonly Dictionary<string, Tense> Tenses = new Dictionary<string, Tense>();
         protected readonly Dictionary<string, Person> Persons = new Dictionary<string, Person>();
-        private readonly GrammemeMapper _grammemeMapper = new GrammemeMapper();
 
         public string GetPrefix(int id)
         {
@@ -37,7 +36,7 @@ namespace Nestor.Data
 
         public byte[] GetTag(int id)
         {
-            return id == 0 ? new byte[0] : Tags[id - 1];
+            return id == 0 ? Array.Empty<byte>() : Tags[id - 1];
         }
 
         public WordRaw GetWord(int id)
@@ -72,14 +71,14 @@ namespace Nestor.Data
 
         public void ParseGrammemes()
         {
-            foreach (var grammeme in Grammemes)
+            foreach (string grammeme in Grammemes)
             {
-                AddToDictionary(grammeme, _grammemeMapper.GetPos(grammeme), PartsOfSpeech);
-                AddToDictionary(grammeme, _grammemeMapper.GetGender(grammeme), Genders);
-                AddToDictionary(grammeme, _grammemeMapper.GetNumber(grammeme), Numbers);
-                AddToDictionary(grammeme, _grammemeMapper.GetCase(grammeme), Cases);
-                AddToDictionary(grammeme, _grammemeMapper.GetTense(grammeme), Tenses);
-                AddToDictionary(grammeme, _grammemeMapper.GetPerson(grammeme), Persons);
+                AddToDictionary(grammeme, GrammemeMapper.GetPos(grammeme), PartsOfSpeech);
+                AddToDictionary(grammeme, GrammemeMapper.GetGender(grammeme), Genders);
+                AddToDictionary(grammeme, GrammemeMapper.GetNumber(grammeme), Numbers);
+                AddToDictionary(grammeme, GrammemeMapper.GetCase(grammeme), Cases);
+                AddToDictionary(grammeme, GrammemeMapper.GetTense(grammeme), Tenses);
+                AddToDictionary(grammeme, GrammemeMapper.GetPerson(grammeme), Persons);
             }
         }
 
