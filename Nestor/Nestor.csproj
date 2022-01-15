@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>0.4.0</PackageVersion>
+        <PackageVersion>0.4.1</PackageVersion>
         <Title>Nestor</Title>
         <Authors>Denis Peshekhonov</Authors>
         <Description>.NET Morphological library for Russian language</Description>
@@ -13,6 +13,7 @@
         <PackageTags>NLP Russian morphology</PackageTags>
         <PackageProjectUrl>https://github.com/DenisNP/Nestor</PackageProjectUrl>
         <RepositoryUrl>https://github.com/DenisNP/Nestor</RepositoryUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -56,6 +57,9 @@
         <EmbeddedResource Include="Dict\words.txt">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </EmbeddedResource>
+        <None Update="README.md">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>
