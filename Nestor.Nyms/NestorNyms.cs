@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 
 namespace Nestor.Nyms
 {
@@ -12,29 +14,45 @@ namespace Nestor.Nyms
         
         public NestorNyms()
         {
-            LoadFileTo("Dict/synonyms.txt", _synonyms);
-            LoadFileTo("Dict/antonyms.txt", _antonyms);
+            LoadFileTo("synonyms.txt", _synonyms);
+            LoadFileTo("antonyms.txt", _antonyms);
             GC.Collect();
         }
 
         private void LoadFileTo(string fileName, Dictionary<string, HashSet<string>> dictionary)
         {
             Console.Write($"Loading {fileName}... ");
-            
-            foreach (string line in File.ReadLines(fileName))
+
+            using StreamReader reader = LoadFile(fileName);
+            string line;
+            while ((line = reader.ReadLine()) != null)
             {
-                if (string.IsNullOrEmpty(line)) continue;
+                if (!string.IsNullOrEmpty(line))
+                {
+                    if (string.IsNullOrEmpty(line)) continue;
 
-                string[] data = line.Split(";");
-                if (data.Length != 2) continue;
+                    string[] data = line.Split(";");
+                    if (data.Length != 2) continue;
 
-                string word = data[0];
-                HashSet<string> otherWords = data[1].Split("|").ToHashSet();
+                    string word = data[0];
+                    HashSet<string> otherWords = data[1].Split("|").ToHashSet();
                 
-                dictionary.Add(word, otherWords);
+                    dictionary.Add(word, otherWords);
+                }
             }
 
             Console.WriteLine($"done, total records: {dictionary.Count}");
+        }
+
+        private StreamReader LoadFile(string fileName)
+        {
+            var assembly = Assembly.GetCallingAssembly();
+            Stream file = assembly.GetManifestResourceStream($"Nestor.Nyms.Dict.{fileName}");
+            if (file == null)
+            {
+                throw new IOException($"Cannot load file {fileName}");
+            }
+            return new StreamReader(file, Encoding.UTF8);
         }
 
         public HashSet<string> Synonyms(string word)
