@@ -12,7 +12,7 @@ namespace Nestor.Models
         public WordForm Lemma => Forms[0];
         public Tag Tag => Lemma.Tag;
 
-        internal Word(WordRaw raw, Storage storage, List<ushort[]> paradigms, HashSet<string> vowels)
+        internal Word(WordRaw raw, Storage storage, List<ushort[]> paradigms)
         {
             Stem = raw.Stem;
             ushort[] paradigm = raw.ParadigmId == 0 ? ParadigmHelper.Empty() : paradigms[raw.ParadigmId - 1];
@@ -26,8 +26,7 @@ namespace Nestor.Models
                     GetForm(i, paradigm, Stem, storage),
                     paradigm[forms.Length * 2 + i],
                     tag.Select(g => storage.GetGrammeme(g)).ToArray(),
-                    storage,
-                    vowels
+                    storage
                 );
             }
           

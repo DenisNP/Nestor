@@ -15,7 +15,8 @@ namespace Nestor
         private readonly HashSet<string> _prepositions = new HashSet<string>();
         private readonly Storage _storage = new Storage();
         private readonly List<ushort[]> _paradigms = new List<ushort[]>();
-        private readonly HashSet<string> _vowels = new HashSet<string> {"а", "о", "у", "ы", "э", "я", "ё", "ю", "и", "е"};
+        private static readonly HashSet<string> Vowels 
+            = new HashSet<string> {"а", "о", "у", "ы", "э", "я", "ё", "ю", "и", "е"};
 
         public NestorMorph()
         {
@@ -71,7 +72,7 @@ namespace Nestor
                     Stem = wordForm,
                     ParadigmId = 0
                 };
-                return new []{ new Word(raw, _storage, _paradigms, _vowels) };
+                return new []{ new Word(raw, _storage, _paradigms) };
             }
 
             return wordIds.Select(WordById).ToArray();
@@ -167,14 +168,14 @@ namespace Nestor
         /// </summary>
         /// <param name="letter">String contains single letter</param>
         /// <returns>True if letter is vowel</returns>
-        public bool IsVowel(string letter)
+        public static bool IsVowel(string letter)
         {
             if (letter.Length != 1)
             {
                 throw new ArgumentException("Letter length must be equal to 1");
             }
             
-            return _vowels.Contains(letter.ToLower());
+            return Vowels.Contains(letter.ToLower());
         }
 
         /// <summary>
@@ -182,7 +183,7 @@ namespace Nestor
         /// </summary>
         /// <param name="c">Char contains single letter</param>
         /// <returns>True if letter is vowel</returns>
-        public bool IsVowel(char c)
+        public static bool IsVowel(char c)
         {
             return IsVowel(c.ToString());
         }
@@ -195,7 +196,23 @@ namespace Nestor
         private Word WordById(int id)
         {
             WordRaw wordRaw = _storage.GetWord(id);
-            return new Word(wordRaw, _storage, _paradigms, _vowels);
+            return new Word(wordRaw, _storage, _paradigms);
+        }
+
+        public static int GetStressIndex(WordForm wordForm)
+        {
+            if (wordForm.Stress <= 0) return -1;
+            var k = 0;
+            
+            for (var i = 0; i < wordForm.Word.Length; i++)
+            {
+                char chr = wordForm.Word[i];
+                if (Vowels.Contains(chr.ToString())) k++;
+
+                if (k == wordForm.Stress) return i;
+            }
+
+            return -1;
         }
     }
 

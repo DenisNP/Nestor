@@ -83,14 +83,14 @@ namespace NestorTests
         [Test]
         public void TestMultiAccent()
         {
-            const string word = "пустынных";
+            const string word = "округа";
             Word[] info = _nMorph.WordInfo(word);
-            Assert.AreEqual(1, info.Length);
+            Assert.GreaterOrEqual(info.Length, 1);
 
-            WordForm[] forms = info.First().ExactForms(word);
-            int[] accents = forms.Select(f => f.Stress).Distinct().ToArray();
+            WordForm[] forms = info.SelectMany(i => i.ExactForms(word)).ToArray();
+            int[] stresses = forms.Select(f => f.Stress).Distinct().OrderBy(x => x).ToArray();
             
-            Assert.AreEqual(2, accents.Length);
+            Assert.AreEqual(3, stresses.Length);
         }
         
         [Test]
@@ -172,13 +172,13 @@ namespace NestorTests
         }
 
         [Test]
-        public void TestAccentIndex()
+        public void TestStressIndex()
         {
             Word[] info = _nMorph.WordInfo("трансформатор");
             Assert.AreEqual(1, info.Length);
 
             Word first = info.First();
-            int index = first.Lemma.GetStressIndex();
+            int index = NestorMorph.GetStressIndex(first.Lemma);
             
             Assert.AreEqual(9, index);
         }

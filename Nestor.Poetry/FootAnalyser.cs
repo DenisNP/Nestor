@@ -131,7 +131,7 @@ namespace Nestor.Poetry
         /// <returns>Array of stresses, each index is a vowel number in the word starting from zero</returns>
         public StressType[] GetPoeticStresses(string word)
         {
-            int vCount = word.Count(l => _nestor.IsVowel(l));
+            int vCount = word.Count(NestorMorph.IsVowel);
             
             // if there are no vowels, return empty array
             if (vCount == 0)

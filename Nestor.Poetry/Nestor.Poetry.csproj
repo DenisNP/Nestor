@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>0.0.3</PackageVersion>
+        <PackageVersion>0.0.4</PackageVersion>
         <Title>Nestor.Poetry</Title>
         <Authors>Denis Peshekhonov</Authors>
         <Description>.NET poetic library for Russian language</Description>
@@ -18,6 +18,6 @@
     
     <ItemGroup>
         <ProjectReference Include="..\Nestor\Nestor.csproj" />
-        <None Include="README.md" Pack="true" PackagePath="\"/>
+        <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 </Project>
