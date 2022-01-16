@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace Nestor.Nyms.Tests
@@ -16,12 +16,11 @@ namespace Nestor.Nyms.Tests
         [Test]
         public void TestSynonyms()
         {
-            const string word = "рыболов";
-            var s = _nNyms.Synonyms(word);
-            Console.WriteLine(s.Count);
+            const string word = "враг";
+            HashSet<string> s = _nNyms.Synonyms(word);
             Assert.IsTrue(s.Contains("противник"));
 
-            var areSynonyms = _nNyms.AreSynonyms("красивый", "прекрасный");
+            bool areSynonyms = _nNyms.AreSynonyms("красивый", "прекрасный");
             Assert.IsTrue(areSynonyms);
         }
 
@@ -29,11 +28,11 @@ namespace Nestor.Nyms.Tests
         public void TestAntonyms()
         {
             const string word = "враг";
-            var s = _nNyms.Antonyms(word);
+            HashSet<string> s = _nNyms.Antonyms(word);
             
             Assert.IsTrue(s.Contains("друг"));
 
-            var areAntonyms = _nNyms.AreAntonyms("большой", "маленький");
+            bool areAntonyms = _nNyms.AreAntonyms("большой", "маленький");
             Assert.IsTrue(areAntonyms);
         }
     }
