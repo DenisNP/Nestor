@@ -29,8 +29,6 @@ namespace Nestor.Nyms
             {
                 if (!string.IsNullOrEmpty(line))
                 {
-                    if (string.IsNullOrEmpty(line)) continue;
-
                     string[] data = line.Split(";");
                     if (data.Length != 2) continue;
 
