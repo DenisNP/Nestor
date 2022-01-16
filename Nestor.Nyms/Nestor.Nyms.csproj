@@ -13,6 +13,7 @@
         <PackageTags>NLP Russian morphology synonyms antonyms</PackageTags>
         <PackageProjectUrl>https://github.com/DenisNP/Nestor/tree/master/Nestor.Nyms</PackageProjectUrl>
         <RepositoryUrl>https://github.com/DenisNP/Nestor/tree/master/Nestor.Nyms</RepositoryUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
