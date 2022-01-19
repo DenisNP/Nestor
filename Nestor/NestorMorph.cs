@@ -199,20 +199,36 @@ namespace Nestor
             return new Word(wordRaw, _storage, _paradigms);
         }
 
-        public static int GetStressIndex(WordForm wordForm)
+        /// <summary>
+        /// Get index of stressed character in word
+        /// </summary>
+        /// <param name="word">String contains word</param>
+        /// <param name="stress">Number of stressed vowel starting from 1</param>
+        /// <returns>Index of stressed character (counting not only vowels) starting from 0, or -1 if stress was not found</returns>
+        public static int GetStressIndex(string word, int stress)
         {
-            if (wordForm.Stress <= 0) return -1;
+            if (stress <= 0) return -1;
             var k = 0;
             
-            for (var i = 0; i < wordForm.Word.Length; i++)
+            for (var i = 0; i < word.Length; i++)
             {
-                char chr = wordForm.Word[i];
+                char chr = word[i];
                 if (Vowels.Contains(chr.ToString())) k++;
 
-                if (k == wordForm.Stress) return i;
+                if (k == stress) return i;
             }
 
             return -1;
+        }
+
+        /// <summary>
+        /// Get index of stressed character in word
+        /// </summary>
+        /// <param name="wordForm">WordForm object provided by Nestor</param>
+        /// <returns>Index of stressed character (counting not only vowels) starting from 0, or -1 if stress was not found</returns>
+        public static int GetStressIndex(WordForm wordForm)
+        {
+            return GetStressIndex(wordForm.Word, wordForm.Stress);
         }
     }
 

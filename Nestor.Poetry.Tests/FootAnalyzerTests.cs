@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using NUnit.Framework;
 
@@ -115,6 +116,18 @@ namespace Nestor.Poetry.Tests
                                 "Поругание счастия есть.";
             foot = _footAnalyser.FindBestFootByPoem(poem);
             Assert.AreEqual(FootType.Anapest, foot.Type);
+        }
+
+        [Test]
+        public void T()
+        {
+            const string line = "У лукоморья дуб зелёный";
+            (Foot foot, int distance)[] foots = _footAnalyser.ScoreAllFootsByLine(line);
+            foreach ((Foot foot, int distance) in foots)
+            {
+                Console.WriteLine("{0} - {1}", foot.Name, distance);
+            }
+            Assert.Pass();
         }
     }
 }

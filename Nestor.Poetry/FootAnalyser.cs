@@ -10,7 +10,6 @@ namespace Nestor.Poetry
         private readonly NestorMorph _nestor;
         private const int WordToMaskMismatchPenalty = 5;
         private const int MaskToWordMismatchPenalty = 2;
-        private const int LastMismatchPenalty = 1;
 
         public FootAnalyser(NestorMorph nestor = null)
         {
@@ -98,7 +97,6 @@ namespace Nestor.Poetry
             {
                 StressType lineStress = lineStresses[i];
                 StressType maskStress = mask[i];
-                bool isLastVowel = i == mask.Length - 1;
                 
                 // if line vowel can be stressed or not, this is zero distance to mask
                 // otherwise:
@@ -108,11 +106,11 @@ namespace Nestor.Poetry
                     {
                         // mask is strictly unstressed when line vowel is not, this is a big penalty
                         case StressType.StrictlyStressed when maskStress == StressType.StrictlyUnstressed:
-                            dist += WordToMaskMismatchPenalty + (isLastVowel ? LastMismatchPenalty : 0);
+                            dist += WordToMaskMismatchPenalty;
                             break;
                         // mask can be stressed when line vowel in unstressed, light penalty
                         case StressType.StrictlyUnstressed when maskStress == StressType.CanBeStressed:
-                            dist += MaskToWordMismatchPenalty + (isLastVowel ? LastMismatchPenalty : 0);
+                            dist += MaskToWordMismatchPenalty;
                             break;
                     }
                     

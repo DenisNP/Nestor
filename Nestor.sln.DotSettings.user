@@ -8,8 +8,14 @@
     &lt;/TestAncestor&gt;&#xD;
   &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=2bb6d393_002D022c_002D452b_002Da51f_002De3d50022eedf/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TestMultiAccent" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;Project Location="D:\_DEV\OTHER\Nestor\Nestor.Tests" Presentation="&amp;lt;Nestor.Tests&amp;gt;" /&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=2bb6d393_002D022c_002D452b_002Da51f_002De3d50022eedf/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TestMultiAccent" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Or&gt;&#xD;
+    &lt;Project Location="D:\_DEV\OTHER\Nestor\Nestor.Tests" Presentation="&amp;lt;Nestor.Tests&amp;gt;" /&gt;&#xD;
+    &lt;ProjectFile&gt;BDA342A1-6986-499E-AEC8-F60544AC1572/f:FootAnalyzerTests.cs&lt;/ProjectFile&gt;&#xD;
+    &lt;TestAncestor&gt;&#xD;
+      &lt;TestId&gt;NUnit3x::BDA342A1-6986-499E-AEC8-F60544AC1572::net5.0::Nestor.Poetry.Tests.RhymeAnalyzerTests.Test&lt;/TestId&gt;&#xD;
+    &lt;/TestAncestor&gt;&#xD;
+  &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=36d9c28b_002Dead7_002D47fe_002D839b_002Dea53120a3996/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TestSynonyms" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
@@ -31,5 +37,12 @@
     &lt;TestId&gt;NUnit3x::BDA342A1-6986-499E-AEC8-F60544AC1572::net5.0::Nestor.Poetry.Tests.FootAnalyzerTests&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::90E6376F-6D1F-4F53-B7FE-39E39BEFDA06::.NETCoreApp,Version=v3.1::Nestor.Nyms.Tests.Tests.TestSynonyms&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::90E6376F-6D1F-4F53-B7FE-39E39BEFDA06::.NETCoreApp,Version=v3.1::Nestor.Nyms.Tests.Tests&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e929df5b_002Daa03_002D423b_002D87a0_002Dd9c239bbac21/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="T" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::BDA342A1-6986-499E-AEC8-F60544AC1572::net5.0::Nestor.Poetry.Tests.FootAnalyzerTests.T&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::BDA342A1-6986-499E-AEC8-F60544AC1572::net5.0::Nestor.Poetry.Tests.RhymeAnalyzerTests.Test&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::BDA342A1-6986-499E-AEC8-F60544AC1572::net5.0::Nestor.Poetry.Tests.RhymeAnalyzerTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
