@@ -222,14 +222,15 @@ namespace Nestor.Poetry
             double leftScore = CompareConsonants(firstTrigram.LeftConsonant, secondTrigram.LeftConsonant);
             double vowelScore = firstTrigram.Vowel == secondTrigram.Vowel ? 1.0 : 0.0;
             double rightScore = CompareConsonants(firstTrigram.RightConsonant, secondTrigram.RightConsonant);
-            bool rightIsNull = string.IsNullOrEmpty(firstTrigram.RightConsonant)
-                               && string.IsNullOrEmpty(secondTrigram.RightConsonant);
+            bool rightIsSilent = firstTrigram.RightIsNull && secondTrigram.RightIsNull
+                                 || firstTrigram.RightIsNull && secondTrigram.RightConsonant == "й"
+                                 || firstTrigram.RightConsonant == "й" && secondTrigram.RightIsNull;
 
             return stressed switch
             {
-                true when rightIsNull => 0.8 * Math.Min(leftScore, vowelScore) + 0.2 * Math.Max(leftScore, vowelScore),
+                true when rightIsSilent => 0.8 * Math.Min(leftScore, vowelScore) + 0.2 * Math.Max(leftScore, vowelScore),
                 true => 0.05 * leftScore + 0.8 * Math.Min(vowelScore, rightScore) + 0.15 * Math.Max(vowelScore, rightScore),
-                false when rightIsNull => 0.9 * leftScore + 0.1 * vowelScore,
+                false when rightIsSilent => 0.9 * leftScore + 0.1 * vowelScore,
                 false => 0.25 * leftScore + 0.05 * vowelScore + 0.7 * rightScore
             };
         }

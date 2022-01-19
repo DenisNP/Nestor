@@ -6,6 +6,8 @@
                               && string.IsNullOrEmpty(Vowel)
                               && string.IsNullOrEmpty(RightConsonant);
 
+        public bool RightIsNull => string.IsNullOrEmpty(RightConsonant);
+
         public override string ToString()
         {
             return $"Trigram[{LeftConsonant}-{Vowel}-{RightConsonant}]";
