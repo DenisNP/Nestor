@@ -231,7 +231,7 @@ namespace Nestor.Poetry
                 true when rightIsSilent => 0.8 * Math.Min(leftScore, vowelScore) + 0.2 * Math.Max(leftScore, vowelScore),
                 true => 0.05 * leftScore + 0.8 * Math.Min(vowelScore, rightScore) + 0.15 * Math.Max(vowelScore, rightScore),
                 false when rightIsSilent => 0.9 * leftScore + 0.1 * vowelScore,
-                false => 0.25 * leftScore + 0.05 * vowelScore + 0.7 * rightScore
+                false => 0.35 * leftScore + 0.05 * vowelScore + 0.6 * rightScore
             };
         }
 
@@ -244,7 +244,7 @@ namespace Nestor.Poetry
 
             if (l1 is null || l2 is null)
             {
-                return 0.2;
+                return 0.3;
             } 
 
             return 0.0;

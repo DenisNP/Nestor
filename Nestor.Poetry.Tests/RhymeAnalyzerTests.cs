@@ -17,7 +17,7 @@ namespace Nestor.Poetry.Tests
         [Test]
         public void Test()
         {
-            double s = _rhymeAnalyzer.ScoreRhyme(new WordWithStress("какие", 2), new WordWithStress("боевые", 3));
+            double s = _rhymeAnalyzer.ScoreRhyme(new WordWithStress("полиглот", 3), new WordWithStress("вертолёт", 3));
             Console.WriteLine(s);
             Assert.Pass();
         }
