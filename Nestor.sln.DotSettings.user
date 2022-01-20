@@ -40,9 +40,12 @@
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e929df5b_002Daa03_002D423b_002D87a0_002Dd9c239bbac21/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="T" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::BDA342A1-6986-499E-AEC8-F60544AC1572::net5.0::Nestor.Poetry.Tests.FootAnalyzerTests.T&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::BDA342A1-6986-499E-AEC8-F60544AC1572::net5.0::Nestor.Poetry.Tests.RhymeAnalyzerTests.Test&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::BDA342A1-6986-499E-AEC8-F60544AC1572::net5.0::Nestor.Poetry.Tests.RhymeAnalyzerTests&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+  &lt;Or&gt;&#xD;
+    &lt;TestAncestor&gt;&#xD;
+      &lt;TestId&gt;NUnit3x::BDA342A1-6986-499E-AEC8-F60544AC1572::net5.0::Nestor.Poetry.Tests.FootAnalyzerTests.T&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;NUnit3x::BDA342A1-6986-499E-AEC8-F60544AC1572::net5.0::Nestor.Poetry.Tests.RhymeAnalyzerTests.Test&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;NUnit3x::BDA342A1-6986-499E-AEC8-F60544AC1572::net5.0::Nestor.Poetry.Tests.RhymeAnalyzerTests&lt;/TestId&gt;&#xD;
+    &lt;/TestAncestor&gt;&#xD;
+    &lt;Project Location="D:\_DEV\OTHER\Nestor\Nestor.Tests" Presentation="&amp;lt;Nestor.Tests&amp;gt;" /&gt;&#xD;
+  &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
