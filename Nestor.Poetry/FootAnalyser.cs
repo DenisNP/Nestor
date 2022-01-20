@@ -19,7 +19,7 @@ namespace Nestor.Poetry
         /// <summary>
         /// Find best matching foot for entire poem
         /// </summary>
-        /// <param name="poem">String contains lines of poem separated by newline character</param>
+        /// <param name="poem">String contains lines of poem in Russian, separated by newline character</param>
         /// <returns>Best foot matched</returns>
         public Foot FindBestFootByPoem(string poem)
         {
@@ -51,7 +51,7 @@ namespace Nestor.Poetry
         /// <summary>
         /// Find best matching foot for current line
         /// </summary>
-        /// <param name="line">String contains single poem line</param>
+        /// <param name="line">String contains single poem line in Russian</param>
         /// <param name="distance">Distance to foot found, less is better</param>
         /// <returns>Best foot matched</returns>
         public Foot FindBestFootByLine(string line, out int distance)

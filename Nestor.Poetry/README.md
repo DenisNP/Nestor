@@ -28,3 +28,12 @@ const string poem =   "Выхожу один я на дорогу;\n" +
 Foot foot = analyzer.FindBestFootByPoem(line);
 Console.WriteLine(foot.Type.ToString()); // Chorea
 ```
+
+## Оценка рифмы между двумя словами
+Использование:
+```c#
+var analyzer = new RhymeAnalyzer();
+
+RhymingPair pair = analyzer.ScoreRhyme("любовь", "морковь");
+Console.WriteLine(pair.Score); // 0.85
+```

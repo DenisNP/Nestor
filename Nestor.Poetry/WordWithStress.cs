@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Nestor.Poetry
 {
@@ -32,7 +34,7 @@ namespace Nestor.Poetry
             if (StressIndex < 0)
             {
                 throw new ArgumentException(
-                    "Stress is a number of stressed vowel. Probably stress is larger than number of vowels in word."
+                    $"Stress is a number of stressed vowel. Probably stress is larger than number of vowels in word: {word}; {stress}"
                 );
             }
         }
@@ -50,6 +52,13 @@ namespace Nestor.Poetry
             }
 
             return Word[startIndex..];
+        }
+
+        public override string ToString()
+        {
+            List<char> stressed = Word.ToList();
+            stressed.Insert(StressIndex + 1, '\'');
+            return string.Join("", stressed);
         }
     }
 }

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Nestor.Models;
 
 namespace Nestor.Poetry
 {
     public class RhymeAnalyzer
     {
+        private readonly NestorMorph _nestorMorph;
         private static readonly List<string> SoftVowels = new() { "я", "ё", "ю", "и", "е" };
         private static readonly List<string> HardVowels = new() { "а", "о", "у", "ы", "э" };
         
@@ -28,7 +30,57 @@ namespace Nestor.Poetry
             { "Ж", "ж" }
         };
 
-        public double ScoreRhyme(WordWithStress firstWord, WordWithStress secondWord)
+        public RhymeAnalyzer(NestorMorph nestorMorph = null)
+        {
+            _nestorMorph = nestorMorph ?? new NestorMorph();
+        }
+
+        /// <summary>
+        /// Find best rhyme between two Russian words
+        /// </summary>
+        /// <param name="firstWord">First word</param>
+        /// <param name="secondWord">Second word</param>
+        /// <returns>Rhyme score with best rhyming word forms</returns>
+        /// <exception cref="ArgumentException"></exception>
+        public RhymingPair ScoreRhyme(string firstWord, string secondWord)
+        {
+            if (string.IsNullOrEmpty(firstWord) || string.IsNullOrEmpty(secondWord))
+            {
+                throw new ArgumentException("Both words should not be null");
+            }
+
+            WordWithStress[] words1 = GetAllStressedForms(firstWord);
+            WordWithStress[] words2 = GetAllStressedForms(secondWord);
+
+            var bestScore = double.MinValue;
+            WordWithStress bestForm1 = null;
+            WordWithStress bestForm2 = null;
+            
+            // compare every form with each other and find best score
+            foreach (WordWithStress w1 in words1)
+            {
+                foreach (WordWithStress w2 in words2)
+                {
+                    double score = SimpleScoreRhyme(w1, w2);
+                    if (score > bestScore)
+                    {
+                        bestScore = score;
+                        bestForm1 = w1;
+                        bestForm2 = w2;
+                    }
+                }
+            }
+
+            return new RhymingPair(bestForm1, bestForm2, bestScore);
+        }
+
+        /// <summary>
+        /// Score rhyme between two Russian words
+        /// </summary>
+        /// <param name="firstWord">First word with known stress</param>
+        /// <param name="secondWord">Second word with known stress</param>
+        /// <returns>Rhyme score between 0.0 and 1.0 inclusive, more is better</returns>
+        public double SimpleScoreRhyme(WordWithStress firstWord, WordWithStress secondWord)
         {
             // get transcribed tails
             string tail1 = GetTranscription(firstWord.GetTailAfterStress(true));
@@ -39,9 +91,9 @@ namespace Nestor.Poetry
                 return 0.0;
             }
 
-            Console.WriteLine();
+            /*Console.WriteLine();
             Console.WriteLine(tail1);
-            Console.WriteLine(tail2);
+            Console.WriteLine(tail2);*/
 
             var stressedScore = 0.0;
             var unstressedScore = 0.0;
@@ -60,7 +112,7 @@ namespace Nestor.Poetry
             while (!finished)
             {
                 double pairScore = ScoreTrigramPair(trigram1, trigram2, stressed);
-                Console.WriteLine("{0} {1} = {2}", trigram1, trigram2, pairScore);
+                //Console.WriteLine("{0} {1} = {2}", trigram1, trigram2, pairScore);
                 
                 // check next
                 trigram1 = GetNextTrigram(tail1, ref idx1);
@@ -229,7 +281,7 @@ namespace Nestor.Poetry
             return stressed switch
             {
                 true when rightIsSilent => 0.8 * Math.Min(leftScore, vowelScore) + 0.2 * Math.Max(leftScore, vowelScore),
-                true => 0.05 * leftScore + 0.8 * Math.Min(vowelScore, rightScore) + 0.15 * Math.Max(vowelScore, rightScore),
+                true => 0.15 * leftScore + 0.7 * Math.Min(vowelScore, rightScore) + 0.15 * Math.Max(vowelScore, rightScore),
                 false when rightIsSilent => 0.9 * leftScore + 0.1 * vowelScore,
                 false => 0.35 * leftScore + 0.05 * vowelScore + 0.6 * rightScore
             };
@@ -328,6 +380,34 @@ namespace Nestor.Poetry
         private static bool IsVowel(string letter)
         {
             return SoftVowels.Contains(letter) || HardVowels.Contains(letter);
+        }
+
+        private WordWithStress[] GetAllStressedForms(string word)
+        {
+            Word[] info = _nestorMorph.WordInfo(word);
+            List<WordForm> forms = info
+                .SelectMany(i => i.ExactForms(word))
+                .GroupBy(f => f.Stress)
+                .Select(g => g.First())
+                .Where(f => f.Stress > 0)
+                .ToList();
+
+            // known stresses
+            if (forms.Count > 0)
+            {
+                return forms.Select(f => new WordWithStress(f.Word, (byte)f.Stress)).ToArray();
+            }
+            
+            // unknown stress, so take stress for every
+            var allVowelsStresses = new List<WordWithStress>();
+            byte lastStressNumber = 0;
+            foreach (char c in word.Where(NestorMorph.IsVowel))
+            {
+                lastStressNumber++;
+                allVowelsStresses.Add(new WordWithStress(word, lastStressNumber));
+            }
+
+            return allVowelsStresses.ToArray();
         }
     }
 }

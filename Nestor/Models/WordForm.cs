@@ -23,11 +23,6 @@ namespace Nestor.Models
 
         public void SetStress(int stress)
         {
-            if (Stress != -1)
-            {
-                throw new InvalidOperationException("You can set only unknown stress");
-            }
-
             int index = NestorMorph.GetStressIndex(Word, stress);
             if (index == -1)
             {

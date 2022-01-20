@@ -1,5 +1,4 @@
-﻿using System;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace Nestor.Poetry.Tests
 {
@@ -17,9 +16,22 @@ namespace Nestor.Poetry.Tests
         [Test]
         public void Test()
         {
-            double s = _rhymeAnalyzer.ScoreRhyme(new WordWithStress("полиглот", 3), new WordWithStress("вертолёт", 3));
-            Console.WriteLine(s);
-            Assert.Pass();
+            RhymingPair r1 = _rhymeAnalyzer.ScoreRhyme("нежно", "снежный");
+            Assert.Greater(r1.Score, 0.8);
+            
+            RhymingPair r2 = _rhymeAnalyzer.ScoreRhyme("любовь", "морковь");
+            Assert.Greater(r2.Score, 0.8);
+            Assert.Less(r2.Score, 0.95);
+            
+            RhymingPair r3 = _rhymeAnalyzer.ScoreRhyme("пакля", "рвакля");
+            Assert.Greater(r3.Score, 0.8);
+            
+            RhymingPair r4 = _rhymeAnalyzer.ScoreRhyme("палка", "селёдка");
+            Assert.Less(r4.Score, 0.3);
+            
+            RhymingPair r5 = _rhymeAnalyzer.ScoreRhyme("рация", "акция");
+            Assert.Greater(r5.Score, 0.4);
+            Assert.Less(r5.Score, 0.8);
         }
     }
 }
