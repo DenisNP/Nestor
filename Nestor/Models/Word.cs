@@ -74,7 +74,7 @@ namespace Nestor.Models
 
         public WordForm[] ExactForms(string word)
         {
-            return Forms.Where(f => f.Word == word).ToArray();
+            return Forms.Where(f => f.Word == word || f.Word.Replace("ё", "е") == word).ToArray();
         }
 
         public WordForm ClosestForm(

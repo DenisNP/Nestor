@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Nestor;
 using Nestor.Models;
@@ -91,6 +93,17 @@ namespace NestorTests
             int[] stresses = forms.Select(f => f.Stress).Distinct().OrderBy(x => x).ToArray();
             
             Assert.AreEqual(3, stresses.Length);
+        }
+        
+        [Test]
+        public void TestExactForms()
+        {
+            const string word = "зеленый";
+            Word[] info = _nMorph.WordInfo(word);
+            Assert.GreaterOrEqual(info.Length, 1);
+            List<WordForm> form = info.SelectMany(i => i.ExactForms("зеленый")).ToList();
+            
+            Assert.GreaterOrEqual(form.Count, 1);
         }
         
         [Test]
