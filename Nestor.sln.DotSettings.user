@@ -46,6 +46,8 @@
       &lt;TestId&gt;NUnit3x::BDA342A1-6986-499E-AEC8-F60544AC1572::net5.0::Nestor.Poetry.Tests.FootAnalyzerTests.T&lt;/TestId&gt;&#xD;
       &lt;TestId&gt;NUnit3x::BDA342A1-6986-499E-AEC8-F60544AC1572::net5.0::Nestor.Poetry.Tests.RhymeAnalyzerTests.Test&lt;/TestId&gt;&#xD;
       &lt;TestId&gt;NUnit3x::BDA342A1-6986-499E-AEC8-F60544AC1572::net5.0::Nestor.Poetry.Tests.RhymeAnalyzerTests&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;NUnit3x::BDA342A1-6986-499E-AEC8-F60544AC1572::net5.0::Nestor.Poetry.Tests.FootAnalyzerTests.ExactFormsTest&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;NUnit3x::BDA342A1-6986-499E-AEC8-F60544AC1572::net5.0::Nestor.Poetry.Tests.FootAnalyzerTests&lt;/TestId&gt;&#xD;
     &lt;/TestAncestor&gt;&#xD;
     &lt;Project Location="D:\_DEV\OTHER\Nestor\Nestor.Tests" Presentation="&amp;lt;Nestor.Tests&amp;gt;" /&gt;&#xD;
   &lt;/Or&gt;&#xD;

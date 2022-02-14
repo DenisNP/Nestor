@@ -119,15 +119,11 @@ namespace Nestor.Poetry.Tests
         }
 
         [Test]
-        public void T()
+        public void ExactFormsTest()
         {
-            const string line = "У лукоморья дуб зелёный";
-            (Foot foot, int distance)[] foots = _footAnalyser.ScoreAllFootsByLine(line);
-            foreach ((Foot foot, int distance) in foots)
-            {
-                Console.WriteLine("{0} - {1}", foot.Name, distance);
-            }
-            Assert.Pass();
+            const string line = "У лукоморья дуб зеленый";
+            Foot foot = _footAnalyser.FindBestFootByLine(line, out _);
+            Assert.AreEqual(FootType.Iambic, foot.Type);
         }
     }
 }
