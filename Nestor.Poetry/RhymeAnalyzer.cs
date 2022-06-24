@@ -91,19 +91,15 @@ namespace Nestor.Poetry
                 return 0.0;
             }
 
-            /*Console.WriteLine();
-            Console.WriteLine(tail1);
-            Console.WriteLine(tail2);*/
-
-            var stressedScore = 0.0;
-            var unstressedScore = 0.0;
-            var endScore = 0.0;
+            var stressedScore = 0.0; // score for stressed trigram pair
+            var unstressedScore = 0.0; // average score for unstressed trigram pairs
+            var endScore = 0.0; // score for last trigram pair
             
             var idx1 = 0;
             var idx2 = 0;
             var unstressedTrigramsCount = 0;
             var finished = false;
-            var stressed = true;
+            var stressed = true; // we always start with stressed trigram pair
             
             Trigram trigram1 = GetNextTrigram(tail1, ref idx1);
             Trigram trigram2 = GetNextTrigram(tail2, ref idx2);
@@ -112,8 +108,7 @@ namespace Nestor.Poetry
             while (!finished)
             {
                 double pairScore = ScoreTrigramPair(trigram1, trigram2, stressed);
-                //Console.WriteLine("{0} {1} = {2}", trigram1, trigram2, pairScore);
-                
+
                 // check next
                 trigram1 = GetNextTrigram(tail1, ref idx1);
                 trigram2 = GetNextTrigram(tail2, ref idx2);
@@ -143,15 +138,23 @@ namespace Nestor.Poetry
                 }
             }
 
+            double worstScore = Math.Min(stressedScore, endScore);
+            double bestScore = Math.Max(stressedScore, endScore);
+            double additionalScore;
+
             if (unstressedTrigramsCount > 0)
             {
-                unstressedScore /= unstressedTrigramsCount;
-                return 0.7 * Math.Min(stressedScore, endScore) + 0.1 * unstressedScore + 0.2 * Math.Max(stressedScore, endScore);
+                // there were unstressed trigrams, so we need to calculate average score
+                additionalScore = unstressedScore / unstressedTrigramsCount;
             }
             else
             {
-                return 0.8 * Math.Min(stressedScore, endScore) + 0.2 * Math.Max(stressedScore, endScore);
+                // there is a little different formula if there were no unstressed trigrams,
+                // take into account worst score again
+                additionalScore = worstScore;
             }
+
+            return 0.7 * worstScore + 0.2 * bestScore + 0.1 * additionalScore;
         }
 
         private string GetTranscription(string word)
@@ -280,8 +283,12 @@ namespace Nestor.Poetry
 
             return stressed switch
             {
+                // when right is silent, we score by worst between left and vowel (for stressed)
                 true when rightIsSilent => 0.8 * Math.Min(leftScore, vowelScore) + 0.2 * Math.Max(leftScore, vowelScore),
+                // when right is not silent, we score by worst between vowel (for stressed) and right
                 true => 0.15 * leftScore + 0.7 * Math.Min(vowelScore, rightScore) + 0.15 * Math.Max(vowelScore, rightScore),
+                // for unstressed vowel score is not so important, so we score by left if right is silent,
+                // otherwise by right mostly with small influence of left
                 false when rightIsSilent => 0.9 * leftScore + 0.1 * vowelScore,
                 false => 0.35 * leftScore + 0.05 * vowelScore + 0.6 * rightScore
             };
@@ -289,16 +296,19 @@ namespace Nestor.Poetry
 
         private double CompareConsonants(string l1, string l2)
         {
+            // if consonants are the same, score is 1.0
             if (l1 == l2)
             {
                 return 1.0;
             }
 
+            // if one of them is null, but not the other, score is 0.3
             if (l1 is null || l2 is null)
             {
                 return 0.3;
             } 
 
+            // in all other cases, score is 0.0
             return 0.0;
         }
 
@@ -306,7 +316,7 @@ namespace Nestor.Poetry
         {
             var trigram = new Trigram(null, null, null);
             
-            // word ended
+            // word ended, return null trigram
             if (index >= word.Length)
             {
                 return trigram;
@@ -398,10 +408,10 @@ namespace Nestor.Poetry
                 return forms.Select(f => new WordWithStress(f.Word, (byte)f.Stress)).ToArray();
             }
             
-            // unknown stress, so take stress for every
+            // unknown stress, so take stress for every vowel
             var allVowelsStresses = new List<WordWithStress>();
             byte lastStressNumber = 0;
-            foreach (char c in word.Where(NestorMorph.IsVowel))
+            foreach (char _ in word.Where(NestorMorph.IsVowel))
             {
                 lastStressNumber++;
                 allVowelsStresses.Add(new WordWithStress(word, lastStressNumber));
