@@ -32,6 +32,12 @@ namespace Nestor.Poetry.Tests
             RhymingPair r5 = _rhymeAnalyzer.ScoreRhyme("рация", "акция");
             Assert.Greater(r5.Score, 0.4);
             Assert.Less(r5.Score, 0.8);
+            
+            RhymingPair r6 = _rhymeAnalyzer.ScoreRhyme("окно", "стекло");
+            Assert.Less(r6.Score, 0.4);
+            
+            RhymingPair r7 = _rhymeAnalyzer.ScoreRhyme("стена", "страна");
+            Assert.Greater(r7.Score, 0.9);
         }
     }
 }
