@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
 
         <IsPackable>false</IsPackable>
 
         <RootNamespace>NestorTests</RootNamespace>
+
+        <TargetFrameworks>net6.0;</TargetFrameworks>
     </PropertyGroup>
 
     <ItemGroup>
@@ -15,7 +16,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Nestor\Nestor.csproj" />
+        <ProjectReference Include="..\Nestor.Thesaurus\Nestor.Thesaurus.csproj" />
+        <ProjectReference Include="..\Nestor\Nestor.csproj" />  
     </ItemGroup>
 
 </Project>

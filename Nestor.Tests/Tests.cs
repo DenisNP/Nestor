@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Nestor;
 using Nestor.Models;
+using Nestor.Thesaurus;
 using NUnit.Framework;
 
 namespace NestorTests
@@ -11,11 +12,13 @@ namespace NestorTests
     public class Tests
     {
         private NestorMorph _nMorph;
+        private NestorThesaurus _nThesaurus;
         
         [SetUp]
         public void SetUp()
         {
             _nMorph ??= new NestorMorph();
+            _nThesaurus ??= new NestorThesaurus();
         }
         
         [Test]
@@ -196,10 +199,54 @@ namespace NestorTests
             Assert.AreEqual(9, index);
         }
 
+        [Test]
+        public void TestThesaurusStraightRelations()
+        {
+            var hyponyms = _nThesaurus.GetStraightRelations("рост", WordRelation.Hyponym);
+            Assert.AreEqual(28, hyponyms.Length);
+            
+            var sameRoot = _nThesaurus.GetStraightRelations("рост", WordRelation.SameRoot);
+            Assert.AreEqual(93, sameRoot.Length);
+
+            var synsets = _nThesaurus.GetStraightRelations("рост", WordRelation.Synset);
+            Assert.AreEqual(4, synsets.Length);
+            
+            var hypernyms = _nThesaurus.GetStraightRelations("рост", WordRelation.Hypernym);
+            Assert.AreEqual(6, hypernyms.Length);
+            
+            var domains = _nThesaurus.GetStraightRelations("рост", WordRelation.Domain);
+            Assert.AreEqual(2, domains.Length);
+            
+            var posSynonyms = _nThesaurus.GetStraightRelations("рост", WordRelation.PartOfSpeechSynonym);
+            Assert.AreEqual(5, posSynonyms.Length);
+            
+            var holonyms = _nThesaurus.GetStraightRelations("рост", WordRelation.Holonym);
+            Assert.AreEqual(1, holonyms.Length);
+            
+            var meronyms = _nThesaurus.GetStraightRelations("рост", WordRelation.Meronym);
+            Assert.AreEqual(4, meronyms.Length);
+            
+            var associations = _nThesaurus.GetStraightRelations("рост", WordRelation.Association);
+            Assert.AreEqual(6, associations.Length);
+            
+            var causes = _nThesaurus.GetStraightRelations("потерять конечность", WordRelation.Cause);
+            Assert.AreEqual(1, causes.Length);
+            
+            var effects = _nThesaurus.GetStraightRelations("разогнать", WordRelation.Effect);
+            Assert.AreEqual(2, effects.Length);
+            
+            var multipleRelations = _nThesaurus.GetStraightRelations("рост",
+                WordRelation.SameRoot 
+                        | WordRelation.Holonym 
+                        | WordRelation.Hypernym);
+            Assert.AreEqual(100, multipleRelations.Length);
+        }
+
         [TearDown]
         public void Dispose()
         {
             _nMorph = null;
+            _nThesaurus = null;
         }
     }
 }
