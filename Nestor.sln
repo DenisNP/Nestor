@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nestor.Poetry.Tests", "Nest
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nestor.Thesaurus", "Nestor.Thesaurus\Nestor.Thesaurus.csproj", "{854FEC22-D095-4576-83B6-F828ACDDC17B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nestor.Thesaurus.Tests", "Nestor.Thesaurus.Tests\Nestor.Thesaurus.Tests.csproj", "{A5EA0D5C-204D-46ED-97BC-D5A5BC5DF701}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,5 +56,9 @@ Global
 		{854FEC22-D095-4576-83B6-F828ACDDC17B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{854FEC22-D095-4576-83B6-F828ACDDC17B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{854FEC22-D095-4576-83B6-F828ACDDC17B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5EA0D5C-204D-46ED-97BC-D5A5BC5DF701}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5EA0D5C-204D-46ED-97BC-D5A5BC5DF701}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5EA0D5C-204D-46ED-97BC-D5A5BC5DF701}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5EA0D5C-204D-46ED-97BC-D5A5BC5DF701}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

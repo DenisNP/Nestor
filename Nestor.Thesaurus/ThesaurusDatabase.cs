@@ -225,6 +225,15 @@ namespace Nestor.Thesaurus
 
             return GetSynsets(associationIds);
         }
+        
+        public Synset[] GetAscRelations(string[] ids)
+        {
+            var relationIds = AssociationRelations
+                .Where(x => ids.Contains(x.AssociationId))
+                .Select(s => s.RelationId).ToArray();
+
+            return GetSynsets(relationIds);
+        }
 
         public Synset[] GetCauses(string[] ids) //inverse effects
         {
