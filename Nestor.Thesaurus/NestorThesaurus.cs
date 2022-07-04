@@ -195,7 +195,6 @@ namespace Nestor.Thesaurus
             }
 
             return result.ToArray();
-
         }
         
         private RelatedWord ConstructRelatedWord(string rawText, WordRelation relation)
