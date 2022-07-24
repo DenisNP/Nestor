@@ -14,12 +14,12 @@ namespace Nestor.Thesaurus
         /// <summary>
         /// Смысл - одно конкретное слово или словосочетание с конкретным же значением
         /// </summary>
-        public Sense[] Senses { get; }
+        private Dictionary<string, Sense> _senses = new();
 
         /// <summary>
         /// Синсет = множество сущностей Sense с одинаковыми значениями и с одной частью речи
         /// </summary>
-        private Synset[] _synsets { get; }
+        private Dictionary<string, Synset> _synsets = new();
 
         /// <summary>
         /// Синонимы из других частей речи
@@ -112,9 +112,19 @@ namespace Nestor.Thesaurus
                     switch (name)
                     {
                         case "synset": 
-                            _synsets = ReadJsonStream(sr.ReadToEnd(), type) as Synset[]; break;
+                            var synsets = ReadJsonStream(sr.ReadToEnd(), type) as Synset[];
+                            foreach (var synset in synsets)
+                            {
+                                _synsets.Add(synset.Id, synset);
+                            }
+                            break;
                         case "sense": 
-                            Senses = ReadJsonStream(sr.ReadToEnd(), type) as Sense[]; break;
+                            var senses = ReadJsonStream(sr.ReadToEnd(), type) as Sense[];
+                            foreach (var sense in senses)
+                            {
+                                _senses.Add(sense.Id, sense);
+                            }
+                            break;
                         case "pos_synonymy_relation":
                             FillDictionary(ReadJsonStream(sr.ReadToEnd(), type) as PosSynonymyRelation[],
                                 _posSynonymyLeftByRight,
@@ -227,15 +237,19 @@ namespace Nestor.Thesaurus
             }
             return result;
         }
-
-        private Sense[] GetSenses(string[] senseIds)
+  
+        public Sense[] GetSenses(string[] senseIds)
         {
-            return senseIds.Select(sId => Senses.First(s => s.Id == sId)).ToArray();
+            return senseIds.Select(senseId => _senses[senseId]).ToArray();
         }
-
+        
+        public Sense[] GetAllSenses()
+        {
+            return _senses.Values.ToArray();
+        }
         public Synset[] GetSynsets(string[] synsetIds)
         {
-            return synsetIds.Select(sId => _synsets.First(s => s.Id == sId)).ToArray();
+            return synsetIds.Select(synsetId => _synsets[synsetId]).ToArray();
         }
 
         // public string GetLemmaForSynset(Synset synset)

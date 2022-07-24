@@ -25,7 +25,7 @@ namespace Nestor.Thesaurus
         {
             var result = new List<RelatedWord>();
 
-            var senses = _database.Senses.Where(s => s.Lemma == lemma).ToArray();
+            var senses = _database.GetAllSenses().Where(s => s.Lemma == lemma).ToArray();
             var senseIds = senses.Select(s => s.Id).ToArray();
             var synsets = _database.GetSynsets(senses.Select(s => s.SynsetId).ToArray());
             var synsetIds = synsets.Select(s => s.Id).ToArray();
@@ -118,7 +118,7 @@ namespace Nestor.Thesaurus
         {
             var result = new List<RelatedWord>();
 
-            var senses = _database.Senses.Where(s => s.Lemma == lemma).ToArray();
+            var senses = _database.GetAllSenses().Where(s => s.Lemma == lemma).ToArray();
             var senseIds = senses.Select(s => s.Id).ToArray();
             var synsets = _database.GetSynsets(senses.Select(s=> s.SynsetId).ToArray());
             var synsetIds = synsets.Select(s => s.Id).ToArray();
