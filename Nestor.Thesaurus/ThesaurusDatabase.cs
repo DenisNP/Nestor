@@ -230,12 +230,12 @@ namespace Nestor.Thesaurus
 
         private Sense[] GetSenses(string[] senseIds)
         {
-            return senseIds.Select(sId => Senses.FirstOrDefault(s => s.Id == sId)).ToArray();
+            return senseIds.Select(sId => Senses.First(s => s.Id == sId)).ToArray();
         }
 
         public Synset[] GetSynsets(string[] synsetIds)
         {
-            return synsetIds.Select(sId => _synsets.FirstOrDefault(s => s.Id == sId)).ToArray();
+            return synsetIds.Select(sId => _synsets.First(s => s.Id == sId)).ToArray();
         }
 
         // public string GetLemmaForSynset(Synset synset)
