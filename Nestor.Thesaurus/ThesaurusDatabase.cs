@@ -221,6 +221,10 @@ namespace Nestor.Thesaurus
             {
                 Console.WriteLine($"...{result.GetType().Name}");
             }
+            else
+            {
+                throw new FileLoadException("Error parsing JSON objects from thesaurus files");
+            }
             return result;
         }
 
