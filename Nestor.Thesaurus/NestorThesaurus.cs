@@ -26,7 +26,7 @@ namespace Nestor.Thesaurus
             var result = new List<RelatedWord>();
 
             var senses = _database.Senses.Where(s => s.Lemma == lemma.ToUpper()).ToArray();
-            var synsets = _database.GetSynsets(senses.Select(s=> s.SynsetId).ToArray());
+            var synsets = _database.GetSynsets(senses.Select(s => s.SynsetId).ToArray());
             var synsetIds = synsets.Select(s => s.Id).ToArray();
 
             // if (relations.HasFlag(WordRelation.None))
@@ -111,9 +111,9 @@ namespace Nestor.Thesaurus
         /// то в этом методе для слова "биология" и relation = Domain нужно вернуть "птица"
         /// </summary>
         /// <param name="lemma"></param>
-        /// <param name="inverted_relations"></param>
+        /// <param name="invertedRelations"></param>
         /// <returns></returns>
-        public RelatedWord[] GetInvertedRelations(string lemma, WordRelation inverted_relations)
+        public RelatedWord[] GetInvertedRelations(string lemma, WordRelation invertedRelations)
         {
             var result = new List<RelatedWord>();
 
@@ -121,13 +121,13 @@ namespace Nestor.Thesaurus
             var synsets = _database.GetSynsets(senses.Select(s=> s.SynsetId).ToArray());
             var synsetIds = synsets.Select(s => s.Id).ToArray();
 
-            if (inverted_relations.HasFlag(WordRelation.Hyponym))
+            if (invertedRelations.HasFlag(WordRelation.Hyponym))
             {
                 result.AddRange(_database.GetHypernyms(synsetIds).Select(h =>
                     ConstructRelatedWord(h.Title, WordRelation.Hypernym)));
             }
 
-            if (inverted_relations.HasFlag(WordRelation.SameRoot))
+            if (invertedRelations.HasFlag(WordRelation.SameRoot))
             {   
                 //возвращаю sense а не synset
                 var derivatives = _database.GetDerivations(senses.Select(s=> s.Id).ToArray()); 
@@ -138,56 +138,56 @@ namespace Nestor.Thesaurus
             }
             
             //not inversable
-            if (inverted_relations.HasFlag(WordRelation.Synset))
+            if (invertedRelations.HasFlag(WordRelation.Synset))
             {
                 result.AddRange(synsets.Select(s => 
                     ConstructRelatedWord(s.Title, WordRelation.Synset)));
             }
 
-            if (inverted_relations.HasFlag(WordRelation.Hypernym))
+            if (invertedRelations.HasFlag(WordRelation.Hypernym))
             {
                 result.AddRange(_database.GetHyponyms(synsetIds).Select(h =>
                     ConstructRelatedWord(h.Title, WordRelation.Hyponym)));
             }
 
-            if (inverted_relations.HasFlag(WordRelation.Domain))
+            if (invertedRelations.HasFlag(WordRelation.Domain))
             {
                 result.AddRange(_database.GetDomainItems(synsetIds).Select(d =>
                     ConstructRelatedWord(d.Title, WordRelation.DomainItem)));
             }
             
             //not inversable
-            if (inverted_relations.HasFlag(WordRelation.PartOfSpeechSynonym))
+            if (invertedRelations.HasFlag(WordRelation.PartOfSpeechSynonym))
             {
                 result.AddRange(_database.GetPosSynonyms(synsetIds).Select(p =>
                     ConstructRelatedWord(p.Title, WordRelation.PartOfSpeechSynonym)));
             }
 
-            if (inverted_relations.HasFlag(WordRelation.Holonym))
+            if (invertedRelations.HasFlag(WordRelation.Holonym))
             {
                 result.AddRange(_database.GetMeronyms(synsetIds).Select(m =>
                     ConstructRelatedWord(m.Title, WordRelation.Meronym)));
             }
         
-            if (inverted_relations.HasFlag(WordRelation.Meronym))
+            if (invertedRelations.HasFlag(WordRelation.Meronym))
             {
                 result.AddRange(_database.GetMeronyms(synsetIds).Select(h =>
                     ConstructRelatedWord(h.Title, WordRelation.Holonym)));
             }
 
-            if (inverted_relations.HasFlag(WordRelation.Association))
+            if (invertedRelations.HasFlag(WordRelation.Association))
             {
                 result.AddRange(_database.GetAscRelations(synsetIds).Select(a =>
                     ConstructRelatedWord(a.Title, WordRelation.RelatedAssociation)));
             }
         
-            if (inverted_relations.HasFlag(WordRelation.Cause))
+            if (invertedRelations.HasFlag(WordRelation.Cause))
             {
                 result.AddRange(_database.GetEffects(synsetIds).Select(e => 
                     ConstructRelatedWord(e.Title,WordRelation.Effect)));
             }
         
-            if (inverted_relations.HasFlag(WordRelation.Effect))
+            if (invertedRelations.HasFlag(WordRelation.Effect))
             {
                 result.AddRange(_database.GetCauses(synsetIds).Select(c =>
                     ConstructRelatedWord(c.Title, WordRelation.Cause)));

@@ -223,7 +223,7 @@ namespace Nestor.Thesaurus
             }
             else
             {
-                throw new FileLoadException("Error parsing JSON objects from thesaurus files");
+                throw new FileLoadException($"Error parsing JSON objects from thesaurus file: {type.Name}!");
             }
             return result;
         }
