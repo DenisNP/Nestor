@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
 using Nestor.Thesaurus.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -15,6 +16,7 @@ namespace Nestor.Thesaurus
         /// Смысл - одно конкретное слово или словосочетание с конкретным же значением
         /// </summary>
         private readonly Dictionary<string, Sense> _senses = new();
+        private readonly Dictionary<string, Sense[]> _sensesByLemma = new();
 
         /// <summary>
         /// Синсет = множество сущностей Sense с одинаковыми значениями и с одной частью речи
@@ -89,7 +91,7 @@ namespace Nestor.Thesaurus
         private readonly Dictionary<string, string[]> _relationsByAssociation = new ();
 
         /// <summary>
-        /// Основной конструктор словаря - читает json файлы выгруженные из реляционной СУБД и записывает из в объект базы.
+        /// Читает json файлы выгруженные из реляционной СУБД и записывает из в объект базы.
         /// </summary>
         /// <param name="pathToThesaurus"> Путь к архиву с JSON файлам тезауруса </param>
         public ThesaurusDatabase(string pathToThesaurus)
@@ -98,7 +100,10 @@ namespace Nestor.Thesaurus
             
             try
             {
-                using FileStream file = File.OpenRead($"{pathToThesaurus}.zip");
+                var assembly = Assembly.GetCallingAssembly();
+                Stream file = assembly.GetManifestResourceStream($"Nestor.Thesaurus.Dict.{pathToThesaurus}")
+                              ?? throw new IOException();
+
                 using var zip = new ZipArchive(file, ZipArchiveMode.Read);
 
                 foreach (ZipArchiveEntry entry in zip.Entries)
@@ -123,6 +128,16 @@ namespace Nestor.Thesaurus
                             foreach (Sense sense in senses)
                             {
                                 _senses.Add(sense.Id, sense);
+                                if (!_sensesByLemma.ContainsKey(sense.Lemma))
+                                {
+                                    _sensesByLemma.Add(sense.Lemma, new []{sense});
+                                }
+                                else
+                                {
+                                    _sensesByLemma[sense.Lemma] = _sensesByLemma[sense.Lemma]
+                                        .Concat(new []{sense})
+                                        .ToArray();
+                                }
                             }
                             break;
                         case "pos_synonymy_relation":
@@ -229,7 +244,7 @@ namespace Nestor.Thesaurus
 
             if (result != null)
             {
-                Console.WriteLine($"...{result.GetType().Name}");
+                Console.WriteLine($"...{type.Name}...ok");
             }
             else
             {
@@ -243,9 +258,9 @@ namespace Nestor.Thesaurus
             return senseIds.Select(senseId => _senses[senseId]).ToArray();
         }
         
-        public Sense[] GetAllSenses()
+        public Sense[] GetSensesByLemma(string lemma)
         {
-            return _senses.Values.ToArray();
+            return _sensesByLemma[lemma];
         }
 
         public Synset[] GetSynsets(string[] synsetIds)
@@ -413,7 +428,7 @@ namespace Nestor.Thesaurus
             Func<T, string> getLeft,
             Func<T, string> getRight)
         {
-            Console.WriteLine($"Started filling dictionary for {typeof(T)}...");
+            Console.Write($"Filling dictionary for {typeof(T).Name}...");
             
             foreach (T item in source)
             {
@@ -438,7 +453,7 @@ namespace Nestor.Thesaurus
                     rightByLeft[left] = rightByLeft[left].Concat(new[] { right }).ToArray();
                 }
             }
-            Console.WriteLine($"Finished filling dictionaries... Lengths: {leftByRight.Count}, {rightByLeft.Count}");
+            Console.WriteLine($"Finished. Lengths: {leftByRight.Count}, {rightByLeft.Count}");
         }
  
     }

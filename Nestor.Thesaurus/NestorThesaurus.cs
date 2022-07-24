@@ -11,7 +11,7 @@ namespace Nestor.Thesaurus
         
         public NestorThesaurus(NestorMorph nestorMorph = null)
         {
-            _database ??= new ThesaurusDatabase("SynsetDB");
+            _database ??= new ThesaurusDatabase("SynsetDB.zip");
             _nestor = nestorMorph ?? new NestorMorph();
         }
         
@@ -26,7 +26,7 @@ namespace Nestor.Thesaurus
         {
             var result = new List<RelatedWord>();
 
-            Sense[] senses = _database.GetAllSenses().Where(s => s.Lemma == lemma).ToArray();
+            Sense[] senses = _database.GetSensesByLemma(lemma).ToArray();
             string[] senseIds = senses.Select(s => s.Id).ToArray();
             Synset[] synsets = _database.GetSynsets(senses.Select(s => s.SynsetId).ToArray());
             string[] synsetIds = synsets.Select(s => s.Id).ToArray();
@@ -118,7 +118,7 @@ namespace Nestor.Thesaurus
         {
             var result = new List<RelatedWord>();
 
-            Sense[] senses = _database.GetAllSenses().Where(s => s.Lemma == lemma).ToArray();
+            Sense[] senses = _database.GetSensesByLemma(lemma);
             string[] senseIds = senses.Select(s => s.Id).ToArray();
             Synset[] synsets = _database.GetSynsets(senses.Select(s => s.SynsetId).ToArray());
             string[] synsetIds = synsets.Select(s => s.Id).ToArray();
