@@ -26,6 +26,7 @@ namespace Nestor.Thesaurus
             var result = new List<RelatedWord>();
 
             var senses = _database.Senses.Where(s => s.Lemma == lemma.ToUpper()).ToArray();
+            var senseIds = senses.Select(s => s.Id).ToArray();
             var synsets = _database.GetSynsets(senses.Select(s => s.SynsetId).ToArray());
             var synsetIds = synsets.Select(s => s.Id).ToArray();
 
@@ -41,7 +42,7 @@ namespace Nestor.Thesaurus
             if (relations.HasFlag(WordRelation.SameRoot))
             {   
                 //возвращаю sense а не synset
-                var derivatives = _database.GetDerivations(senses.Select(s=> s.Id).ToArray()); 
+                var derivatives = _database.GetDerivations(senseIds); 
 
                 result.AddRange(derivatives
                     .Select(derivative => 
@@ -118,6 +119,7 @@ namespace Nestor.Thesaurus
             var result = new List<RelatedWord>();
 
             var senses = _database.Senses.Where(s => s.Lemma == lemma.ToUpper()).ToArray();
+            var senseIds = senses.Select(s => s.Id).ToArray();
             var synsets = _database.GetSynsets(senses.Select(s=> s.SynsetId).ToArray());
             var synsetIds = synsets.Select(s => s.Id).ToArray();
 
@@ -130,7 +132,7 @@ namespace Nestor.Thesaurus
             if (invertedRelations.HasFlag(WordRelation.SameRoot))
             {   
                 //возвращаю sense а не synset
-                var derivatives = _database.GetDerivations(senses.Select(s=> s.Id).ToArray()); 
+                var derivatives = _database.GetDerivations(senseIds); 
 
                 result.AddRange(derivatives
                     .Select(derivative => 
