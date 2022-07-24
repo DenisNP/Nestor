@@ -24,69 +24,69 @@ namespace Nestor.Thesaurus
         /// <summary>
         /// Синонимы из других частей речи
         /// </summary>
-        private Dictionary<string, string[]> _posSynonymyLeftByRight = new Dictionary<string, string[]>();
-        private Dictionary<string, string[]> _posSynonymyRightByLeft = new Dictionary<string, string[]>();
+        private Dictionary<string, string[]> _posSynonymyLeftByRight = new();
+        private Dictionary<string, string[]> _posSynonymyRightByLeft = new ();
 
         /// <summary>
         /// Меронимы и холонимы - части и целые, например, "желудь" / "дуб"
         /// </summary>
-        private Dictionary<string, string[]> _meronymsByHolonym = new Dictionary<string, string[]>();
-        private Dictionary<string, string[]> _holonymsByMeronym = new Dictionary<string, string[]>();
+        private Dictionary<string, string[]> _meronymsByHolonym = new ();
+        private Dictionary<string, string[]> _holonymsByMeronym = new ();
 
         /// <summary>
         /// Классы и экземпляры, например, "Смоленск" / "областной центр"
         /// </summary>
-        private Dictionary<string, string[]> _classByInstance = new Dictionary<string, string[]>();
-        private Dictionary<string, string[]> _instanceByClass = new Dictionary<string, string[]>();
+        private Dictionary<string, string[]> _classByInstance = new ();
+        private Dictionary<string, string[]> _instanceByClass = new ();
 
         /// <summary>
         /// Гипонимы и гиперонимы - более частные и более общие понятия, например, "спаржа" / "овощи"
         /// </summary>
-        private Dictionary<string, string[]> _hyponymsByHypernym = new Dictionary<string, string[]>();
-        private Dictionary<string, string[]> _hypernymsByHyponym = new Dictionary<string, string[]>();
+        private Dictionary<string, string[]> _hyponymsByHypernym = new ();
+        private Dictionary<string, string[]> _hypernymsByHyponym = new ();
 
         /// <summary>
         /// Предпосылки и возможные выводы из них, например, "прибежать" / "бегать" (TODO только для глаголов)
         /// </summary>
-        private Dictionary<string, string[]> _conclusionByPremise = new Dictionary<string, string[]>();
-        private Dictionary<string, string[]> _premiseByConclusion = new Dictionary<string, string[]>();
+        private Dictionary<string, string[]> _conclusionByPremise = new ();
+        private Dictionary<string, string[]> _premiseByConclusion = new ();
 
         /// <summary>
         /// Домены и их атрибуты, например, "спорт" / "мяч"
         /// </summary>
-        private Dictionary<string, string[]> _domainsByItem = new Dictionary<string, string[]>();
-        private Dictionary<string, string[]> _itemsByDomain = new Dictionary<string, string[]>();
+        private Dictionary<string, string[]> _domainsByItem = new ();
+        private Dictionary<string, string[]> _itemsByDomain = new ();
 
         /// <summary>
         /// От каких слов произошло данное, и какие произошли от него, например, "приятель" / "приятельский"
         /// Как правило однокоренные 
         /// </summary>
-        private Dictionary<string, string[]> _derivativesBySource = new Dictionary<string, string[]>();
-        private Dictionary<string, string[]> _sourcesByDerivative = new Dictionary<string, string[]>();
+        private Dictionary<string, string[]> _derivativesBySource = new ();
+        private Dictionary<string, string[]> _sourcesByDerivative = new ();
 
         /// <summary>
         /// Из каких слов состоит фраза, и в каких фразах участвует слово, например, "чувство" / "порыв чувств"
         /// </summary>
-        private Dictionary<string, string[]> _phrasesByWord = new Dictionary<string, string[]>();
-        private Dictionary<string, string[]> _wordsByPhrase = new Dictionary<string, string[]>();
+        private Dictionary<string, string[]> _phrasesByWord = new ();
+        private Dictionary<string, string[]> _wordsByPhrase = new ();
 
         /// <summary>
         /// Причины и следствия, например, (TODO только для глаголов)
         /// </summary>
-        private Dictionary<string, string[]> _causesByEffect = new Dictionary<string, string[]>();
-        private Dictionary<string, string[]> _effectsByCause = new Dictionary<string, string[]>();
+        private Dictionary<string, string[]> _causesByEffect = new ();
+        private Dictionary<string, string[]> _effectsByCause = new ();
 
         /// <summary>
         /// Антонимы - слова противоположные по смыслу
         /// </summary>
-        private Dictionary<string, string[]> _antonymyLeftByRight = new Dictionary<string, string[]>();
-        private Dictionary<string, string[]> _antonymyRightByLeft = new Dictionary<string, string[]>();
+        private Dictionary<string, string[]> _antonymyLeftByRight = new ();
+        private Dictionary<string, string[]> _antonymyRightByLeft = new ();
 
         /// <summary>
         /// Ассоциации - слова, которые принадлежат одной группе, например, "прибежать" / "бегать"
         /// </summary>
-        private Dictionary<string, string[]> _associationsByRelation = new Dictionary<string, string[]>();
-        private Dictionary<string, string[]> _relationsByAssociation = new Dictionary<string, string[]>();
+        private Dictionary<string, string[]> _associationsByRelation = new ();
+        private Dictionary<string, string[]> _relationsByAssociation = new ();
 
         /// <summary>
         /// Основной конструктор словаря - читает json файлы выгруженные из реляционной СУБД и записывает из в объект базы.
