@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -18,63 +19,74 @@ namespace Nestor.Thesaurus
         /// <summary>
         /// Синсет = множество сущностей Sense с одинаковыми значениями и с одной частью речи
         /// </summary>
-        private Synset[] Synsets { get; }
+        private Synset[] _synsets { get; }
 
         /// <summary>
         /// Синонимы из других частей речи
         /// </summary>
-        private PosSynonymyRelation[] PosSynonymyRelations { get; }
+        private Dictionary<string, string[]> _posSynonymyLeftByRight = new Dictionary<string, string[]>();
+        private Dictionary<string, string[]> _posSynonymyRightByLeft = new Dictionary<string, string[]>();
 
         /// <summary>
         /// Меронимы и холонимы - части и целые, например, "желудь" / "дуб"
         /// </summary>
-        private MeronymyRelation[] MeronymyRelations { get; }
+        private Dictionary<string, string[]> _meronymsByHolonym = new Dictionary<string, string[]>();
+        private Dictionary<string, string[]> _holonymsByMeronym = new Dictionary<string, string[]>();
 
         /// <summary>
         /// Классы и экземпляры, например, "Смоленск" / "областной центр"
         /// </summary>
-        private InstanceRelation[] InstanceRelations { get; }
+        private Dictionary<string, string[]> _classByInstance = new Dictionary<string, string[]>();
+        private Dictionary<string, string[]> _instanceByClass = new Dictionary<string, string[]>();
 
         /// <summary>
         /// Гипонимы и гиперонимы - более частные и более общие понятия, например, "спаржа" / "овощи"
         /// </summary>
-        private HypernymRelation[] HypernymRelations { get; }
+        private Dictionary<string, string[]> _hyponymsByHypernym = new Dictionary<string, string[]>();
+        private Dictionary<string, string[]> _hypernymsByHyponym = new Dictionary<string, string[]>();
 
         /// <summary>
         /// Предпосылки и возможные выводы из них, например, "прибежать" / "бегать" (TODO только для глаголов)
         /// </summary>
-        private EntailmentRelation[] EntailmentRelations { get; }
+        private Dictionary<string, string[]> _conclusionByPremise = new Dictionary<string, string[]>();
+        private Dictionary<string, string[]> _premiseByConclusion = new Dictionary<string, string[]>();
 
         /// <summary>
         /// Домены и их атрибуты, например, "спорт" / "мяч"
         /// </summary>
-        private DomainRelation[] DomainRelations { get; }
+        private Dictionary<string, string[]> _domainsByItem = new Dictionary<string, string[]>();
+        private Dictionary<string, string[]> _itemsByDomain = new Dictionary<string, string[]>();
 
         /// <summary>
         /// От каких слов произошло данное, и какие произошли от него, например, "приятель" / "приятельский"
         /// Как правило однокоренные 
         /// </summary>
-        private DerivationRelation[] DerivationRelations { get; }
+        private Dictionary<string, string[]> _derivativesBySource = new Dictionary<string, string[]>();
+        private Dictionary<string, string[]> _sourcesByDerivative = new Dictionary<string, string[]>();
 
         /// <summary>
         /// Из каких слов состоит фраза, и в каких фразах участвует слово, например, "чувство" / "порыв чувств"
         /// </summary>
-        private CompositionRelation[] CompositionRelations { get; }
+        private Dictionary<string, string[]> _phrasesByWord = new Dictionary<string, string[]>();
+        private Dictionary<string, string[]> _wordsByPhrase = new Dictionary<string, string[]>();
 
         /// <summary>
         /// Причины и следствия, например, (TODO только для глаголов)
         /// </summary>
-        private CauseRelation[] CauseRelations { get; }
+        private Dictionary<string, string[]> _causesByEffect = new Dictionary<string, string[]>();
+        private Dictionary<string, string[]> _effectsByCause = new Dictionary<string, string[]>();
 
         /// <summary>
         /// Антонимы - слова противоположные по смыслу
         /// </summary>
-        private AntonymyRelation[] AntonymyRelations { get; }
+        private Dictionary<string, string[]> _antonymyLeftByRight = new Dictionary<string, string[]>();
+        private Dictionary<string, string[]> _antonymyRightByLeft = new Dictionary<string, string[]>();
 
         /// <summary>
         /// Ассоциации - слова, которые принадлежат одной группе, например, "прибежать" / "бегать"
         /// </summary>
-        public AssociationRelation[] AssociationRelations { get; }
+        private Dictionary<string, string[]> _associationsByRelation = new Dictionary<string, string[]>();
+        private Dictionary<string, string[]> _relationsByAssociation = new Dictionary<string, string[]>();
 
         /// <summary>
         /// Основной конструктор словаря - читает json файлы выгруженные из реляционной СУБД и записывает из в объект базы.
@@ -82,46 +94,120 @@ namespace Nestor.Thesaurus
         /// <param name="pathToThesaurus"> Путь к архиву с JSON файлам тезауруса </param>
         public ThesaurusDatabase(string pathToThesaurus)
         {
-            Console.WriteLine("Unzipping file...");
-
-            if (!Directory.Exists(pathToThesaurus))
+            Console.WriteLine("Nestor is loading synset thesaurus...");
+            
+            try
             {
-                try
+                using var file = File.OpenRead($"{pathToThesaurus}.zip");
+                using var zip = new ZipArchive(file, ZipArchiveMode.Read);
+
+                foreach (var entry in zip.Entries)
                 {
-                    ZipFile.ExtractToDirectory($"{pathToThesaurus}.zip",
-                        $"{pathToThesaurus}");
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Error loading thesaurus: " + e.Message);
-                    throw new IOException($"Cannot load file: {pathToThesaurus}.zip");
+                    var name = entry.Name.Split(".")[0];
+                    Type type = GetTypeFromString(name);
+
+                    using var stream = entry.Open();
+                    using var sr = new StreamReader(stream);
+                    
+                    switch (name)
+                    {
+                        case "synset": 
+                            _synsets = ReadJsonStream(sr.ReadToEnd(), type) as Synset[]; break;
+                        case "sense": 
+                            Senses = ReadJsonStream(sr.ReadToEnd(), type) as Sense[]; break;
+                        case "pos_synonymy_relation":
+                            FillDictionary(ReadJsonStream(sr.ReadToEnd(), type) as PosSynonymyRelation[],
+                                _posSynonymyLeftByRight,
+                                _posSynonymyRightByLeft,
+                                (h) => h.LeftId,
+                                (h) => h.RightId); 
+                            break;
+                        case "meronymy_relation": 
+                            FillDictionary(ReadJsonStream(sr.ReadToEnd(), type) as MeronymyRelation[],
+                                _holonymsByMeronym,
+                                _meronymsByHolonym,
+                                (h) => h.HolonymId,
+                                (h) => h.MeronymId);  
+                            break;
+                        case "instance_relation": 
+                            FillDictionary(ReadJsonStream(sr.ReadToEnd(), type) as InstanceRelation[],
+                                _classByInstance,
+                                _instanceByClass,
+                                (h) => h.ClassId,
+                                (h) => h.InstanceId); 
+                            break;
+                        case "hypernym_relation": 
+                            FillDictionary(ReadJsonStream(sr.ReadToEnd(), type) as HypernymRelation[],
+                                _hypernymsByHyponym,
+                                _hyponymsByHypernym,
+                                (h) => h.HypernymId,
+                                (h) => h.HyponymId);
+                            break;
+                        case "entailment_relation": 
+                            FillDictionary(ReadJsonStream(sr.ReadToEnd(), type) as EntailmentRelation[],
+                                _conclusionByPremise,
+                                _premiseByConclusion,
+                                (h) => h.ConclusionId,
+                                (h) => h.PremiseId);
+                            break;
+                        case "domain_relation": 
+                            FillDictionary(ReadJsonStream(sr.ReadToEnd(), type) as DomainRelation[],
+                                _domainsByItem,
+                                _itemsByDomain,
+                                (h) => h.DomainId,
+                                (h) => h.DomainItemId);  
+                            break;
+                        case "derivation_relation": 
+                            FillDictionary(ReadJsonStream(sr.ReadToEnd(), type) as DerivationRelation[],
+                                _derivativesBySource,
+                                _sourcesByDerivative,
+                                (h) => h.DerivativeId,
+                                (h) => h.SourceId); 
+                            break;
+                        case "composition_relation": 
+                            FillDictionary(ReadJsonStream(sr.ReadToEnd(), type) as CompositionRelation[],
+                                _phrasesByWord,
+                                _wordsByPhrase,
+                                (h) => h.PhraseId,
+                                (h) => h.WordId);  
+                            break;
+                        case "cause_relation": 
+                            FillDictionary(ReadJsonStream(sr.ReadToEnd(), type) as CauseRelation[],
+                                _causesByEffect,
+                                _effectsByCause,
+                                (h) => h.CauseId,
+                                (h) => h.EffectId); 
+                            break;
+                        case "association_relation": 
+                            FillDictionary(ReadJsonStream(sr.ReadToEnd(), type) as AssociationRelation[],
+                                _associationsByRelation,
+                                _relationsByAssociation,
+                                (h) => h.AssociationId,
+                                (h) => h.RelationId);
+                            break;
+                        case "antonymy_relation": 
+                            FillDictionary(ReadJsonStream(sr.ReadToEnd(), type) as AntonymyRelation[],
+                                _antonymyLeftByRight,
+                                _antonymyRightByLeft,
+                                (h) => h.LeftId,
+                                (h) => h.RightId);
+                            break;
+                    }
                 }
             }
-
-            Console.WriteLine("Nestor is loading synset thesaurus...");
-
-            Synsets = ReadJson<Synset>($"{pathToThesaurus}/synset.json");
-            Senses = ReadJson<Sense>($"{pathToThesaurus}/sense.json");
-            PosSynonymyRelations = ReadJson<PosSynonymyRelation>($"{pathToThesaurus}/pos_synonymy_relation.json");
-            MeronymyRelations = ReadJson<MeronymyRelation>($"{pathToThesaurus}/meronymy_relation.json");
-            HypernymRelations = ReadJson<HypernymRelation>($"{pathToThesaurus}/hypernym_relation.json");
-            EntailmentRelations = ReadJson<EntailmentRelation>($"{pathToThesaurus}/entailment_relation.json");
-            DomainRelations = ReadJson<DomainRelation>($"{pathToThesaurus}/domain_relation.json");
-            DerivationRelations = ReadJson<DerivationRelation>($"{pathToThesaurus}/derivation_relation.json");
-            CauseRelations = ReadJson<CauseRelation>($"{pathToThesaurus}/cause_relation.json");
-            AntonymyRelations = ReadJson<AntonymyRelation>($"{pathToThesaurus}/antonymy_relation.json");
-            AssociationRelations = ReadJson<AssociationRelation>($"{pathToThesaurus}/association_relation.json");
-            
-            CompositionRelations = ReadJson<CompositionRelation>($"{pathToThesaurus}/composition_relation.json");
-            InstanceRelations = ReadJson<InstanceRelation>($"{pathToThesaurus}/instance_relation.json");
-
+            catch (Exception e)
+            {
+                Console.WriteLine("Error loading thesaurus: " + e.Message);
+                throw new IOException($"Cannot load file: {pathToThesaurus}.zip");
+            }
             Console.WriteLine("Thesaurus loaded...OK");
         }
 
-        private T[] ReadJson<T>(string fileName)
+        private object ReadJsonStream(string stream, Type type)
         {
-            var result = JsonConvert.DeserializeObject<T[]>(
-                File.ReadAllText(fileName),
+            var result = JsonConvert.DeserializeObject(
+                stream,
+                type,
                 new JsonSerializerSettings
                 {
                     ContractResolver = new DefaultContractResolver
@@ -133,9 +219,8 @@ namespace Nestor.Thesaurus
 
             if (result != null)
             {
-                Console.WriteLine($"...{result[0].GetType().Name}: {result.Length}");
+                Console.WriteLine($"...{result.GetType().Name}");
             }
-
             return result;
         }
 
@@ -146,7 +231,7 @@ namespace Nestor.Thesaurus
 
         public Synset[] GetSynsets(string[] synsetIds)
         {
-            return synsetIds.Select(sId => Synsets.FirstOrDefault(s => s.Id == sId)).ToArray();
+            return synsetIds.Select(sId => _synsets.FirstOrDefault(s => s.Id == sId)).ToArray();
         }
 
         // public string GetLemmaForSynset(Synset synset)
@@ -156,110 +241,193 @@ namespace Nestor.Thesaurus
 
         public Synset[] GetPosSynonyms(string[] ids) // part of speech synonyms - not invertible
         {
-            var posSynonymyRelationIds = PosSynonymyRelations
-                .Where(x => ids.Contains(x.LeftId))
-                .Select(s => s.RightId).ToArray();
-
-            return GetSynsets(posSynonymyRelationIds);
+            var resultIds = new List<string>();
+            foreach (var id in ids)
+            {
+                resultIds.AddRange(_posSynonymyLeftByRight
+                    .TryGetValue(id, out var synonyms) ? synonyms : Array.Empty<string>());
+            }
+            return GetSynsets(resultIds.ToArray());
         }
 
         public Synset[] GetHypernyms(string[] ids) // inverse hyponyms
         {
-            var hypernymIds = HypernymRelations
-                .Where(x => ids.Contains(x.HyponymId))
-                .Select(s => s.HypernymId).ToArray();
-
-            return GetSynsets(hypernymIds);
+            var resultIds = new List<string>();
+            foreach (var id in ids)
+            {
+                resultIds.AddRange(_hypernymsByHyponym
+                    .TryGetValue(id, out var hypernyms) ? hypernyms : Array.Empty<string>());
+            }
+            return GetSynsets(resultIds.ToArray());
         }
 
         public Synset[] GetHyponyms(string[] ids) // inverse hypernyms
         {
-            var hyponymIds = HypernymRelations
-                .Where(x => ids.Contains(x.HypernymId))
-                .Select(s => s.HyponymId).ToArray();
-
-            return GetSynsets(hyponymIds);
+            var resultIds = new List<string>();
+            foreach (var id in ids)
+            {
+                resultIds.AddRange(_hyponymsByHypernym
+                    .TryGetValue(id, out var hyponyms) ? hyponyms : Array.Empty<string>());
+            }
+            return GetSynsets(resultIds.ToArray());
         }
 
         public Synset[] GetHolonyms(string[] ids) // inverse meronyms 
         {
-            var holonymIds = MeronymyRelations
-                .Where(x => ids.Contains(x.MeronymId))
-                .Select(s => s.HolonymId).ToArray();
-
-            return GetSynsets(holonymIds);
+            var resultIds = new List<string>();
+            foreach (var id in ids)
+            {
+                resultIds.AddRange(_holonymsByMeronym
+                    .TryGetValue(id, out var holonyms) ? holonyms : Array.Empty<string>());
+            }
+            return GetSynsets(resultIds.ToArray());
         }
 
         public Synset[] GetMeronyms(string[] ids) // inverse holonyms
         {
-            var meronymIds = MeronymyRelations
-                .Where(x => ids.Contains(x.HolonymId))
-                .Select(s => s.MeronymId).ToArray();
-
-            return GetSynsets(meronymIds);
+            var resultIds = new List<string>();
+            foreach (var id in ids)
+            {
+                resultIds.AddRange(_meronymsByHolonym
+                    .TryGetValue(id , out var holonym) ? holonym : Array.Empty<string>());
+            }
+            return GetSynsets(resultIds.ToArray());
         }
 
         public Synset[] GetDomains(string[] ids) // inverse domain items
         {
-            var domainIds = DomainRelations
-                .Where(x => ids.Contains(x.DomainItemId))
-                .Select(s => s.DomainId).ToArray();
-
-            return GetSynsets(domainIds);
+            var resultIds = new List<string>();
+            foreach (var id in ids)
+            {
+                resultIds.AddRange(_domainsByItem
+                    .TryGetValue(id, out var domainIds) ? domainIds : Array.Empty<string>());
+            }
+            return GetSynsets(resultIds.ToArray());
         }
 
         public Synset[] GetDomainItems(string[] ids) // inverse domains
         {
-            var domainIds = DomainRelations
-                .Where(x => ids.Contains(x.DomainId))
-                .Select(s => s.DomainItemId).ToArray();
-
-            return GetSynsets(domainIds);
+            var resultIds = new List<string>();
+            foreach (var id in ids)
+            {
+                resultIds.AddRange(_itemsByDomain
+                    .TryGetValue(id, out var itemIds) ? itemIds : Array.Empty<string>());
+            }
+            return GetSynsets(resultIds.ToArray());
         }
 
         public Synset[] GetAssociations(string[] ids)
         {
-            var associationIds = AssociationRelations
-                .Where(x => ids.Contains(x.RelationId))
-                .Select(s => s.AssociationId).ToArray();
-
-            return GetSynsets(associationIds);
+            var resultIds = new List<string>();
+            foreach (var id in ids)
+            {
+                resultIds.AddRange(_associationsByRelation
+                    .TryGetValue(id, out var associationIds) ? associationIds : Array.Empty<string>());
+            }
+            return GetSynsets(resultIds.ToArray());
         }
         
         public Synset[] GetAscRelations(string[] ids)
         {
-            var relationIds = AssociationRelations
-                .Where(x => ids.Contains(x.AssociationId))
-                .Select(s => s.RelationId).ToArray();
-
-            return GetSynsets(relationIds);
+            var resultIds = new List<string>();
+            foreach (var id in ids)
+            {
+                resultIds.AddRange(_relationsByAssociation
+                    .TryGetValue(id, out var relationIds) ? relationIds : Array.Empty<string>());
+            }
+            return GetSynsets(resultIds.ToArray());
         }
 
         public Synset[] GetCauses(string[] ids) //inverse effects
         {
-            var causeIds = CauseRelations
-                .Where(x => ids.Contains(x.EffectId))
-                .Select(s => s.CauseId).ToArray();
-
-            return GetSynsets(causeIds);
+            var resultIds = new List<string>();
+            foreach (var id in ids)
+            {
+                resultIds.AddRange(_causesByEffect
+                    .TryGetValue(id, out var causeIds) ? causeIds : Array.Empty<string>());
+            }
+            return GetSynsets(resultIds.ToArray());
         }
 
         public Synset[] GetEffects(string[] ids) // inverse causes
         {
-            var effectIds = CauseRelations
-                .Where(x => ids.Contains(x.CauseId))
-                .Select(s => s.EffectId).ToArray();
-
-            return GetSynsets(effectIds);
+            var resultIds = new List<string>();
+            foreach (var id in ids)
+            {
+                resultIds.AddRange(_effectsByCause
+                    .TryGetValue(id, out var effectIds) ? effectIds : Array.Empty<string>());
+            }
+            return GetSynsets(resultIds.ToArray());
         }
 
         public Sense[] GetDerivations(string[] ids) // words with same root
         {
-            var derivationIds = DerivationRelations
-                .Where(x => ids.Contains(x.DerivativeId))
-                .Select(s => s.SourceId).ToArray();
-
-            return GetSenses(derivationIds);
+            var resultIds = new List<string>();
+            foreach (var id in ids)
+            {
+                resultIds.AddRange(_derivativesBySource
+                    .TryGetValue(id, out var derivativeIds) ? derivativeIds : Array.Empty<string>());
+            }
+            return GetSenses(resultIds.ToArray());
         }
+        
+        private Type GetTypeFromString(string typeName)
+        {
+            return typeName switch
+            {
+                "synset" => typeof(Synset[]),
+                "sense" => typeof(Sense[]),
+                "pos_synonymy_relation" => typeof(PosSynonymyRelation[]),
+                "antonymy_relation" => typeof(AntonymyRelation[]),
+                "association_relation" => typeof(AssociationRelation[]),
+                "composition_relation" => typeof(CompositionRelation[]),
+                "derivation_relation" => typeof(DerivationRelation[]),
+                "domain_relation" => typeof(DomainRelation[]),
+                "hypernym_relation" => typeof(HypernymRelation[]),
+                "instance_relation" => typeof(InstanceRelation[]),
+                "meronymy_relation" => typeof(MeronymyRelation[]),
+                "cause_relation" => typeof(CauseRelation[]),
+                "entailment_relation" => typeof(EntailmentRelation[]),
+                _ => typeof(object)
+            };
+        }
+
+        private void FillDictionary<T>(
+            T[] source,
+            Dictionary<string, string[]> leftByRight,
+            Dictionary<string, string[]> rightByLeft,
+            Func<T, string> getLeft,
+            Func<T, string> getRight)
+        {
+            Console.WriteLine($"Started filling dictionary for {typeof(T)}...");
+            
+            foreach (var item in source)
+            {
+                var left = getLeft(item);
+                var right = getRight(item);
+
+                if (!leftByRight.ContainsKey(right))
+                {
+                    leftByRight.Add(right, new string[] { left });
+                }
+                else
+                {
+                    leftByRight[right] = leftByRight[right]
+                        .Concat(new string[] { left }).ToArray();
+                }
+
+                if (!rightByLeft.ContainsKey(left))
+                {
+                    rightByLeft.Add(left, new string[] { right });
+                }
+                else
+                {
+                    rightByLeft[left] = rightByLeft[left]
+                        .Concat(new string[] { right }).ToArray();
+                }
+            }
+            Console.WriteLine($"Finished filling dictionaries... Lengths: {leftByRight.Count}, {rightByLeft.Count}");
+        }
+ 
     }
 }

@@ -25,15 +25,15 @@ public class Tests
         var synsets = _nThesaurus.GetStraightRelations("рост", WordRelation.Synset);
         Assert.That(synsets, Has.Length.EqualTo(4));
         
+        var posSynonyms = _nThesaurus.GetStraightRelations("рост", WordRelation.PartOfSpeechSynonym);
+        Assert.That(posSynonyms, Has.Length.EqualTo(5));
+        
         var hypernyms = _nThesaurus.GetStraightRelations("рост", WordRelation.Hypernym);
         Assert.That(hypernyms, Has.Length.EqualTo(6));
         
         var domains = _nThesaurus.GetStraightRelations("рост", WordRelation.Domain);
         Assert.That(domains, Has.Length.EqualTo(2));
-        
-        var posSynonyms = _nThesaurus.GetStraightRelations("рост", WordRelation.PartOfSpeechSynonym);
-        Assert.That(posSynonyms, Has.Length.EqualTo(5));
-        
+
         var holonyms = _nThesaurus.GetStraightRelations("рост", WordRelation.Holonym);
         Assert.That(holonyms, Has.Length.EqualTo(1));
         
@@ -95,11 +95,11 @@ public class Tests
         var causes = _nThesaurus.GetInvertedRelations("смерть", WordRelation.Effect);
         Assert.That(causes, Has.Length.EqualTo(0));
         
-        var multipleRelations = _nThesaurus.GetInvertedRelations("рост",
-            WordRelation.SameRoot 
-                    | WordRelation.Holonym 
-                    | WordRelation.Hypernym);
-        Assert.That(multipleRelations, Has.Length.EqualTo(125));
+         var multipleRelations = _nThesaurus.GetInvertedRelations("рост",
+             WordRelation.SameRoot 
+                     | WordRelation.Holonym 
+                     | WordRelation.Hypernym);
+         Assert.That(multipleRelations, Has.Length.EqualTo(125));
     }
     
     [TearDown]
