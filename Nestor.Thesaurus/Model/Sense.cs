@@ -7,7 +7,13 @@ public class Sense
     public int ConceptId { get; set; }
     public int EntryId { get; set; }
     public string Id { get; set; }
-    public string Lemma { get; set; }
+
+    private string _lemma;
+    public string Lemma
+    {
+        get => _lemma;
+        set => _lemma = value.ToLower();
+    }
     public string MainWord { get; set; }
     public int Meaning { get; set; }
     public string Name { get; set; }
