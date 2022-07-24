@@ -14,79 +14,79 @@ namespace Nestor.Thesaurus
         /// <summary>
         /// Смысл - одно конкретное слово или словосочетание с конкретным же значением
         /// </summary>
-        private Dictionary<string, Sense> _senses = new();
+        private readonly Dictionary<string, Sense> _senses = new();
 
         /// <summary>
         /// Синсет = множество сущностей Sense с одинаковыми значениями и с одной частью речи
         /// </summary>
-        private Dictionary<string, Synset> _synsets = new();
+        private readonly Dictionary<string, Synset> _synsets = new();
 
         /// <summary>
         /// Синонимы из других частей речи
         /// </summary>
-        private Dictionary<string, string[]> _posSynonymyLeftByRight = new();
-        private Dictionary<string, string[]> _posSynonymyRightByLeft = new ();
+        private readonly Dictionary<string, string[]> _posSynonymyLeftByRight = new();
+        private readonly Dictionary<string, string[]> _posSynonymyRightByLeft = new ();
 
         /// <summary>
         /// Меронимы и холонимы - части и целые, например, "желудь" / "дуб"
         /// </summary>
-        private Dictionary<string, string[]> _meronymsByHolonym = new ();
-        private Dictionary<string, string[]> _holonymsByMeronym = new ();
+        private readonly Dictionary<string, string[]> _meronymsByHolonym = new ();
+        private readonly Dictionary<string, string[]> _holonymsByMeronym = new ();
 
         /// <summary>
         /// Классы и экземпляры, например, "Смоленск" / "областной центр"
         /// </summary>
-        private Dictionary<string, string[]> _classByInstance = new ();
-        private Dictionary<string, string[]> _instanceByClass = new ();
+        private readonly Dictionary<string, string[]> _classByInstance = new ();
+        private readonly Dictionary<string, string[]> _instanceByClass = new ();
 
         /// <summary>
         /// Гипонимы и гиперонимы - более частные и более общие понятия, например, "спаржа" / "овощи"
         /// </summary>
-        private Dictionary<string, string[]> _hyponymsByHypernym = new ();
-        private Dictionary<string, string[]> _hypernymsByHyponym = new ();
+        private readonly Dictionary<string, string[]> _hyponymsByHypernym = new ();
+        private readonly Dictionary<string, string[]> _hypernymsByHyponym = new ();
 
         /// <summary>
         /// Предпосылки и возможные выводы из них, например, "прибежать" / "бегать" (TODO только для глаголов)
         /// </summary>
-        private Dictionary<string, string[]> _conclusionByPremise = new ();
-        private Dictionary<string, string[]> _premiseByConclusion = new ();
+        private readonly Dictionary<string, string[]> _conclusionByPremise = new ();
+        private readonly Dictionary<string, string[]> _premiseByConclusion = new ();
 
         /// <summary>
         /// Домены и их атрибуты, например, "спорт" / "мяч"
         /// </summary>
-        private Dictionary<string, string[]> _domainsByItem = new ();
-        private Dictionary<string, string[]> _itemsByDomain = new ();
+        private readonly Dictionary<string, string[]> _domainsByItem = new ();
+        private readonly Dictionary<string, string[]> _itemsByDomain = new ();
 
         /// <summary>
         /// От каких слов произошло данное, и какие произошли от него, например, "приятель" / "приятельский"
         /// Как правило однокоренные 
         /// </summary>
-        private Dictionary<string, string[]> _derivativesBySource = new ();
-        private Dictionary<string, string[]> _sourcesByDerivative = new ();
+        private readonly Dictionary<string, string[]> _derivativesBySource = new ();
+        private readonly Dictionary<string, string[]> _sourcesByDerivative = new ();
 
         /// <summary>
         /// Из каких слов состоит фраза, и в каких фразах участвует слово, например, "чувство" / "порыв чувств"
         /// </summary>
-        private Dictionary<string, string[]> _phrasesByWord = new ();
-        private Dictionary<string, string[]> _wordsByPhrase = new ();
+        private readonly Dictionary<string, string[]> _phrasesByWord = new ();
+        private readonly Dictionary<string, string[]> _wordsByPhrase = new ();
 
         /// <summary>
         /// Причины и следствия, например, (TODO только для глаголов)
         /// </summary>
-        private Dictionary<string, string[]> _causesByEffect = new ();
-        private Dictionary<string, string[]> _effectsByCause = new ();
+        private readonly Dictionary<string, string[]> _causesByEffect = new ();
+        private readonly Dictionary<string, string[]> _effectsByCause = new ();
 
         /// <summary>
         /// Антонимы - слова противоположные по смыслу
         /// </summary>
-        private Dictionary<string, string[]> _antonymyLeftByRight = new ();
-        private Dictionary<string, string[]> _antonymyRightByLeft = new ();
+        private readonly Dictionary<string, string[]> _antonymyLeftByRight = new ();
+        private readonly Dictionary<string, string[]> _antonymyRightByLeft = new ();
 
         /// <summary>
         /// Ассоциации - слова, которые принадлежат одной группе, например, "прибежать" / "бегать"
         /// </summary>
-        private Dictionary<string, string[]> _associationsByRelation = new ();
-        private Dictionary<string, string[]> _relationsByAssociation = new ();
+        private readonly Dictionary<string, string[]> _associationsByRelation = new ();
+        private readonly Dictionary<string, string[]> _relationsByAssociation = new ();
 
         /// <summary>
         /// Основной конструктор словаря - читает json файлы выгруженные из реляционной СУБД и записывает из в объект базы.
@@ -98,29 +98,29 @@ namespace Nestor.Thesaurus
             
             try
             {
-                using var file = File.OpenRead($"{pathToThesaurus}.zip");
+                using FileStream file = File.OpenRead($"{pathToThesaurus}.zip");
                 using var zip = new ZipArchive(file, ZipArchiveMode.Read);
 
-                foreach (var entry in zip.Entries)
+                foreach (ZipArchiveEntry entry in zip.Entries)
                 {
-                    var name = entry.Name.Split(".")[0];
+                    string name = entry.Name.Split(".")[0];
                     Type type = GetTypeFromString(name);
 
-                    using var stream = entry.Open();
+                    using Stream stream = entry.Open();
                     using var sr = new StreamReader(stream);
                     
                     switch (name)
                     {
                         case "synset": 
                             var synsets = ReadJsonStream(sr.ReadToEnd(), type) as Synset[];
-                            foreach (var synset in synsets)
+                            foreach (Synset synset in synsets)
                             {
                                 _synsets.Add(synset.Id, synset);
                             }
                             break;
                         case "sense": 
                             var senses = ReadJsonStream(sr.ReadToEnd(), type) as Sense[];
-                            foreach (var sense in senses)
+                            foreach (Sense sense in senses)
                             {
                                 _senses.Add(sense.Id, sense);
                             }
@@ -215,7 +215,7 @@ namespace Nestor.Thesaurus
 
         private object ReadJsonStream(string stream, Type type)
         {
-            var result = JsonConvert.DeserializeObject(
+            object result = JsonConvert.DeserializeObject(
                 stream,
                 type,
                 new JsonSerializerSettings
@@ -247,23 +247,19 @@ namespace Nestor.Thesaurus
         {
             return _senses.Values.ToArray();
         }
+
         public Synset[] GetSynsets(string[] synsetIds)
         {
             return synsetIds.Select(synsetId => _synsets[synsetId]).ToArray();
         }
 
-        // public string GetLemmaForSynset(Synset synset)
-        // {
-        //     return Senses.FirstOrDefault(s => s.SynsetId == synset.Id)?.Lemma;
-        // }
-
         public Synset[] GetPosSynonyms(string[] ids) // part of speech synonyms - not invertible
         {
             var resultIds = new List<string>();
-            foreach (var id in ids)
+            foreach (string id in ids)
             {
                 resultIds.AddRange(_posSynonymyLeftByRight
-                    .TryGetValue(id, out var synonyms) ? synonyms : Array.Empty<string>());
+                    .TryGetValue(id, out string[] synonyms) ? synonyms : Array.Empty<string>());
             }
             return GetSynsets(resultIds.ToArray());
         }
@@ -271,10 +267,10 @@ namespace Nestor.Thesaurus
         public Synset[] GetHypernyms(string[] ids) // inverse hyponyms
         {
             var resultIds = new List<string>();
-            foreach (var id in ids)
+            foreach (string id in ids)
             {
                 resultIds.AddRange(_hypernymsByHyponym
-                    .TryGetValue(id, out var hypernyms) ? hypernyms : Array.Empty<string>());
+                    .TryGetValue(id, out string[] hypernyms) ? hypernyms : Array.Empty<string>());
             }
             return GetSynsets(resultIds.ToArray());
         }
@@ -381,10 +377,10 @@ namespace Nestor.Thesaurus
         public Sense[] GetDerivations(string[] ids) // words with same root
         {
             var resultIds = new List<string>();
-            foreach (var id in ids)
+            foreach (string id in ids)
             {
                 resultIds.AddRange(_derivativesBySource
-                    .TryGetValue(id, out var derivativeIds) ? derivativeIds : Array.Empty<string>());
+                    .TryGetValue(id, out string[] derivativeIds) ? derivativeIds : Array.Empty<string>());
             }
             return GetSenses(resultIds.ToArray());
         }
@@ -419,29 +415,27 @@ namespace Nestor.Thesaurus
         {
             Console.WriteLine($"Started filling dictionary for {typeof(T)}...");
             
-            foreach (var item in source)
+            foreach (T item in source)
             {
-                var left = getLeft(item);
-                var right = getRight(item);
+                string left = getLeft(item);
+                string right = getRight(item);
 
                 if (!leftByRight.ContainsKey(right))
                 {
-                    leftByRight.Add(right, new string[] { left });
+                    leftByRight.Add(right, new[] { left });
                 }
                 else
                 {
-                    leftByRight[right] = leftByRight[right]
-                        .Concat(new string[] { left }).ToArray();
+                    leftByRight[right] = leftByRight[right].Concat(new[] { left }).ToArray();
                 }
 
                 if (!rightByLeft.ContainsKey(left))
                 {
-                    rightByLeft.Add(left, new string[] { right });
+                    rightByLeft.Add(left, new[] { right });
                 }
                 else
                 {
-                    rightByLeft[left] = rightByLeft[left]
-                        .Concat(new string[] { right }).ToArray();
+                    rightByLeft[left] = rightByLeft[left].Concat(new[] { right }).ToArray();
                 }
             }
             Console.WriteLine($"Finished filling dictionaries... Lengths: {leftByRight.Count}, {rightByLeft.Count}");

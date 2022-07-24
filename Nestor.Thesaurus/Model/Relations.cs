@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 namespace Nestor.Thesaurus.Model;
 
 public class PosSynonymyRelation

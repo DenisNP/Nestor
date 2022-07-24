@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Nestor.Thesaurus.Model;
 
 namespace Nestor.Thesaurus
 {
@@ -15,7 +16,7 @@ namespace Nestor.Thesaurus
         }
         
         /// <summary>
-        /// Для каждого флага из relations нужно для lemma вернуть список объектов RelatedWord,
+        /// Для каждого флага из relations нужно для lemma возвращает список объектов RelatedWord,
         /// в каждом таком объекте слово или словосочетание и тип взаимоотношения с исходным словом
         /// </summary>
         /// <param name="lemma"> Лемма </param>
@@ -25,10 +26,10 @@ namespace Nestor.Thesaurus
         {
             var result = new List<RelatedWord>();
 
-            var senses = _database.GetAllSenses().Where(s => s.Lemma == lemma).ToArray();
-            var senseIds = senses.Select(s => s.Id).ToArray();
-            var synsets = _database.GetSynsets(senses.Select(s => s.SynsetId).ToArray());
-            var synsetIds = synsets.Select(s => s.Id).ToArray();
+            Sense[] senses = _database.GetAllSenses().Where(s => s.Lemma == lemma).ToArray();
+            string[] senseIds = senses.Select(s => s.Id).ToArray();
+            Synset[] synsets = _database.GetSynsets(senses.Select(s => s.SynsetId).ToArray());
+            string[] synsetIds = synsets.Select(s => s.Id).ToArray();
 
             // if (relations.HasFlag(WordRelation.None))
             //     return result.ToArray();
@@ -41,11 +42,10 @@ namespace Nestor.Thesaurus
 
             if (relations.HasFlag(WordRelation.SameRoot))
             {   
-                //возвращаю sense а не synset
-                var derivatives = _database.GetDerivations(senseIds); 
+                // возвращаю sense а не synset
+                Sense[] derivatives = _database.GetDerivations(senseIds); 
 
-                result.AddRange(derivatives
-                    .Select(derivative => 
+                result.AddRange(derivatives.Select(derivative => 
                         ConstructRelatedWord(derivative.Name, WordRelation.SameRoot)));
             }
 
@@ -107,7 +107,7 @@ namespace Nestor.Thesaurus
         }
         
         /// <summary>
-        /// Для слова нужно вернуть все слова, чьё взаимоотношение с ними попадает под relations
+        /// Для слова возвращает все слова, чьё взаимоотношение с ними попадает под relations
         /// если в методе выше для слова "птица" и relation = Domain нужно вернуть "биология",
         /// то в этом методе для слова "биология" и relation = Domain нужно вернуть "птица"
         /// </summary>
@@ -118,10 +118,10 @@ namespace Nestor.Thesaurus
         {
             var result = new List<RelatedWord>();
 
-            var senses = _database.GetAllSenses().Where(s => s.Lemma == lemma).ToArray();
-            var senseIds = senses.Select(s => s.Id).ToArray();
-            var synsets = _database.GetSynsets(senses.Select(s=> s.SynsetId).ToArray());
-            var synsetIds = synsets.Select(s => s.Id).ToArray();
+            Sense[] senses = _database.GetAllSenses().Where(s => s.Lemma == lemma).ToArray();
+            string[] senseIds = senses.Select(s => s.Id).ToArray();
+            Synset[] synsets = _database.GetSynsets(senses.Select(s => s.SynsetId).ToArray());
+            string[] synsetIds = synsets.Select(s => s.Id).ToArray();
 
             if (invertedRelations.HasFlag(WordRelation.Hyponym))
             {
@@ -131,15 +131,14 @@ namespace Nestor.Thesaurus
 
             if (invertedRelations.HasFlag(WordRelation.SameRoot))
             {   
-                //возвращаю sense а не synset
-                var derivatives = _database.GetDerivations(senseIds); 
+                // возвращаю sense а не synset
+                Sense[] derivatives = _database.GetDerivations(senseIds); 
 
-                result.AddRange(derivatives
-                    .Select(derivative => 
-                        ConstructRelatedWord(derivative.Name, WordRelation.SameRoot)));
+                result.AddRange(derivatives.Select(derivative =>
+                    ConstructRelatedWord(derivative.Name, WordRelation.SameRoot)));
             }
             
-            //not inversable
+            // not inversable
             if (invertedRelations.HasFlag(WordRelation.Synset))
             {
                 result.AddRange(synsets.Select(s => 
@@ -186,7 +185,7 @@ namespace Nestor.Thesaurus
             if (invertedRelations.HasFlag(WordRelation.Cause))
             {
                 result.AddRange(_database.GetEffects(synsetIds).Select(e => 
-                    ConstructRelatedWord(e.Title,WordRelation.Effect)));
+                    ConstructRelatedWord(e.Title, WordRelation.Effect)));
             }
         
             if (invertedRelations.HasFlag(WordRelation.Effect))
@@ -200,7 +199,7 @@ namespace Nestor.Thesaurus
         
         private RelatedWord ConstructRelatedWord(string rawText, WordRelation relation)
         {
-            var lemma = _nestor.Lemmatize(rawText, MorphOption.Distinct).First();
+            string lemma = _nestor.Lemmatize(rawText, MorphOption.Distinct).First();
             return new RelatedWord(lemma, rawText, relation);
         }
     }

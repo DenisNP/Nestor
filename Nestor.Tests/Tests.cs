@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nestor;
 using Nestor.Models;
-using Nestor.Thesaurus;
 using NUnit.Framework;
 
 namespace NestorTests
