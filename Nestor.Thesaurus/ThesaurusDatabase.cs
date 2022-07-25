@@ -260,7 +260,7 @@ namespace Nestor.Thesaurus
         
         public Sense[] GetSensesByLemma(string lemma)
         {
-            return _sensesByLemma[lemma];
+            return _sensesByLemma.ContainsKey(lemma) ? _sensesByLemma[lemma] : Array.Empty<Sense>();
         }
 
         public Synset[] GetSynsets(string[] synsetIds)

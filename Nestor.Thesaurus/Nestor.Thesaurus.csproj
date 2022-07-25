@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>0.0.2</PackageVersion>
+        <PackageVersion>0.0.3</PackageVersion>
         <Title>Nestor.Thesaurus</Title>
         <Description>Russial NLP Thesaurus library</Description>
         <Authors>Denis Peshekhonov, Grigory Frantsuzov</Authors>
@@ -12,15 +12,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Nestor\Nestor.csproj"/>
+        <ProjectReference Include="..\Nestor\Nestor.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Dict\SynsetDB.zip"/>
+        <None Remove="Dict\SynsetDB.zip" />
         <EmbeddedResource Include="Dict\SynsetDB.zip">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </EmbeddedResource>
