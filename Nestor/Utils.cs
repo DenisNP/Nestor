@@ -11,7 +11,7 @@ namespace Nestor
         internal static Stream LoadFile(string fileName)
         {
             var assembly = Assembly.GetCallingAssembly();
-            using Stream file = assembly.GetManifestResourceStream($"Nestor.Dict.{fileName}");
+            Stream file = assembly.GetManifestResourceStream($"Nestor.Dict.{fileName}");
 
             if (file != null)
             {
