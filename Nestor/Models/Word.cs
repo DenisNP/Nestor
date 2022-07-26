@@ -5,10 +5,10 @@ using Nestor.Data;
 
 namespace Nestor.Models
 {
-    public class Word
+    public class Word : IDisposable
     {
-        public string Stem { get; }
-        public WordForm[] Forms { get; }
+        public string Stem { get; private set; }
+        public WordForm[] Forms { get; private set; }
         public WordForm Lemma => Forms[0];
         public Tag Tag => Lemma.Tag;
 
@@ -110,6 +110,17 @@ namespace Nestor.Models
         {
             int formsCount = paradigm.Length / 4;
             return $"{storage.GetPrefix(paradigm[idx])}{stem}{storage.GetSuffix(paradigm[formsCount + idx])}";
+        }
+
+        public void Dispose()
+        {
+            foreach (WordForm wordForm in Forms)
+            {
+                wordForm.Dispose();
+            }
+
+            Forms = null;
+            Stem = null;
         }
     }
 }

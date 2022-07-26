@@ -132,15 +132,22 @@ namespace Nestor
         public string[] Lemmatize(string s, MorphOption options = MorphOption.None)
         {
             string[] tokens = Tokenize(s, options);
-            IEnumerable<Word[]> words = tokens.Select(t => WordInfo(t));
+            List<Word[]> words = tokens.Select(t => WordInfo(t)).ToList();
 
             IEnumerable<string> selectedWords = words
                 .SelectMany(w => options.HasFlag(MorphOption.InsertAllLemmas) ? w : new[] {w[0]})
                 .Select(w => w.Lemma.Word);
 
-            return options.HasFlag(MorphOption.Distinct) 
+            string[] lemmas = options.HasFlag(MorphOption.Distinct) 
                 ? selectedWords.Distinct().ToArray() 
                 : selectedWords.ToArray();
+
+            foreach (Word word in words.SelectMany(w => w))
+            {
+                word.Dispose();
+            }
+
+            return lemmas;
         }
 
         /// <summary>

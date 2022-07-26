@@ -3,12 +3,12 @@ using Nestor.Data;
 
 namespace Nestor.Models
 {
-    public class WordForm
+    public class WordForm : IDisposable
     {
-        public string Word { get; }
+        public string Word { get; private set; }
         public int Stress { get; private set; }
 
-        public Tag Tag { get; }
+        public Tag Tag { get; private set; }
         
         public string[] Grammemes { get; }
         
@@ -30,6 +30,12 @@ namespace Nestor.Models
             }
             
             Stress = stress;
+        }
+
+        public void Dispose()
+        {
+            Word = null;
+            Tag = null;
         }
     }
 }
