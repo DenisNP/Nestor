@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using DawgSharp;
 using Nestor.Models;
@@ -71,10 +72,11 @@ namespace Nestor
         {
             Console.Write("Nestor is loading morphology...");
 
-            _dawgSingle = Dawg<int>.Load(Utils.LoadFile("dict_single.bin"),
-                reader => reader.ReadInt32());
+            using Stream singleDict = Utils.LoadFile("dict_single.bin");
+            _dawgSingle = Dawg<int>.Load(singleDict, reader => reader.ReadInt32());
             
-            _dawgMulti = Dawg<int[]>.Load(Utils.LoadFile("dict_multiple.bin"),
+            using Stream multiDict = Utils.LoadFile("dict_multiple.bin");
+            _dawgMulti = Dawg<int[]>.Load(multiDict,
                 reader =>
                 {
                     string str = reader.ReadString();
