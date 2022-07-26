@@ -101,7 +101,7 @@ namespace Nestor.Thesaurus
             try
             {
                 var assembly = Assembly.GetCallingAssembly();
-                Stream file = assembly.GetManifestResourceStream($"Nestor.Thesaurus.Dict.{pathToThesaurus}")
+                using Stream file = assembly.GetManifestResourceStream($"Nestor.Thesaurus.Dict.{pathToThesaurus}")
                               ?? throw new IOException();
 
                 using var zip = new ZipArchive(file, ZipArchiveMode.Read);

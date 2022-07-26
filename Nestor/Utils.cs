@@ -11,7 +11,7 @@ namespace Nestor
         internal static Stream LoadFile(string fileName)
         {
             var assembly = Assembly.GetCallingAssembly();
-            var file = assembly.GetManifestResourceStream($"Nestor.Dict.{fileName}");
+            using Stream file = assembly.GetManifestResourceStream($"Nestor.Dict.{fileName}");
 
             if (file != null)
             {
@@ -23,7 +23,7 @@ namespace Nestor
 
         internal static void LoadFileToList(List<string> list, string fileName)
         {
-            using var fileStream = LoadFile(fileName);
+            using Stream fileStream = LoadFile(fileName);
             LoadStreamToList(list, fileStream);
         }
 
