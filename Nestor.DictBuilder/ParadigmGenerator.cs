@@ -166,7 +166,7 @@ namespace Nestor.DictBuilder
                         : secondWord[..accentIndex].Replace("'", "") + "'" + secondWord[(accentIndex + 1)..].Replace("'", "");
                     
                     // accent
-                    var accent = lengthDiffers ? -1 : FindAccent(secondSubword);
+                    var accent = lengthDiffers ? 0 : FindAccent(secondSubword);
                     secondSubword = secondSubword.Replace("'", "");
 
                     // tags
