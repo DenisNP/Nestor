@@ -133,11 +133,11 @@ namespace Nestor.DictBuilder
         private static (string word, string[] tags, int accent, string altForm)[] ExtractForms(List<string> lines)
         {
             var result = new List<(string word, string[] tags, int accent, string altForm)>();
-            
+
             foreach (var line in lines)
             {
                 var lineData = line.Split("|");
-                
+
                 // skip forms with spaces
                 if (lineData[0].Trim().Contains(" ")) 
                     continue;
@@ -145,7 +145,8 @@ namespace Nestor.DictBuilder
                 // extract word form
                 var firstWord = Regex.Replace(lineData[0], "[^а-яё\\-]+", "");
                 var secondWord = Regex.Replace(lineData[2], "[^а-яё\\-']+", "");
-                
+                var secondWordClean = Regex.Replace(secondWord, "[^а-яё\\-]+", "");
+
                 // multiple accents
                 int[] accentIndexes = secondWord
                     .Select((c, i) => (c, i))
@@ -153,9 +154,9 @@ namespace Nestor.DictBuilder
                     .Select(x => x.i)
                     .ToArray();
 
-                if (accentIndexes.Length == 0)
+                if (accentIndexes.Length == 0 || firstWord.Length != secondWordClean.Length)
                     accentIndexes = new[] {-1};
-                
+
                 foreach (int accentIndex in accentIndexes)
                 {
                     // create word with only one current accent
