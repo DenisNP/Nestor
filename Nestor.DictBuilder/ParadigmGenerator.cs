@@ -146,6 +146,7 @@ namespace Nestor.DictBuilder
                 var firstWord = Regex.Replace(lineData[0], "[^а-яё\\-]+", "");
                 var secondWord = Regex.Replace(lineData[2], "[^а-яё\\-']+", "");
                 var secondWordClean = Regex.Replace(secondWord, "[^а-яё\\-]+", "");
+                var lengthDiffers = firstWord.Length != secondWordClean.Length;
 
                 // multiple accents
                 int[] accentIndexes = secondWord
@@ -154,7 +155,7 @@ namespace Nestor.DictBuilder
                     .Select(x => x.i)
                     .ToArray();
 
-                if (accentIndexes.Length == 0 || firstWord.Length != secondWordClean.Length)
+                if (accentIndexes.Length == 0 || lengthDiffers)
                     accentIndexes = new[] {-1};
 
                 foreach (int accentIndex in accentIndexes)
@@ -165,7 +166,7 @@ namespace Nestor.DictBuilder
                         : secondWord[..accentIndex].Replace("'", "") + "'" + secondWord[(accentIndex + 1)..].Replace("'", "");
                     
                     // accent
-                    var accent = FindAccent(secondSubword);
+                    var accent = lengthDiffers ? -1 : FindAccent(secondSubword);
                     secondSubword = secondSubword.Replace("'", "");
 
                     // tags
