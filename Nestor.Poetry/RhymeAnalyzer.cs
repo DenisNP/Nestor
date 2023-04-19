@@ -280,6 +280,7 @@ namespace Nestor.Poetry
             bool rightIsSilent = firstTrigram.RightIsNull && secondTrigram.RightIsNull
                                  || firstTrigram.RightIsNull && secondTrigram.RightConsonant == "й"
                                  || firstTrigram.RightConsonant == "й" && secondTrigram.RightIsNull;
+            bool vowelsInconsistency = firstTrigram.Vowel == null ^ secondTrigram.Vowel == null;
 
             return stressed switch
             {
@@ -289,7 +290,9 @@ namespace Nestor.Poetry
                 true when rightIsSilent => 0.8 * vowelScore + 0.2 * leftScore,
                 // when right is not silent, we score by worst between vowel (for stressed) and right
                 true => 0.15 * leftScore + 0.7 * Math.Min(vowelScore, rightScore) + 0.15 * Math.Max(vowelScore, rightScore),
-                // for unstressed vowel score is not so important, so we score by left if right is silent,
+                // force lower score if exactly one trigram has vowel
+                false when rightIsSilent && vowelsInconsistency => 0.2 * leftScore,
+                // for unstressed middle vowel score is not so important, so we score by left if right is silent,
                 // otherwise by right mostly with small influence of left
                 false when rightIsSilent => 0.9 * leftScore + 0.1 * vowelScore,
                 false => 0.35 * leftScore + 0.05 * vowelScore + 0.6 * rightScore

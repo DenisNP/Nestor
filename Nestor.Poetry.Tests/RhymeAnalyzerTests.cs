@@ -44,6 +44,9 @@ namespace Nestor.Poetry.Tests
 
             RhymingPair r9 = _rhymeAnalyzer.ScoreRhyme("аура", "мяуро");
             Assert.Greater(r9.Score, 0.8);
+
+            RhymingPair r10 = _rhymeAnalyzer.ScoreRhyme("пакля", "моноспектакль");
+            Assert.Greater(r10.Score, 0.8);
         }
     }
 }
