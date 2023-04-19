@@ -94,29 +94,29 @@ namespace Nestor.Poetry
             var stressedScore = 0.0; // score for stressed trigram pair
             var unstressedScore = 0.0; // average score for unstressed trigram pairs
             var endScore = 0.0; // score for last trigram pair
-            
+
             var idx1 = 0;
             var idx2 = 0;
             var unstressedTrigramsCount = 0;
             var finished = false;
             var stressed = true; // we always start with stressed trigram pair
-            
+
             Trigram trigram1 = GetNextTrigram(tail1, ref idx1);
             Trigram trigram2 = GetNextTrigram(tail2, ref idx2);
-            
+
             // score each trigram pair till the end of both words
             while (!finished)
             {
-                double pairScore = ScoreTrigramPair(trigram1, trigram2, stressed);
+                Trigram nextTrigram1 = GetNextTrigram(tail1, ref idx1);
+                Trigram nextTrigram2 = GetNextTrigram(tail2, ref idx2);
 
-                // check next
-                trigram1 = GetNextTrigram(tail1, ref idx1);
-                trigram2 = GetNextTrigram(tail2, ref idx2);
-                if (trigram1.IsNull && trigram2.IsNull)
+                if (nextTrigram1.IsNull && nextTrigram2.IsNull)
                 {
                     finished = true;
                 }
-                
+
+                double pairScore = ScoreTrigramPair(trigram1, trigram2, stressed, finished);
+
                 // add score
                 if (stressed)
                 {
@@ -136,6 +136,10 @@ namespace Nestor.Poetry
                     unstressedScore += pairScore;
                     unstressedTrigramsCount++;
                 }
+
+                // set next
+                trigram1 = nextTrigram1;
+                trigram2 = nextTrigram2;
             }
 
             double worstScore = Math.Min(stressedScore, endScore);
@@ -161,24 +165,25 @@ namespace Nestor.Poetry
         {
             List<string> reversed = word.Reverse().Select(c => c.ToString()).ToList();
             var transcribed = new List<string>();
-            
+
             var i = 0;
             var nextConsonantIsSoft = false;
             var nextConsonantIsVoiced = false;
-            
+
             while (i < reversed.Count)
             {
                 string letter = reversed[i];
                 int softVowelIdx = SoftVowels.FindIndex(v => v == letter);
                 if (softVowelIdx >= 0)
                 {
+                    // soft vowel, see next letter
+
                     nextConsonantIsVoiced = true;
                     string hardSibling = HardVowels[softVowelIdx];
-                    
-                    // soft vowel, see next letter
+
                     if (i == reversed.Count - 1)
                     {
-                        // no next letter, push full transctiption
+                        // no next letter, push full transcription
                         transcribed.Add(hardSibling);
                         transcribed.Add("й");
                     }
@@ -186,15 +191,10 @@ namespace Nestor.Poetry
                     {
                         // see next letter
                         string nextLetter = reversed[i + 1];
-                        if (IsVowel(nextLetter))
+                        if (IsVowel(nextLetter) || (nextLetter is "ь" or "ъ"))
                         {
-                            // next letter is vowel, full transctiption
-                            transcribed.Add(hardSibling);
-                            transcribed.Add("й");
-                        }
-                        else if (nextLetter is "ь" or "ъ")
-                        {
-                            // next letter is ь, add full and skip
+                            // next letter is vowel, full transcription
+                            // or next letter is ь, add full and skip
                             transcribed.Add(hardSibling);
                             transcribed.Add("й");
                         }
@@ -221,7 +221,7 @@ namespace Nestor.Poetry
                 {
                     nextConsonantIsSoft = true;
                     // dont push this letter
-                } 
+                }
                 else if (letter == "ъ")
                 {
                     // just skip
@@ -234,7 +234,7 @@ namespace Nestor.Poetry
                         nextConsonantIsSoft = false;
                         letter = letter.ToUpper();
                     }
-                    
+
                     // test if voiced or voiceless
                     int voicedIndex = VoicedConsonants.FindIndex(c => c == letter);
                     if (voicedIndex >= 0)
@@ -268,11 +268,11 @@ namespace Nestor.Poetry
             {
                 result = result.Replace(key, value);
             }
-            
+
             return result;
         }
 
-        private double ScoreTrigramPair(Trigram firstTrigram, Trigram secondTrigram, bool stressed)
+        private double ScoreTrigramPair(Trigram firstTrigram, Trigram secondTrigram, bool stressed, bool end)
         {
             double leftScore = CompareConsonants(firstTrigram.LeftConsonant, secondTrigram.LeftConsonant);
             double vowelScore = firstTrigram.Vowel == secondTrigram.Vowel ? 1.0 : 0.0;
@@ -283,8 +283,10 @@ namespace Nestor.Poetry
 
             return stressed switch
             {
-                // when right is silent, we score by worst between left and vowel (for stressed)
-                true when rightIsSilent => 0.8 * Math.Min(leftScore, vowelScore) + 0.2 * Math.Max(leftScore, vowelScore),
+                // when right is silent at the end of word, we score by worst between left and vowel (for stressed)
+                true when rightIsSilent && end => 0.8 * Math.Min(leftScore, vowelScore) + 0.2 * Math.Max(leftScore, vowelScore),
+                // when right is silent not in the end, we score by worst between left and vowel (for stressed)
+                true when rightIsSilent => 0.8 * vowelScore + 0.2 * leftScore,
                 // when right is not silent, we score by worst between vowel (for stressed) and right
                 true => 0.15 * leftScore + 0.7 * Math.Min(vowelScore, rightScore) + 0.15 * Math.Max(vowelScore, rightScore),
                 // for unstressed vowel score is not so important, so we score by left if right is silent,
@@ -315,7 +317,7 @@ namespace Nestor.Poetry
         private Trigram GetNextTrigram(string word, ref int index)
         {
             var trigram = new Trigram(null, null, null);
-            
+
             // word ended, return null trigram
             if (index >= word.Length)
             {
@@ -329,7 +331,7 @@ namespace Nestor.Poetry
                 var lastLetter = word[index - 1].ToString();
                 return trigram with { LeftConsonant = lastLetter };
             }
-            
+
             // not last letter
             var currentLetter = word[index].ToString();
 
@@ -347,7 +349,7 @@ namespace Nestor.Poetry
                         trigram = trigram with { LeftConsonant = nextLetter };
                         return trigram;
                     }
-                    
+
                     // the end is out there
                     currentLetter = word[index - 1].ToString();
                     nextLetter = word[index].ToString();
@@ -360,7 +362,7 @@ namespace Nestor.Poetry
                 // starting from vowel
                 trigram = trigram with { Vowel = currentLetter };
             }
-            
+
             // move to the next
             index++;
 
@@ -369,7 +371,7 @@ namespace Nestor.Poetry
             {
                 return trigram;
             }
-            
+
             // take one next letter if this is consonant
             var secondNextLetter = word[index].ToString();
             if (!IsVowel(secondNextLetter))
@@ -382,7 +384,7 @@ namespace Nestor.Poetry
                     index++;
                 }
             }
-            
+
             // next letter was vowel, stop trigram here
             return trigram;
         }
@@ -407,7 +409,7 @@ namespace Nestor.Poetry
             {
                 return forms.Select(f => new WordWithStress(f.Word, (byte)f.Stress)).ToArray();
             }
-            
+
             // unknown stress, so take stress for every vowel
             var allVowelsStresses = new List<WordWithStress>();
             byte lastStressNumber = 0;
