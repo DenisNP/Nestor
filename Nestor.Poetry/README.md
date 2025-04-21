@@ -25,7 +25,7 @@ const string poem =   "Выхожу один я на дорогу;\n" +
                     + "Сквозь туман кремнистый путь блестит;\n" +
                     + "Ночь тиха. Пустыня внемлет богу,\n" +
                     + "И звезда с звездою говорит.";
-Foot foot = analyzer.FindBestFootByPoem(line);
+Foot foot = analyzer.FindBestFootByPoem(poem);
 Console.WriteLine(foot.Type.ToString()); // Chorea
 ```
 
