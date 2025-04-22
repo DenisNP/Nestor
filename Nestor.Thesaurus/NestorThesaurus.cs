@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Nestor.Thesaurus.Model;
 
 namespace Nestor.Thesaurus
 {
@@ -25,10 +26,10 @@ namespace Nestor.Thesaurus
         {
             var result = new List<RelatedWord>();
 
-            var senses = _database.GetAllSenses().Where(s => s.Lemma == lemma).ToArray();
-            var senseIds = senses.Select(s => s.Id).ToArray();
-            var synsets = _database.GetSynsets(senses.Select(s => s.SynsetId).ToArray());
-            var synsetIds = synsets.Select(s => s.Id).ToArray();
+            Sense[] senses = _database.GetAllSenses().Where(s => s.Lemma == lemma).ToArray();
+            string[] senseIds = senses.Select(s => s.Id).ToArray();
+            Synset[] synsets = _database.GetSynsets(senses.Select(s => s.SynsetId).ToArray());
+            string[] synsetIds = synsets.Select(s => s.Id).ToArray();
 
             // if (relations.HasFlag(WordRelation.None))
             //     return result.ToArray();
@@ -51,8 +52,8 @@ namespace Nestor.Thesaurus
 
             if (relations.HasFlag(WordRelation.Synset))
             {
-                result.AddRange(synsets.Select(s => 
-                    ConstructRelatedWord(s.Title, WordRelation.Synset)));
+                Sense[] allSenses = _database.GetAllSenses().Where(s => synsetIds.Contains(s.SynsetId)).ToArray();
+                result.AddRange(allSenses.Select(s => ConstructRelatedWord(s.Name, WordRelation.Synset)));
             }
 
             if (relations.HasFlag(WordRelation.Hypernym))
@@ -103,9 +104,9 @@ namespace Nestor.Thesaurus
                     ConstructRelatedWord(e.Title, WordRelation.Effect)));
             }
 
-            return result.ToArray();
+            return result.Distinct().OrderBy(r => r.Lemma).ToArray();
         }
-        
+
         /// <summary>
         /// Для слова нужно вернуть все слова, чьё взаимоотношение с ними попадает под relations
         /// если в методе выше для слова "птица" и relation = Domain нужно вернуть "биология",
@@ -118,10 +119,10 @@ namespace Nestor.Thesaurus
         {
             var result = new List<RelatedWord>();
 
-            var senses = _database.GetAllSenses().Where(s => s.Lemma == lemma).ToArray();
-            var senseIds = senses.Select(s => s.Id).ToArray();
-            var synsets = _database.GetSynsets(senses.Select(s=> s.SynsetId).ToArray());
-            var synsetIds = synsets.Select(s => s.Id).ToArray();
+            Sense[] senses = _database.GetAllSenses().Where(s => s.Lemma == lemma).ToArray();
+            string[] senseIds = senses.Select(s => s.Id).ToArray();
+            Synset[] synsets = _database.GetSynsets(senses.Select(s=> s.SynsetId).ToArray());
+            string[] synsetIds = synsets.Select(s => s.Id).ToArray();
 
             if (invertedRelations.HasFlag(WordRelation.Hyponym))
             {
@@ -142,8 +143,8 @@ namespace Nestor.Thesaurus
             //not inversable
             if (invertedRelations.HasFlag(WordRelation.Synset))
             {
-                result.AddRange(synsets.Select(s => 
-                    ConstructRelatedWord(s.Title, WordRelation.Synset)));
+                Sense[] allSenses = _database.GetAllSenses().Where(s => synsetIds.Contains(s.SynsetId)).ToArray();
+                result.AddRange(allSenses.Select(s => ConstructRelatedWord(s.Name, WordRelation.Synset)));
             }
 
             if (invertedRelations.HasFlag(WordRelation.Hypernym))
@@ -195,12 +196,12 @@ namespace Nestor.Thesaurus
                     ConstructRelatedWord(c.Title, WordRelation.Cause)));
             }
 
-            return result.ToArray();
+            return result.Distinct().OrderBy(r => r.Lemma).ToArray();
         }
         
         private RelatedWord ConstructRelatedWord(string rawText, WordRelation relation)
         {
-            var lemma = _nestor.Lemmatize(rawText, MorphOption.Distinct).First();
+            string lemma = _nestor.Lemmatize(rawText, MorphOption.Distinct).First();
             return new RelatedWord(lemma, rawText, relation);
         }
     }

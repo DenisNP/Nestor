@@ -2,8 +2,5 @@
 
 namespace Nestor.Thesaurus
 {
-    public record RelatedWord(string Lemma, string TextRaw, WordRelation Relation)
-    {
-
-    }
+    public record RelatedWord(string Lemma, string TextRaw, WordRelation Relation);
 }

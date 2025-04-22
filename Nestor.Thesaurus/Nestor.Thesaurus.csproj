@@ -2,6 +2,18 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageVersion>0.5.2</PackageVersion>
+        <Title>Nestor.Thesaurus</Title>
+        <Authors>Denis Peshekhonov</Authors>
+        <Description>.NET Thesaurus for Russian language</Description>
+        <Copyright>Denis Peshekhonov, 2022</Copyright>
+        <PackageLicenseUrl>https://licenses.nuget.org/GPL-3.0-or-later</PackageLicenseUrl>
+        <RepositoryType>GitHub</RepositoryType>
+        <PackageTags>NLP Russian morphology</PackageTags>
+        <PackageProjectUrl>https://github.com/DenisNP/Nestor/tree/master/Nestor.Thesaurus</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/DenisNP/Nestor/tree/master/Nestor.Thesaurus</RepositoryUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -9,13 +21,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.2-beta1" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 
     <ItemGroup>
       <None Update="SynsetDB.zip">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Include="README.md" Pack="true" PackagePath=""/>
     </ItemGroup>
     
 </Project>

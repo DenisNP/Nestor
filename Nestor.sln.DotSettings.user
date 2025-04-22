@@ -1,4 +1,5 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AAssert_002Ecs_002Fl_003AC_0021_003FUsers_003FDenisNP_003FAppData_003FRoaming_003FJetBrains_003FRider2025_002E1_003Fresharper_002Dhost_003FDecompilerCache_003Fdecompiler_003F25288f22b7c548d8adf4cb3c0171568e75600_003Fa1_003Fb73cf05d_003FAssert_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=158047ee_002D98f9_002D41d4_002D8873_002Ddc5f364c14c5/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from &amp;lt;Nestor.Tests&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Or&gt;&#xD;
     &lt;Project Location="D:\_DEV\Nestor\Nestor.Tests" Presentation="&amp;lt;Nestor.Tests&amp;gt;" /&gt;&#xD;
@@ -25,10 +26,15 @@
     &lt;TestId&gt;NUnit3x::90E6376F-6D1F-4F53-B7FE-39E39BEFDA06::.NETCoreApp,Version=v3.1::Nestor.Nyms.Tests.Tests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d450749c_002Df6e2_002D47ea_002Da18f_002D8a1bad60e887/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TestRemovePrepositions" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;Project Location="D:\_DEV\OTHER\Nestor\Nestor.Poetry.Tests" Presentation="&amp;lt;Nestor.Poetry.Tests&amp;gt;" /&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d450749c_002Df6e2_002D47ea_002Da18f_002D8a1bad60e887/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TestRemovePrepositions" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Or&gt;&#xD;
+    &lt;Project Location="D:\_DEV\OTHER\Nestor\Nestor.Poetry.Tests" Presentation="&amp;lt;Nestor.Poetry.Tests&amp;gt;" /&gt;&#xD;
+    &lt;TestAncestor&gt;&#xD;
+      &lt;TestId&gt;NUnit3x::A5EA0D5C-204D-46ED-97BC-D5A5BC5DF701::net6.0::Nestor.Thesaurus.Tests.Tests.TestThesaurusStraightRelations&lt;/TestId&gt;&#xD;
+    &lt;/TestAncestor&gt;&#xD;
+  &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e929df5b_002Daa03_002D423b_002D87a0_002Dd9c239bbac21/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="T" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e929df5b_002Daa03_002D423b_002D87a0_002Dd9c239bbac21/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="T" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Or&gt;&#xD;
     &lt;TestAncestor&gt;&#xD;
       &lt;TestId&gt;NUnit3x::BDA342A1-6986-499E-AEC8-F60544AC1572::net5.0::Nestor.Poetry.Tests.FootAnalyzerTests.T&lt;/TestId&gt;&#xD;

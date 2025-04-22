@@ -12,7 +12,7 @@ public class Tests
     {
         _nThesaurus ??= new NestorThesaurus();
     }
-
+    
     [Test]
     public void TestThesaurusStraightRelations()
     {
@@ -105,6 +105,6 @@ public class Tests
     [TearDown]
     public void Dispose()
     {
-        _nThesaurus = null;
+        _nThesaurus = null!;
     }
 }
