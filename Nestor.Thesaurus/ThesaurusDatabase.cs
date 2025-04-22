@@ -212,7 +212,7 @@ namespace Nestor.Thesaurus
             catch (Exception e)
             {
                 Console.WriteLine("Error loading thesaurus: " + e.Message);
-                throw new IOException($"Cannot load file: {pathToThesaurus}.zip");
+                throw new IOException($"Cannot load file: {pathToThesaurus}");
             }
             Console.WriteLine("Thesaurus loaded...OK");
         }

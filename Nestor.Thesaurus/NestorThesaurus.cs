@@ -11,7 +11,7 @@ namespace Nestor.Thesaurus
         
         public NestorThesaurus(NestorMorph nestorMorph = null)
         {
-            _database ??= new ThesaurusDatabase("SynsetDB");
+            _database ??= new ThesaurusDatabase("SynsetDB.zip");
             _nestor = nestorMorph ?? new NestorMorph();
         }
         
