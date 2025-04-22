@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>0.0.5</PackageVersion>
+        <PackageVersion>0.0.7</PackageVersion>
         <Title>Nestor.Thesaurus</Title>
         <Authors>Denis Peshekhonov</Authors>
         <Description>.NET Thesaurus for Russian language</Description>
@@ -25,10 +25,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="SynsetDB.zip">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
       <None Include="README.md" Pack="true" PackagePath=""/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Remove="Dict\SynsetDB.zip" />
+        <EmbeddedResource Include="Dict\SynsetDB.zip">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </EmbeddedResource>
     </ItemGroup>
     
 </Project>

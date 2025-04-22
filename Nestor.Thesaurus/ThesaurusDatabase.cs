@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
 using Nestor.Thesaurus.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -98,10 +99,13 @@ namespace Nestor.Thesaurus
             
             try
             {
-                using var file = File.OpenRead($"{pathToThesaurus}.zip");
+                var assembly = Assembly.GetCallingAssembly();
+                using Stream file = assembly.GetManifestResourceStream($"Nestor.Thesaurus.Dict.{pathToThesaurus}")
+                                    ?? throw new IOException();
+
                 using var zip = new ZipArchive(file, ZipArchiveMode.Read);
 
-                foreach (var entry in zip.Entries)
+                foreach (ZipArchiveEntry entry in zip.Entries)
                 {
                     var name = entry.Name.Split(".")[0];
                     Type type = GetTypeFromString(name);
