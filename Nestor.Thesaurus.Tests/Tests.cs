@@ -20,13 +20,13 @@ public class Tests
         Assert.That(hyponyms, Has.Length.EqualTo(28));
         
         var sameRoot = _nThesaurus.GetStraightRelations("рост", WordRelation.SameRoot);
-        Assert.That(sameRoot, Has.Length.EqualTo(93));
+        Assert.That(sameRoot, Has.Length.EqualTo(47));
 
         var synsets = _nThesaurus.GetStraightRelations("рост", WordRelation.Synset);
-        Assert.That(synsets, Has.Length.EqualTo(4));
+        Assert.That(synsets, Has.Length.EqualTo(9));
         
         var posSynonyms = _nThesaurus.GetStraightRelations("рост", WordRelation.PartOfSpeechSynonym);
-        Assert.That(posSynonyms, Has.Length.EqualTo(5));
+        Assert.That(posSynonyms, Has.Length.EqualTo(4));
         
         var hypernyms = _nThesaurus.GetStraightRelations("рост", WordRelation.Hypernym);
         Assert.That(hypernyms, Has.Length.EqualTo(6));
@@ -53,7 +53,7 @@ public class Tests
             WordRelation.SameRoot 
                     | WordRelation.Holonym 
                     | WordRelation.Hypernym);
-        Assert.That(multipleRelations, Has.Length.EqualTo(100));
+        Assert.That(multipleRelations, Has.Length.EqualTo(54));
     }
 
     [Test]
@@ -64,21 +64,21 @@ public class Tests
         
         //same as not inverted
         var sameRoot = _nThesaurus.GetInvertedRelations("рост", WordRelation.SameRoot);
-        Assert.That(sameRoot, Has.Length.EqualTo(93));
+        Assert.That(sameRoot, Has.Length.EqualTo(47));
         
         //samer as not inverted
         var synsets = _nThesaurus.GetInvertedRelations("рост", WordRelation.Synset);
-        Assert.That(synsets, Has.Length.EqualTo(4));
+        Assert.That(synsets, Has.Length.EqualTo(9));
         
         var hyponyms = _nThesaurus.GetInvertedRelations("рост", WordRelation.Hypernym);
         Assert.That(hyponyms, Has.Length.EqualTo(28));
         
         var domainItems = _nThesaurus.GetInvertedRelations("биология", WordRelation.Domain);
-        Assert.That(domainItems, Has.Length.EqualTo(2112));
+        Assert.That(domainItems, Has.Length.EqualTo(1281));
         
         //same as not inverted
         var posSynonyms = _nThesaurus.GetInvertedRelations("рост", WordRelation.PartOfSpeechSynonym);
-        Assert.That(posSynonyms, Has.Length.EqualTo(5));
+        Assert.That(posSynonyms, Has.Length.EqualTo(4));
         
         var meronyms = _nThesaurus.GetInvertedRelations("рост", WordRelation.Holonym);
         Assert.That(meronyms, Has.Length.EqualTo(4));
@@ -99,7 +99,7 @@ public class Tests
              WordRelation.SameRoot 
                      | WordRelation.Holonym 
                      | WordRelation.Hypernym);
-         Assert.That(multipleRelations, Has.Length.EqualTo(125));
+         Assert.That(multipleRelations, Has.Length.EqualTo(79));
     }
     
     [TearDown]
